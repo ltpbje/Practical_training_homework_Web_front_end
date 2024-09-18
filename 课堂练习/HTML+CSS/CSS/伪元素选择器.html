@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+				
+			div::before{
+				content: '前面';
+				color: red;
+			}
+				
+			div::after{
+				content: '后面';
+				color: blue;
+			}
+			
+				
+			input{
+				border:0px ;
+				border-bottom: 1px solid black;
+				outline: none;
+			}
+			
+			input:focus::placeholder{
+				color: #CDC8D4;
+			}
+		</style>
+	</head>
+	<body>
+		<div>|</div>
+		<input type="text" placeholder="用户名" />
+	</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			p:hover{
+				color: red;
+			
+			}
+			
+			[type="text"] +p{
+				display: none;
+			}
+			
+			[type="text"]:focus +p{
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<p>
+		今天天气不错
+		</p>
+		<hr>
+		<input type="text" />
+		<p>我获取了焦点</p>
+		<hr />
+		1+1=2
+		<br />
+		<label for="t"> 对</label><input type="radio" name='status' id='t'/>
+		<label for="f"> 错</label><input type="radio" name='status' id='f'/>
+	</body>
+</html>
