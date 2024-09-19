@@ -1,0 +1,26 @@
+.box-left,.box-right{
+    width: 200px;
+    height: 200px;
+    float: left;
+}
+
+.box-left{
+    background-color: blue;
+}
+
+.box-right{
+    background-color: red;
+}
+
+.father{
+    padding: 20px;
+    background: green;
+    /* 清除浮动 */
+    overflow: hidden;
+}
+
+.father-brother{
+    height: 200px;
+    width: 200px;
+    background-color: purple;
+}
