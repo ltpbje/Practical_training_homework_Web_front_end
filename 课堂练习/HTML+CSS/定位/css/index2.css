@@ -1,0 +1,47 @@
+
+
+
+.container{
+    width: 500px;
+    height: 500px;
+    overflow: hidden;
+}
+
+.box{
+    height: 500px;
+    width: 1600px; 
+    transition: all 0.7s;
+}
+.box img{
+    float: left;
+}
+
+#a:checked~ .container .box{
+    margin-left: 0px;
+}
+
+#b:checked~ .container .box{
+    margin-left: -500px;
+}
+
+#c:checked~ .container .box{
+    margin-left: -1000px;
+}
+
+.btn-box label{
+    display: inline-block;
+    width: 26px;
+    line-height: 26px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    text-align: center;
+}
+.btn-box label:hover{
+    background-color: skyblue;
+    border-color: white;
+}
+.btn-box{
+    width: 102px;
+    margin: 10px auto;
+}
+
