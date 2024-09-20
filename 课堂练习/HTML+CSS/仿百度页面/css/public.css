@@ -1,0 +1,40 @@
+*{
+padding: 0;
+margin: 0;
+}
+
+ul,ol{
+    list-style: none;
+}
+
+a{
+    color: #333;
+    text-decoration: none;
+}
+
+img{
+    border: none;
+    vertical-align: middle;
+}
+/* 
+样式的继承性
+1、父元素中设置的样式是可以被子元素继承
+2、不是所有的样式都具备继承性
+3、如果子元素有与父元素相同的样式，但是值不同，那么，子元素不再继承父元素的样式而是使用自己的 */
+body{
+    font-family: Microsoft YaHei,'宋体';
+    font-size: 14px;
+    color: #333;
+}
+
+.clear{
+    overflow: hidden;
+}
+
+.lf{
+    float: left;
+}
+
+.rf{
+    float: right;
+}
