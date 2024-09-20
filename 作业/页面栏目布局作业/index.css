@@ -1,0 +1,105 @@
+.container{
+    width: 1390px;
+    height: 400px;
+    /* border: 1px solid #000; */
+    margin: 10px auto;
+}
+
+.left_box{
+    width: 250px;
+    float: left;
+    box-sizing: border-box;
+    height: 362px;
+    /* border: 1px solid red; */
+    background-image: url(./img/courseCenter.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-top: 13px;
+    margin-left: 10px;
+    padding:30px 40px 0 15px ;
+    color: white;
+    font-size: 13px;
+}
+
+.left_box h2{
+    font-size: 30px;
+    margin: 0;
+}
+.left_box p:nth-of-type(1){
+    margin: 0;
+    font-size: 12px;
+}
+
+.left_box p:nth-of-type(2){
+    margin-top: 40px;
+    margin-bottom: 0px;
+}
+.left_box p:nth-of-type(3)
+{
+    margin-top: 7px;
+}
+.left_box button{
+    display: block;
+    background-color:transparent;
+    border-style:none;
+    border: 1px solid white;
+    color: white;
+    text-align: center;
+    margin: 47px auto 0;
+    font-size: 15px;
+    width: 140px;
+    height: 50px;
+}
+
+
+
+
+
+.right_box{
+    float: right;
+    box-sizing: border-box;
+    width: 1120px;
+    height: 100%;
+    /* border: 1px solid blue; */
+    padding-left: 10px;
+   
+}
+
+.right_box .box{
+    float: left;
+    margin: 10px;
+}
+
+.right_box .box {
+    position: relative;
+    width: 254px; 
+    height: 170px;
+}
+
+.right_box .box img{
+    position: absolute;
+   
+}
+
+.icon_box{
+    position: relative;
+    margin: 30px auto;
+    width: 200px;
+    height: 100px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.icon_box img{
+    position: absolute;
+    height: 54px;
+    left: 10px;
+    top: 19px;
+}
+.icon_box span{
+    position: absolute;
+    left: 75px;
+    top: 40px;
+    font-size: 13px;
+}
+
