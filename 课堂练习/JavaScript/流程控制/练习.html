@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        // var time = prompt();
+        // if (time > 0 && time <= 8) {
+        //     console.log('上午好');
+        // }
+        // if (time > 8 && time <= 12) {
+        //     console.log('中午好');
+        // }
+        // if (time > 12 && time <= 18) {
+        //     console.log('下午好');
+        // }
+        // if (time > 18 && time <= 24) {
+        //     console.log('晚上好');
+        // } else {
+        //     console.log('输入的不是时间');
+        // }
+
+        // for (var i = 3; i < 10; i++) {
+        //     console.log('搬了' + (i + 1) + '块砖');
+        // }
+        // for (var i = 0; i < 10; i = i + 2) {
+        //     console.log('搬了' + (i + 2) + '块砖');
+        // }
+
+        // for (var i = 3; i < 10; i++) {
+        //     console.log('搬了' + (i + 1) + '块砖');
+        // }
+
+        // for (var i = 0; i <= 100; i++) {
+        //     if (i % 2 === 0) {
+        //         console.log(i)
+        //     }
+        // }
+        // for (var i = 0; i <= 100; i++) {
+        //     if (i % 2 === 1) {
+        //         console.log(i)
+        //     }
+        // }
+
+        // for (var i = 1; i > 0; i++) {
+        //     if (0.0001 * (2 ** i) >= 8848) {
+        //         console.log(i)
+        //         break;
+        //     }
+        // }
+        // var count = 0;
+        // var i = 0.0001;
+        // while (i < 8848) {
+        //     i *= 2;
+        //     count++;
+        // };
+        // console.log(count);
+
+        // // 台阶问题
+        // for (var i = 0; i < 1000; i++) {
+        //     if (i % 2 === 1 && i % 3 === 2 && i % 5 === 4 && i % 6 === 5 && i % 7 === 0) {
+        //         console.log(`最少有${i}级台阶`);
+        //         break;
+        //     }
+        // }
+
+        // // 2、有一个篮球，从5米高自由落体，每次弹起的高度是上一次的1/3，当篮球弹起高度小于0.1米以后就不再弹了，请求篮球会弹起多少次
+        // let count = 0;
+        // for (let i = 5; i >= 0.1; i *= 1 / 3) {
+        //     count++;
+        // }
+        // console.log(`篮球会弹起${count}次`);
+
+
+        // let score = prompt();
+        // let score = parseInt(Math.random() * 101);
+        // switch (true) {
+        //     case score >= 90 && score <= 100:
+        //         console.log(`${score}优秀`);
+        //         break;
+        //     case score >= 80 && score <= 89:
+        //         console.log(`${score}良好`);
+        //         break;
+        //     case score >= 70 && score <= 79:
+        //         console.log(`${score}中等`);
+        //         break;
+        //     case score >= 60 && score <= 69:
+        //         console.log(`${score}中等`);
+        //         break;
+        //     default:
+        //         console.log(`${score}不及格`);
+
+        // }
+        let score = parseInt(Math.random() * 101);
+        let grade = parseInt(score / 10)
+        // console.log(grade);
+
+        switch (grade) {
+            case 9:
+            case 10:
+                console.log(`${score}优秀`);
+                break;
+            case 8:
+                console.log(`${score}良好`);
+                break;
+            case 7:
+                console.log(`${score}中等`);
+                break;
+            case 6:
+                console.log(`${score}中等`);
+                break;
+            default:
+                console.log(`${score}不及格`);
+
+
+
+        }
+
+    </script>
+</body>
+
+</html>
