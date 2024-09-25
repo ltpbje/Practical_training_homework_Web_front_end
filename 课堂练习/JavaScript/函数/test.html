@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        // let sum = 0;
+        // for (var i = 1; i <= 10; i++) {
+        //     sum = sum + i
+        // }
+        // console.log(sum);
+
+        // let i = 0;
+        // let sum = 0;
+        // function sum() {
+        //     if (i <= 10) {
+        //         sum += i;
+        //         i++;
+        //     }
+        // }
+
+
+
+        // function list(n) {
+        //     if (n === 1) {
+        //         return 1;
+        //     }
+        //     if (n === 2) {
+        //         return 1;
+        //     }
+        //     if (n > 2) {
+        //         return list(n - 1) + list(n - 2);
+        //     }
+        // }
+        // console.log(list(8));
+
+        function list(n) {
+            let a = 1;//第一项
+            let b = 1;//第二项
+            let c; // 当前项
+            for (let i = 1; i <= n; i++) {
+                if (i === 1 || i === 2) {
+                    c = 1;
+                } else {
+                    c = a + b;
+                    a = b;
+                    b = c;
+                }
+
+            }
+            console.log(`第${n}项:${c}`);
+        }
+
+
+    </script>
+</body>
+
+</html>
