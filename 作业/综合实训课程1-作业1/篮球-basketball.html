@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 2、有一个篮球，从5米高自由落体，每次弹起的高度是上一次的1/3，当篮球弹起高度小于0.1米以后就不再弹了，请求篮球会弹起多少次
+        let count = 0;
+        for (let i = 5; i >= 0.1; i *= 1 / 3) {
+            count++;
+        }
+        console.log('篮球会弹起' + count + '次');
+    </script>
+</body>
+
+</html>
