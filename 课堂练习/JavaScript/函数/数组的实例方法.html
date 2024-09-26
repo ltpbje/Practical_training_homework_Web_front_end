@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let arr = [1, 2, 3, 4, 5, 6, 7, 8]
+        // arr.forEach((item, index, _arr) => {
+        //     return console.log(item, index);
+        // })
+
+        const newArr = arr.map((item, index, _arr) => {
+            return item * 10;
+        })
+
+        const filterArr = arr.filter((item, index, _arr) => {
+            return item % 2 === 1;
+        })
+
+        const arrEvery = arr.every((item, index, _arr) => {
+            return item > 4;
+            // 1> 4 && 2>4 && 3>4 && 4>4 && 5>4 && 6> 4;
+        })
+
+        const arrSome = arr.some((item, index, _arr) => {
+            return item > 4;
+            // 1 > 4 || 2>4 || 3>4 || 4>4 || 5>4 || 6> 4;
+        }) 
+    </script>
+
+</body>
+
+</html>

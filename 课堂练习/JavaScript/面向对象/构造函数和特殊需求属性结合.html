@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function Person(_name, _birthday, _idCard) {
+            Object.defineProperties(this, {
+                name: {
+                    configurable: false,
+                    writable: false,
+                    value: _name
+                },
+                birthday: {
+                    configurable: false,
+                    writable: false,
+                    value: _birthday
+                },
+                sex: {
+                    configurable: false,
+                    get: function () {
+                        return this.idCard[16] % 2 == 0 ? '女' : '男';
+                    }
+                },
+                age: {
+                    configurable: false,
+                    get: function () {
+                        const currentDate = new Date();
+                        const birthdayDate = new Date(this.birthday);
+                        const totalTime = currentDate.getTime() - birthdayDate.getTime();
+                        const yearCount = parseInt(totalTime / 1000 / 60 / 60 / 24 / 365);
+                        return yearCount;
+                    }
+                },
+                idCard: {
+                    configurable: false,
+                    writable: false,
+                    value: _idCard
+                }
+            })
+        }
+        const stu = new Person('张三', '2008-9-1', 43323223134234123);
+    </script>
+</body>
+
+</html>

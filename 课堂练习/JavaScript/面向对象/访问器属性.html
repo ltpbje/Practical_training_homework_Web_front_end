@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // var stu = {
+        //     aaa: 'hello',
+        //     birthday: '2008-9-23'
+        // }
+        // Object.defineProperty(stu, 'age', {
+        //     configurable: true,
+        //     enumerable: true,
+        //     get: function () {
+        //         const currentDate = new Date();
+        //         const birthdayDate = new Date(this.birthday);
+        //         const totalTime = currentDate.getTime() - birthdayDate.getTime();
+        //         const yearCount = parseInt(totalTime / 1000 / 60 / 60 / 24 / 365);
+        //         return yearCount;
+        //     },
+        //     // set: function (v) {
+
+        //     // }
+        // })
+
+        var stu = {
+            aaa: 'hello',
+            birthday: '2008-9-23',
+            idCard: '411235672222234672'
+
+        }
+        Object.defineProperties(stu, {
+            name: {
+                value: '张三',
+                configurable: false,
+                writable: false
+            },
+            age: {
+                configurable: false,
+                get: function () {
+                    const currentDate = new Date();
+                    const birthdayDate = new Date(this.birthday);
+                    const totalTime = currentDate.getTime() - birthdayDate.getTime();
+                    const yearCount = parseInt(totalTime / 1000 / 60 / 60 / 24 / 365);
+                    return yearCount;
+                }
+            },
+            sex: {
+                configurable: false,
+                get: function () {
+                    return this.idCard[16] % 2 == 0 ? '女' : '男';
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

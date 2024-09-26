@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function Student(_name, _age) {
+            this.name = _name;
+            this.age = _age;
+            this.sayHi = function () {
+                console.log(`你好我叫${this.name}`);
+            }
+        }
+        const stu1 = new Student('张三', 18);
+        const stu2 = new Student('李四', 99);
+
+    </script>
+</body>
+
+</html>

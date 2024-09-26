@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var stu = {
+            aaa: 'hello'
+        }
+        //我们开始添加一个具备特殊行为描述的数据属性
+        Object.defineProperty(stu, 'name', {
+            configurable: false, //表示不能被delete删除
+            enumerable: false,//表示不能被for...in循环遍历到
+            writable: false,//不能修改值
+            value: '小红'
+        })
+        for (let n in stu) {
+            console.log(n);
+
+        }
+
+    </script>
+</body>
+
+</html>
