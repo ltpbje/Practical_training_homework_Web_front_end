@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .blue {
+            color: blue;
+        }
+
+        .size {
+            font-size: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div class="box2">123</div>
+        <div class="box1"></div>
+        <div class="box1"></div>
+
+    </div>
+    <button onclick="changerColor()">按钮</button>
+    <script>
+        const container = document.getElementById('container');
+
+        const box1 = document.querySelector('#container>.box1');
+        const boxByClassName = document.getElementsByClassName('box1');
+        //HTMLCollection(2) [div.box1, div.box1]
+
+        const boxList = document.querySelectorAll('#container>.box1');
+        // NodeList(2) [div.box1, div.box1]
+        const box2 = document.querySelector('.box2');
+
+        function changerColor() {
+            // console.log(box2);
+
+            // box2.classList.add('blue')
+            // box2.classList.remove('box2')
+            // box2.classList.toggle('blue');
+            // console.log(box2.classList.contains('blue'));
+            // console.log(container.firstElementChild);
+            // console.log(container.lastElementChild);
+            box2.classList.toggle('size')
+            // box2.innerText = '<h1>今天天气很好</h1>'
+            box2.innerHTML = "<h1>今天天气很好</h1>"
+        }
+    </script>
+
+</body>
+
+
+</html>

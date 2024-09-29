@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    手机号:<input type="text" value="" class="number" onblur="vaildatePhone()"></input>
+    邮箱:<input type="text" value="" class="email" onblur="vaildateEmail()"></input>
+    <script>
+        const phone = document.querySelector('.number')
+        function vaildatePhone() {
+            const num = Number(phone.value) + '';
+            if (phone.value.length == 11 && phone.value[0] == 1 && num != 'NaN') {
+                alert('输入正确');
+            } else {
+                alert('输入错误');
+            }
+        }
+        const email = document.querySelector('.email')
+        function vaildateEmail() {
+            console.log(email.value.slice(-8))
+            if (email.value.slice(-8) == '@163.com') {
+                alert('输入正确');
+            } else {
+                alert('输入错误');
+            }
+        }
+        //  123@163.com
+
+        // 7 8 9 10
+        function emailFn(str) {
+            const estr = String(str)
+            // estr.slice(-4) === '.com' ? alert('正确') : alert('错误')
+            if (estr.indexOf("@") && estr.lastIndexOf('@') == estr.indexOf('@') && estr.indexOf('@') < estr.length - 4) {
+                alert('正确')
+            } else {
+                alert('错误')
+            }
+        }
+        emailFn('1212212@123.com')
+    </script>
+</body>
+
+</html>
