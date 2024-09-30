@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .blue {
+            color: blue;
+        }
+
+        .active {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <p>123344</p>
+
+    </div>
+
+    <div class="deleteBox">
+        <p>我被删除了</p>
+    </div>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <script>
+        // const div1 = document.createElement('div')
+        // div1.classList.add('blue')
+        // div1.innerText = '今天天气不好'
+        // const box = document.querySelector('.box')
+        // box.appendChild(div1)
+
+        // box.removeChild(box.children[0])
+
+        // const deleteBox = document.querySelector('.deleteBox')
+        // deleteBox.remove()
+
+
+        const liList = document.querySelectorAll('li');
+        for (let i = 0; i < liList.length; i++) {
+            liList[i].onclick = function () {
+                console.log(liList[i].innerText);
+
+                // liList[i].classList.toggle('active')
+                this.classList.toggle('active')
+            }
+        }
+    </script>
+</body>
+
+</html>
