@@ -1,0 +1,62 @@
+.top-line{
+    background-color: #333;
+    line-height: 40px;
+    height: 40px;
+}
+
+
+.contents a{
+    color: #b0b0b0;
+}
+
+.contents span{
+    color: #b0b0b0;
+    margin: 3.6px;
+}
+
+.topbar-nav{
+    float: left;
+}
+
+.topbar-right{
+    float: right;
+}
+
+.cart{
+    float: right;
+    width: 120px;
+    text-align: center;
+    background-color: #424242;
+}
+.cart{
+    color: #b0b0b0;
+    font-size: 15px;
+}
+
+
+.logo{
+    float: left;
+    margin-top: 22px;
+}
+
+.nav-item{
+    margin-left: 120px;
+    width: 600px;
+}
+.nav-item ul li {
+    float: left;
+    line-height: 100px;
+    
+}
+.nav-item ul li a{
+    padding: 0 6px;
+    color: #333;
+    font-size: 14px;
+}
+
+
+.search{
+    float: right;
+    margin-top: -20px;
+    width: 296px;
+}

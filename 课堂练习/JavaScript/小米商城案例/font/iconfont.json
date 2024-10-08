@@ -1,0 +1,30 @@
+{
+  "id": "4703221",
+  "name": "小米商城案例",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "887935",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e6c8",
+      "unicode_decimal": 59080
+    },
+    {
+      "icon_id": "3456452",
+      "name": "购物车",
+      "font_class": "gouwuche",
+      "unicode": "e70b",
+      "unicode_decimal": 59147
+    },
+    {
+      "icon_id": "34932638",
+      "name": "icon-more",
+      "font_class": "icon-more",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    }
+  ]
+}

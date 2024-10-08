@@ -1,0 +1,38 @@
+/* 清除默认的内外边距 */
+*{
+    padding: 0;
+    margin: 0;
+}
+
+/* 清除a标签的默认样式 */
+a{
+    color: #333;
+    text-decoration: none;
+}
+
+img{
+    border: none;
+    vertical-align: middle;
+}
+
+/* 清除列表标签的默认样式 */
+
+ul,ol{
+    list-style: none;
+}
+
+body{
+    font-size: 12px;
+    color: #333;
+    font-family: "microsoft YaHei";
+}
+
+/* 清除浮动 */
+.clear{
+    overflow: hidden;
+}
+
+.contents{
+    width: 1226px;
+    margin: 0 auto;
+}

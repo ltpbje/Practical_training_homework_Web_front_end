@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            position: absolute;
+            height: 500px;
+            width: 800px;
+            border: 1px solid #000;
+            top: 50%;
+            margin-top: -250px;
+            left: 50%;
+            margin-left: -400px;
+            background-color: gainsboro;
+        }
+
+        .clear {
+            overflow: hidden;
+        }
+
+        .left_box {
+            float: left;
+        }
+
+        .left_box ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        .left_box li {
+            line-height: 83px;
+            width: 230px;
+            text-align: center;
+            list-style: none;
+            background-color: #fff;
+
+        }
+
+        .right_box {
+            position: relative;
+            height: 500px;
+            width: 500px;
+            float: right;
+        }
+
+        .right_box .text {
+            height: 500px;
+            width: 500px;
+            background-color: #fff;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <div class="left_box clear">
+            <ul>
+                <li>分类1</li>
+                <li>分类2</li>
+                <li>分类3</li>
+                <li>分类4</li>
+                <li>分类5</li>
+                <li>分类6</li>
+            </ul>
+        </div>
+        <div class="right_box">
+            <div class="text">1</div>
+            <div class="text">2</div>
+            <div class="text">3</div>
+            <div class="text">4</div>
+            <div class="text">5</div>
+            <div class="text">6</div>
+        </div>
+
+
+    </div>
+
+    <script>
+        const liList = document.querySelectorAll('.left_box li')
+        const textList = document.querySelectorAll('.text')
+        for (let i = 0; i < liList.length; i++) {
+            liList[i].addEventListener('mouseover', function (e) {
+                for (let j = 0; j < textList.length; j++) {
+                    textList[j].style.display = 'none'
+                }
+                textList[i].style.display = 'block'
+            })
+        }
+
+    </script>
+</body>
+
+</html>
