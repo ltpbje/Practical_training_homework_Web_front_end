@@ -27,7 +27,7 @@ const header = document.querySelector('.header');
 for (let i = 0; i < nav_items.length; i++){
     nav_items[i].addEventListener('mouseover', function () {
         // console.log(i);
-        // second_nav.style.boxShadow  = '0 2px 2px #D6D6D6;'
+        second_nav.classList.add('second-nav_boxShadow')
         second_nav.style.height = '212px'
         for (let j = 0; j < con_items.length; j++){
             con_items[j].style.display ='none'
@@ -36,6 +36,6 @@ for (let i = 0; i < nav_items.length; i++){
     })
     header.addEventListener('mouseleave', function () {
         second_nav.style.height = '0px'
-        // second_nav.style.boxShadow = 'none'
+        second_nav.classList.remove('second-nav_boxShadow')
     })
 }

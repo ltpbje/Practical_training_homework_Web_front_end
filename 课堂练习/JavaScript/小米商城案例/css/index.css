@@ -133,13 +133,17 @@
     color: #fff;
 }
 
-.second-nav{
+.second-nav_boxShadow{
+    box-shadow: 0 2px 2px #D6D6D6;
     border-top: 1px solid #E0E0E0;
+}
+.second-nav{
+    /* border-top: 1px solid #E0E0E0; */
     box-sizing: border-box;
     /* padding-top: 23px;
     padding-bottom: 23px; */
     width: 100%;
-    box-shadow: 0 2px 2px #D6D6D6;
+    /* box-shadow: 0 2px 2px #D6D6D6; */
     position: absolute;
     height: 0px;
     overflow: hidden;
