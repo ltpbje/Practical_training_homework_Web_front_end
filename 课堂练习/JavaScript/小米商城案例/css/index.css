@@ -58,12 +58,15 @@
 
 .logo{
     float: left;
-    margin-top: 22px;
+    margin-top: 27px;
 }
 
 .nav-item{
     margin-left: 120px;
     width: 600px;
+}
+.nav-item li:hover a{
+    color: #ff6700;
 }
 .nav-item ul li {
     float: left;
@@ -129,3 +132,37 @@
     border-color: #ff6700;
     color: #fff;
 }
+
+.second-nav{
+    border-top: 1px solid #E0E0E0;
+    box-sizing: border-box;
+    /* padding-top: 23px;
+    padding-bottom: 23px; */
+    width: 100%;
+    box-shadow: 0 2px 2px #D6D6D6;
+    position: absolute;
+    height: 0px;
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+}
+.second-nav .contents{
+     height: 165px;
+}
+.con_item{
+    height: 165px;
+    /* position: absolute; */
+    /* top: 30px; */
+    display: none;
+}
+.con_item .item{
+    float: left;
+    text-align: center;
+}
+
+.con_item .item img{
+    border-right: 1px solid #E0E0E0;
+}
+.con_item .item:nth-last-of-type(1) img{
+    border-right: none;
+}
+
