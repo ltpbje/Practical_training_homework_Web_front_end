@@ -90,6 +90,26 @@
     width: 223px;
     box-sizing: border-box;
     border: 1px solid #e0e0e0;
+    outline: none;
+    padding-left: 10px;
+    transition: all 0.3s ease-out;
+}
+
+.search input:hover{
+    border-color: #B0B0B0;
+}
+
+.search input:hover +button{
+    border-color: #B0B0B0;
+}
+.search input:focus {
+    border-color: #ff6700;
+
+}
+
+.search input:focus +button{
+    border-color: #ff6700;
+
 }
 
 .search button{
@@ -101,5 +121,11 @@
     border: 1px solid #E0E0E0;
    /*清除默认背景 */
    background-color: transparent;
+    transition: all 0.3s ease-out;
+}
 
+.search button:hover {
+    background-color: #ff6700;
+    border-color: #ff6700;
+    color: #fff;
 }
