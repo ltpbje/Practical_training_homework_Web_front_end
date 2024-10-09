@@ -148,6 +148,7 @@
     height: 0px;
     overflow: hidden;
     transition: all 0.3s ease-out;
+    background-color: #fff;
 }
 .second-nav .contents{
      height: 165px;
@@ -170,3 +171,53 @@
     border-right: none;
 }
 
+.banner .banner_nav{
+    width: 234px;
+    height: 460px;
+    padding: 20px 0px;
+    background-color: rgba(105, 101, 101, .6);
+    float: left;
+    box-sizing: border-box;
+}
+.banner .banner_nav li{
+    display: block;
+   line-height: 42px;
+   height: 42px;
+}
+
+.banner .banner_nav li a span{
+    font-size: 14px;
+    color: #fff;
+}
+.banner .banner_nav li a span:first-child{
+    width: 160px;
+    height: 42px;
+    overflow: hidden;
+    float: left;
+}
+
+.banner .banner_nav li a span:nth-child(2){
+    float: right;
+}
+.banner .banner_nav li a{
+    /* height: 42px; */
+    line-height: 42px;
+    padding-left: 30px;
+    display: block;
+    padding-right:10px ;
+}
+
+.banner .banner_nav li a:hover{
+    background-color: #FF6700;
+}
+
+
+.banner_img {
+    width: 992px;
+    float: left;
+}
+
+.banner_img .swiper-container-horizontal>.swiper-pagination-bullets{
+    width: fit-content;
+    left: 90%;
+}

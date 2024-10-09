@@ -9,33 +9,33 @@ const dataArr = [
 let n = 0;
 function changePlaceholder() {
 
-    search_inp.placeholder = dataArr[n]
+    search_inp.placeholder = dataArr[n];
     n++;
     if (n === dataArr.length) {
-        n=0
+        n = 0;
     }
-    
+
 };
 
 setInterval(changePlaceholder, 3000);
 
 // ---------------------search------------------------
-const nav_items = document.querySelectorAll('.nav-item li'); 
+const nav_items = document.querySelectorAll('.nav-item li');
 const con_items = document.querySelectorAll('.con_item');
 const second_nav = document.querySelector(".second-nav");
 const header = document.querySelector('.header');
-for (let i = 0; i < nav_items.length; i++){
+for (let i = 0; i < nav_items.length; i++) {
     nav_items[i].addEventListener('mouseover', function () {
         // console.log(i);
-        second_nav.classList.add('second-nav_boxShadow')
-        second_nav.style.height = '212px'
-        for (let j = 0; j < con_items.length; j++){
-            con_items[j].style.display ='none'
+        second_nav.classList.add('second-nav_boxShadow');
+        second_nav.style.height = '212px';
+        for (let j = 0; j < con_items.length; j++) {
+            con_items[j].style.display = 'none';
         }
-        con_items[i].style.display ='block'
-    })
+        con_items[i].style.display = 'block';
+    });
     header.addEventListener('mouseleave', function () {
-        second_nav.style.height = '0px'
-        second_nav.classList.remove('second-nav_boxShadow')
-    })
+        second_nav.style.height = '0px';
+        second_nav.classList.remove('second-nav_boxShadow');
+    });
 }
