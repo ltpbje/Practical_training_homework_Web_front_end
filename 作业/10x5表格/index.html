@@ -5,7 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./index.css">
+    <!-- <link rel="stylesheet" href="./index.css"> -->
+    <style>
+        table {
+            width: 400px;
+            margin: 0 auto;
+            border: 1px solid #000000;
+            /* 设置表格边框合并 */
+            border-collapse: collapse;
+        }
+
+
+        th,
+        td {
+            border: 1px solid #000000;
+            text-align: center;
+        }
+
+
+        .bg_red {
+            background-color: red;
+        }
+
+        .bg_green {
+            background-color: green;
+        }
+    </style>
 </head>
 
 <body>
@@ -38,10 +63,67 @@
             <td>4</td>
             <td>4</td>
         </tr>
+        <tr>
+            <td>5</td>
+            <td>5</td>
+            <td>5</td>
+            <td>5</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>6</td>
+            <td>6</td>
+            <td>6</td>
+            <td>6</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+            <td>7</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>8</td>
+            <td>8</td>
+            <td>8</td>
+            <td>8</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>9</td>
+            <td>9</td>
+            <td>9</td>
+            <td>9</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+            <td>10</td>
+        </tr>
 
     </table>
     <button>切换行颜色</button>
-    <script src="./index.js"></script>
+    <script>
+        const singleRows = document.querySelectorAll('table tr:nth-of-type(2n+1)');
+        const doubleRows = document.querySelectorAll('table tr:nth-of-type(2n)');
+        const button = document.querySelector('button');
+
+        button.addEventListener('click', function () {
+            for (let i = 0; i < singleRows.length; i++) {
+                singleRows[i].classList.toggle('bg_red');
+            }
+            for (let i = 0; i < doubleRows.length; i++) {
+                doubleRows[i].classList.toggle('bg_green');
+            }
+        });
+
+
+    </script>
 </body>
 
 </html>

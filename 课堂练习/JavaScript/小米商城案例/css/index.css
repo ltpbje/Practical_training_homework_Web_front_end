@@ -250,6 +250,11 @@
 
 
 /* banner-hero-sub start */
+
+.banner-hero-sub{
+    height: 170px;
+    margin-top: 14px;
+}
 .banner-hero-sub .icon{
     float: left;
 }
@@ -282,7 +287,29 @@
     width: 76px;
     height: 82px;    
     float: left;
+    position: relative;
 }
+
+.banner-hero-sub .icon .icon_item_content::before{
+    content: '';
+    height: 70px;
+    position: absolute;
+    left: 4px;
+    top: 0;
+    width: 74px;
+    border-left: 1px solid #69615A;
+   
+}
+
+.banner-hero-sub .icon .icon_item_content .bottom_border{
+     height: 70px;
+     width: 64px;
+     position: absolute;
+    border-bottom: 1px solid #69615A;
+      top: 5px;
+    left: 9px;
+}
+
 
 
 .banner-hero-sub .icon .icon_item img{
