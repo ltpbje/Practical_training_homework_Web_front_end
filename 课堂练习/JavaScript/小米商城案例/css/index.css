@@ -176,8 +176,10 @@
     height: 460px;
     padding: 20px 0px;
     background-color: rgba(105, 101, 101, .6);
-    float: left;
+    /* float: left; */
     box-sizing: border-box;
+    position: relative;
+    z-index: 2;
 }
 .banner .banner_nav li{
     display: block;
@@ -213,11 +215,21 @@
 
 
 .banner_img {
-    width: 992px;
-    float: left;
+    width: 1226px;
+    /* float: left; */
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.banner{
+ position: relative;   
 }
 
 .banner_img .swiper-container-horizontal>.swiper-pagination-bullets{
     width: fit-content;
     left: 90%;
+}
+.swiper-container .swiper-button-prev{
+    left: 240px;
 }
