@@ -19,7 +19,7 @@ function changePlaceholder() {
 
 setInterval(changePlaceholder, 3000);
 
-// ---------------------search------------------------
+// ---------------------search end------------------------
 const nav_items = document.querySelectorAll('.nav-item li');
 const con_items = document.querySelectorAll('.con_item');
 const second_nav = document.querySelector(".second-nav");
@@ -39,3 +39,23 @@ for (let i = 0; i < nav_items.length; i++) {
         second_nav.classList.remove('second-nav_boxShadow');
     });
 }
+// -----------------二级导航栏 end-------------------------
+
+const banner_navs = document.querySelectorAll('.banner_nav ul li');
+// console.log(banner_navs);
+const banner_tabs = document.querySelectorAll('.banner_tabs .banner_tab');
+for (let i = 0; i < banner_navs.length; i++) {
+    banner_navs[i].addEventListener('mouseover', function () {
+        for (let j = 0; j < banner_tabs.length; j++) {
+            banner_tabs[j].style.display = 'none';
+        }
+        banner_tabs[i].style.display = 'block';
+    });
+}
+const banner = document.querySelector('.banner');
+banner.addEventListener('mouseleave', function () {
+    for (let j = 0; j < banner_tabs.length; j++) {
+        banner_tabs[j].style.display = 'none';
+    }
+})
+

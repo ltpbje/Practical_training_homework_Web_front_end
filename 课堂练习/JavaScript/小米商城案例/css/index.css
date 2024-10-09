@@ -233,3 +233,19 @@
 .swiper-container .swiper-button-prev{
     left: 240px;
 }
+
+
+
+.banner_tabs .banner_tab{
+    width: 993px;
+    height: 460px;
+    background-color: #fff;
+    box-shadow: 1px 1px 2px #E0E0E0;
+    position: absolute;
+    left: 234px;
+    top: 0;
+    z-index: 2;
+    display: none;
+}
+
+
