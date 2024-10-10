@@ -57,5 +57,23 @@ banner.addEventListener('mouseleave', function () {
     for (let j = 0; j < banner_tabs.length; j++) {
         banner_tabs[j].style.display = 'none';
     }
-})
+});
 
+// ------------------返回到页面顶部---------------------
+
+const toTopButton = document.querySelector('.fixed_box ul li:last-of-type');
+window.onscroll = function () {
+    let toTop = document.documentElement.scrollTop || document.body.scrollTop;
+    // console.log(toTop);
+    if (toTop >= 400) {
+        toTopButton.style.display = 'block';
+    } else {
+        toTopButton.style.display = 'none';
+    }
+
+};
+
+toTopButton.addEventListener('click', function () {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+});
