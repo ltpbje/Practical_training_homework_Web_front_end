@@ -55,6 +55,9 @@
     font-size: 15px;
 }
 
+.header{
+    height: 100px;
+}
 
 .logo{
     float: left;
@@ -146,6 +149,7 @@
     /* box-shadow: 0 2px 2px #D6D6D6; */
     position: absolute;
     height: 0px;
+    top: 140px;
     overflow: hidden;
     transition: all 0.3s ease-out;
     background-color: #fff;
