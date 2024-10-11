@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        ul {
+            list-style: none;
+            margin: 0 auto;
+            display: block;
+            padding: 0;
+            width: 120px;
+        }
+
+        ul .title1 {
+            box-sizing: border-box;
+            border-bottom: 1px solid #000;
+            text-align: center;
+        }
+
+        /* .title2 .tab {
+            width: 50px;
+        } */
+        .title2 .tab .expand_box {
+            line-height: 23px;
+            height: 23px;
+            border-bottom: 1px solid #000;
+
+            /* overflow: hidden; */
+        }
+
+        .title2 .tab span:hover {
+            background-color: #FE6A00;
+        }
+
+        /* 手风琴效果  css   start  */
+        .title2 .tab span:hover+ul li {
+            height: 23px;
+            line-height: 23px;
+            border-bottom: 1px solid #000;
+        }
+
+        /* 手风琴效果  css  end  */
+
+        .title2 .tab span {
+            display: block;
+            border-bottom: 1px solid black;
+        }
+
+        /* .title2 .tab span:hover+ul {
+            line-height: 0px;
+            overflow: hidden;
+            height: 0px;
+        } */
+
+
+
+        .title2 .tab ul {
+            transition: all 2s ease-out;
+            /* height: 0; */
+            overflow: hidden;
+        }
+
+        .title2 .tab ul li {
+            /* border: 1px solid #000; */
+            transition: all 0.3s ease-out;
+        }
+
+        .title2 .tab li {
+            height: 0;
+            line-height: 0;
+            text-align: center;
+            background-color: #fff;
+        }
+
+        .box {
+            width: 120px;
+            border: 1px solid #000;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <ul class="title1">
+            <li class="title1">账户概览</li>
+        </ul>
+        <ul class="title2">
+            <li class="tab">
+                <span>
+                    产品管理
+                </span>
+                <ul>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="title2">
+            <li class="tab">
+                <span>
+                    产品管理
+                </span>
+                <ul>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="title2">
+            <li class="tab">
+                <span>
+                    产品管理
+                </span>
+                <ul>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                    <li>发布采购</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        const tabs_top = document.querySelectorAll('.title2 .tab>span');
+        const tabs = document.querySelectorAll('.title2 .tab ul');
+        for (let i = 0; i < tabs_top.length; i++) {
+            tabs_top[i].addEventListener('click', function () {
+                let liList = tabs[i].querySelectorAll('li');
+                // console.log(tabs[i].querySelectorAll('li'));
+                for (let j = 0; j < liList.length; j++) {
+
+                    liList[j].classList.toggle('expand_box');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
