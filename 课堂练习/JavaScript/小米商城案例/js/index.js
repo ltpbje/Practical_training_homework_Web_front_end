@@ -73,7 +73,16 @@ window.onscroll = function () {
 
 };
 
-toTopButton.addEventListener('click', function () {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-});
+function toTop() {
+    // document.body.scrollTop = 0;
+    // document.documentElement.scrollTop = 0;
+
+    let toTop = document.documentElement.scrollTop || document.body.scrollTop;
+    document.documentElement.scrollTop = toTop - 70;
+    document.body.scrollTop = toTop - 70;
+    if (toTop > 0) {
+        setTimeout('toTop()', 1);
+    }
+}
+
+toTopButton.addEventListener('click', toTop);

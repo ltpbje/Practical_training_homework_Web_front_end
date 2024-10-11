@@ -330,6 +330,9 @@
     margin-top: 20px;
 }
 
+.main .home-banner-box:last-of-type{
+    padding-bottom: 20px;
+}
 /* 首页横幅框  start*/
 .home-banner-box{
     width: 1226px;
