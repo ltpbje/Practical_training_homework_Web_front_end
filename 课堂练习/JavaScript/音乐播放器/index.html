@@ -18,7 +18,7 @@
             height: 150px;
             width: 150px;
             border-radius: 50%;
-            animation: box 2s linear infinite paused;
+            animation: box 10s linear infinite paused;
         }
 
         .img_box .stop_icon {
@@ -56,6 +56,7 @@
             background-image: linear-gradient(to right, red, red);
             background-repeat: no-repeat;
             background-size: 0 100%;
+            transition: all 0.2s linear;
         }
     </style>
 </head>
@@ -121,7 +122,24 @@
             progress.style.backgroundSize = num + ' 100%';
         });
 
+        function line(e) {
+            // 打印鼠标点击位置相对于元素左上角的水平偏移量
+            // console.log(e.offsetX);
+            // console.dir(progress.clientWidth);
+
+            // console.log((e.offsetX / progress.clientWidth) * bgm.duration);
+            bgm.currentTime = Math.round((e.offsetX / progress.clientWidth) * bgm.duration);
+        }
+
+        // 点击改变进度
+        progress.addEventListener('click', line);
         // 拖动改变进度
+        progress.addEventListener('mousedown', function () {
+            progress.addEventListener('mousemove', line);
+            progress.addEventListener('mouseup', function () {
+                progress.removeEventListener('mousemove');
+            });
+        });
 
     </script>
 </body>
