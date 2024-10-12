@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <style>
+        .img_box {
+            height: 150px;
+            width: 150px;
+            position: relative;
+            border-radius: 50%;
+        }
+
+        .img_box img {
+            height: 150px;
+            width: 150px;
+            border-radius: 50%;
+            animation: box 2s linear infinite paused;
+        }
+
+        .img_box .stop_icon {
+            position: absolute;
+            font-size: 50px;
+            color: aliceblue;
+            left: 50px;
+            top: 50px;
+        }
+
+        @keyframes box {
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+        .progress_box {
+            overflow: hidden;
+            line-height: 50px;
+        }
+
+        .progress_box .current_time,
+        .progress_box .progress,
+        .progress_box .duration_time {
+            float: left;
+
+        }
+
+        .progress_box .progress {
+            width: 200px;
+            height: 10px;
+            background: #eee;
+            margin: 20px;
+            border-radius: 5px;
+            background-image: linear-gradient(to right, red, red);
+            background-repeat: no-repeat;
+            background-size: 0 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="img_box">
+        <img src="./img/DT.jpg" alt="">
+        <div class="stop_icon iconfont icon-bofang "></div>
+    </div>
+    <audio src="./audio/jaychou.flac" controls></audio>
+    <div class="progress_box">
+        <div class="current_time">00:00</div>
+        <div class="progress"></div>
+        <div class="duration_time">00:00</div>
+    </div>
+    <script>
+        const bgm = document.querySelector('audio');
+        const img = document.querySelector('.img_box img');
+        const img_box = document.querySelector('.img_box');
+        const duration_time = document.querySelector('.progress_box .duration_time');
+        const current_time = document.querySelector('.progress_box .current_time');
+        // 获取进度条 
+        const progress = document.querySelector('.progress_box .progress');
+        bgm.addEventListener('play', function () {
+            img.nextElementSibling.classList.remove('icon-bofang');
+            img.nextElementSibling.classList.add('icon-zanting');
+            img.style.animationPlayState = 'running';
+        });
+        bgm.addEventListener('pause', function () {
+            img.nextElementSibling.classList.remove('icon-zanting');
+            img.nextElementSibling.classList.add('icon-bofang');
+            img.style.animationPlayState = 'paused';
+        });
+        img_box.addEventListener('click', function () {
+            if (bgm.paused) {
+                bgm.play();
+            } else {
+                bgm.pause();
+            }
+        });
+
+        // 计算总时长
+        bgm.addEventListener('canplay', function () {
+            const minute = parseInt(bgm.duration / 60).toString().padStart(2, '0');
+            const second = parseInt(bgm.duration % 60).toString().padStart(2, '0');
+            const durationTime = `${minute}:${second}`;
+            duration_time.innerText = durationTime;
+        });
+
+
+        // 计算当前播放的时间 位置 
+        // 添加timeupdate事件监听器
+        //  以便在音频播放进度变化时接收通知
+        bgm.addEventListener('timeupdate', function () {
+            const minute = parseInt(bgm.currentTime / 60).toString().padStart(2, '0');
+            const second = parseInt(bgm.currentTime % 60).toString().padStart(2, '0');
+            const currentTime = `${minute}:${second}`;
+            // 计算当前播放的时间
+            current_time.innerText = currentTime;
+            // 计算当前播放的位置 
+            const num = bgm.currentTime / bgm.duration * 100 + '%';
+            progress.style.backgroundSize = num + ' 100%';
+        });
+
+        // 拖动改变进度
+
+    </script>
+</body>
+
+</html>

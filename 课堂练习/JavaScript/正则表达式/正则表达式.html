@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+账号: <input type="text" id="account" onblur="validateAccount()"><span style="color: red; display: none;">格式错误</span>
+密码: <input type="password" id="pwd" onblur="validatePassword()"><span style="color: red; display: none;">格式错误</span>
+确认密码: <input type="password" id="resPwd" onblur="validateResPassword()"><span
+    style="color: red; display: none;">格式错误</span>
+手机号: <input type="text" id="phone" onblur="validatePhone()"><span style="color: red; display: none;">格式错误</span>
+邮箱: <input type="text" id="email" onblur="validateEmail()"><span style="color: red; display: none;">格式错误</span>
+
+<body>
+    <script>
+        // const reg = /^[张李王]五$/;
+        // const str1 = '张五';
+        // const str2 = '张三五';
+        // console.log(reg.test(str1));
+        // console.log(reg.test(str2));
+        // const str3 = 'aabsdaaa';
+        // const reg1 = /\bbsb\b/;
+        // console.log(reg1.test(str3));
+        // //我希望验证一个字符串，它是a开始，c结束，中间4-6个数字
+        // const reg1 = /^a[0-9]{4,6}c$/;
+        // //我希望验证一个字符串，它是a开始，c结束，中间至少4个数字
+        // const reg2 = /^a[0-9]{4,}c$/;
+        // //我希望验证一个字符串，它是a开始，c结束，中间可以有1个或多个数字
+        // const reg3 = /^a[0-9]+c$/;
+        // //我希望验证一个字符串，它是a开始，c结束中间可以有0个或多个数字
+        // const reg4 = /^a[0-9]*c$/;
+        // //我希望验证一个字符串，它是张开始，三结束，中间有0或1个字符
+        // // 定义一个正则表达式，用于匹配以“张”开头，后面可以跟任意字符（包括空格），最后以“三”结尾的字符串
+        // const reg5 = /^张[\s\S]?三$/;
+        // console.log(reg5.test('张*三'));
+
+
+        // const phoneReg = /^1[345789][0-9]{9}$/;
+        // console.log(phoneReg.test('198888888888'));
+
+        // const emailReg = /^*{3,10}@163\.com$/;
+        function validateAccount() {
+            const accountEle = document.querySelector('#account');
+            const accountReg = /^\d{5,10}$/;
+            if (accountReg.test(accountEle.value)) {
+                accountEle.nextElementSibling.style.display = 'none';
+            } else {
+                accountEle.nextElementSibling.style.display = 'block';
+            }
+        }
+
+
+
+        function validatePassword() {
+            const pwdEle = document.querySelector('#pwd');
+            // 定义一个正则表达式，用于匹配5到10位的密码
+            const pwdReg = /^.{5,10}$/;
+            if (pwdReg.test(pwdEle.value)) {
+                pwdEle.nextElementSibling.style.display = 'none';
+            } else {
+                pwdEle.nextElementSibling.style.display = 'block';
+            }
+        }
+        function validateResPassword() {
+            const resPwd = document.querySelector('#resPwd');
+            // 定义一个正则表达式，用于匹配5到10位的密码
+            const resPwdReg = /^.{5,10}$/;
+            if (resPwdReg.test(resPwd.value)) {
+                resPwd.nextElementSibling.style.display = 'none';
+            } else {
+                resPwd.nextElementSibling.style.display = 'block';
+            }
+        }
+        function validatePhone() {
+            const phone = document.querySelector('#phone');
+
+            const phoneReg = /^1[345789][0-9]{9}$/;
+            if (phoneReg.test(phone.value)) {
+                phone.nextElementSibling.style.display = 'none';
+            } else {
+                phone.nextElementSibling.style.display = 'block';
+            }
+        }
+        function validateEmail() {
+            const email = document.querySelector('#email');
+
+            const emailReg = /^.{3,10}@163\.com$/;
+            if (emailReg.test(email.value)) {
+                email.nextElementSibling.style.display = 'none';
+            } else {
+                email.nextElementSibling.style.display = 'block';
+            }
+        }
+
+
+
+    </script>
+</body>
+
+</html>

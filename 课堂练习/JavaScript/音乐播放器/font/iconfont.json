@@ -1,0 +1,23 @@
+{
+  "id": "4708661",
+  "name": "音乐",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2674483",
+      "name": "暂停",
+      "font_class": "zanting",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "2674474",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    }
+  ]
+}
