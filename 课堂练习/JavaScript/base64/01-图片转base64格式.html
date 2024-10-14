@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <img src="" alt="">
+    <input type="file" onchange="fileChange(this)">
+    <script>
+        function fileChange(ele) {
+            const img = document.querySelector('img');
+            console.log(ele.files);
+            // 判断是否上传了文件
+            if (ele.files.length > 0) {
+                const file = ele.files[0];
+                const imgReg = /^image\/(jpe?g|png)/;
+                // 判断文件类型是否是图片
+                if (imgReg.test(ele.files[0].type)) {
+                    const fileReader = new FileReader();
+                    fileReader.readAsDataURL(file);
+                    fileReader.onload = function () {
+
+                    };
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        #v1 {
+            border: 1px solid #000;
+        }
+
+        #c1 {
+            border: 1px solid #000;
+        }
+    </style>
+    <video id="v1" width="400px" height="300px" controls></video>
+    <button id="button1" onclick="openCamera()">开启摄像头</button>
+
+    <canvas width="400px" height="300px" id="c1"></canvas>
+    <button onclick="takePhoto()">截屏</button>
+    <script>
+        const c1 = document.querySelector('#c1');
+        const ctx = c1.getContext('2d');
+        const v1 = document.querySelector('#v1');
+        function openCamera() {
+            navigator.getUserMedia({
+                video: true,
+                audio: true
+            }, function (stream) {
+                // 成功回调函数
+                v1.srcObject = stream;
+                v1.play();
+            }, function (error) {
+                // 失败回调函数
+
+                console.log(error);
+            });
+        }
+        function takePhoto() {
+            // 截取视频图片渲染到canvas画板中
+            ctx.drawImage(v1, 0, 0, 400, 300);
+            const base64Str = c1.toDataURL('img/png');
+            const a = document.createElement('a');
+            a.href = base64Str;
+            a.download = '截图.png';
+            a.click();
+        }
+    </script>
+</body>
+
+</html>

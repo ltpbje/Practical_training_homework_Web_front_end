@@ -67,13 +67,16 @@
         <img src="./img/DT.jpg" alt="">
         <div class="stop_icon iconfont icon-bofang "></div>
     </div>
-    <audio src="./audio/jaychou.flac" controls></audio>
+    <audio src="" controls></audio>
+    <input type="file" onchange="fileChange(this)">
+    <button onclick="this.previousElementSibling.click()">选择音乐</button>
     <div class="progress_box">
         <div class="current_time">00:00</div>
         <div class="progress"></div>
         <div class="duration_time">00:00</div>
     </div>
     <script>
+
         const bgm = document.querySelector('audio');
         const img = document.querySelector('.img_box img');
         const img_box = document.querySelector('.img_box');
@@ -81,6 +84,26 @@
         const current_time = document.querySelector('.progress_box .current_time');
         // 获取进度条 
         const progress = document.querySelector('.progress_box .progress');
+        function fileChange(ele) {
+
+            console.log(ele);
+
+            // 判断是否上传了音乐
+            if (ele.files.length > 0) {
+                console.log(ele.files);
+                const file = ele.files[0];
+                const imgReg = /^audio\/flac$/;
+                // 判断文件类型是否是图片
+                if (imgReg.test(ele.files[0].type)) {
+                    const fileReader = new FileReader();
+                    fileReader.readAsDataURL(file);
+                    fileReader.onload = function () {
+                        bgm.src = fileReader.result;
+                    };
+                }
+            }
+
+        }
         bgm.addEventListener('play', function () {
             img.nextElementSibling.classList.remove('icon-bofang');
             img.nextElementSibling.classList.add('icon-zanting');
@@ -137,7 +160,7 @@
         progress.addEventListener('mousedown', function () {
             progress.addEventListener('mousemove', line);
             progress.addEventListener('mouseup', function () {
-                progress.removeEventListener('mousemove');
+                progress.removeEventListener('mousemove', line);
             });
         });
 
