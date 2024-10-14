@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<div class="username_box">
+    <label for="username">用户名</label>
+    <input type="text" name="" id="username">
+</div>
+<div class="pwd_box">
+    <label for="pwd">密码</label>
+    <input type="pwd" name="" id="pwd">
+</div>
+<input type="checkbox" id="save">
+<label for="save">记住用户</label>
+<button id="login">登录</button>
+<script>
+    const username = document.querySelector('#username');
+    const pwd = document.querySelector('#pwd');
+    const save = document.querySelector('#save');
+    const loginBtn = document.querySelector('#login');
+    loginBtn.addEventListener('click', function () {
+        if (username.value === 'admin' && pwd.value === '123456') {
+            if (save.checked) {
+                localStorage.setItem('username', username.value);
+            }
+            alert('登录成功');
+        }
+    });
+    function getUserInfo() {
+        if (localStorage.getItem('username')) {
+            username.value = localStorage.getItem('username');
+        }
+    }
+    getUserInfo();
+</script>
+
+<body>
+
+</body>
+
+</html>

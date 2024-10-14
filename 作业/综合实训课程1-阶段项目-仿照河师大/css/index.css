@@ -1,0 +1,84 @@
+
+* {
+    margin: 0;
+    padding: 0;
+}
+ a{
+        text-decoration: none; /* 去除默认的下划线 */
+        color: #000;    /* 去除默认的颜色和点击后变化的颜色 */ 
+}
+/* 内容宽度为1200px */
+.contents{
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.header{
+    height: 176px;
+    margin: 0;
+    padding: 0;
+    background-color: #1D4E91;
+}
+/* 头部 header start */
+.header .site_logo{
+    background: url(../img/head.png)  no-repeat;
+    height: 100%;
+
+}
+.nav_box{
+    border-bottom: 1px solid #1D4E91;
+}
+.nav_box .nav_list{
+    height: 62px;
+}
+.nav_box .nav_list .nav-item{
+    float: left;
+    display: block;
+    position: relative;
+    width: 133px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 18px;
+    color: rgb(31, 90, 150);
+    font-weight: bold;
+}
+.nav_box .nav_list .nav-item .sub-nav{
+    position: absolute;
+}
+.nav_box .nav_list .nav-item:hover{
+    background-color: #1F5A96;
+   
+}
+.nav_box .nav_list .nav-item:hover  a{
+color: white;
+}
+.nav_box .nav_list .nav-item:hover ul:last-of-type{
+    display: block;
+
+}
+.nav_box .nav_list .nav-item ul:last-of-type li {
+    background-color: #fff;
+}
+.nav_box .nav_list .nav-item:hover ul:last-of-type li a:hover{
+    color: white;
+    background-color: #1D4E91;
+    border: none;
+}
+.nav_box .nav_list .nav-item:hover ul:last-of-type li a{
+    color: #1D4E91;
+    background-color: white;
+    border: 1px solid #CCCCCC;
+}
+.nav_box .nav_list .nav-item ul:last-of-type{
+    display: none;
+}
+.nav_box .nav_list .nav-item  a{
+    display: block;
+    width: 100%;
+    height:  100%;
+    font-size: 18px;
+    color: rgb(31, 90, 150);
+    font-weight: bold;
+
+}
