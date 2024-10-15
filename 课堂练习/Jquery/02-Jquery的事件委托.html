@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul>
+        <li>1</li>
+        <li class="active">2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+    </ul>
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        // 现在事件绑定在ul上，但是事件的触发者要满足li.active选择器的条件才行
+        $('ul').on('click', 'li.active', function () {
+            console.log(this);
+
+            console.log(2);
+            // 执行一次 
+            $('ul').off('click');
+        });
+
+        // $('ul').one('click', function (e) {
+        //     console.log(1);
+        //     console.log(e);
+
+
+        // })
+    </script>
+</body>
+
+</html>

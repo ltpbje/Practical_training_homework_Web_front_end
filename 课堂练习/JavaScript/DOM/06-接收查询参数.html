@@ -12,7 +12,9 @@
     <h1></h1>
     <script>
         const u = new URL(location.href);
+        console.log(u);
         const uname = u.searchParams.get('username');
+
         const pwd = u.searchParams.get('password');
         document.querySelector('h1').innerText = `用户名为${uname}密码为${pwd}`;
     </script>
