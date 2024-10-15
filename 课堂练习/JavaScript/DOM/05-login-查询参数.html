@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    用户名<input type="text" class="username">
+    密码<input type="text" class="pwd">
+    <button onclick="login()">跳转传参</button>
+    <script>
+        const username = document.querySelector('.username');
+        const pwd = document.querySelector('.pwd');
+        function login() {
+            uname = username.value;
+            upwd = pwd.value;
+            open(`./06-接收查询参数.html?username=${uname}&password=${upwd}`);
+        }
+    </script>
+</body>
+
+</html>

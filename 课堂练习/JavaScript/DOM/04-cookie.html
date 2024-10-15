@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        //设置过期时间+路径
+        var d = new Date("2024-11-01 09:00:00");
+        // 存入一条cookie 设置过期时间(为格林尼治标准时间)  和路径 为'/'
+        document.cookie = "username=zhangsan;Expires=" + d.toGMTString() + ";Path=/";
+        document.cookie = "a=a;";
+        document.cookie = "b=b;";
+        document.cookie = "c=c;";
+        console.log(document.cookie);
+
+        // 创建 根据cookie名称 得到cookie 对应值的方法
+        // function getCookieValue(cookieName) {
+        //     // 将cookie值 用 ; 切割成数组
+        //     var arr = document.cookie.split(";");
+        //     // 循环遍历arr数组
+        //     for (var i = 0; i < arr.length; i++) {
+        //         // 得到每一个这种类型的字符串‘usmingchangername=zhangsan‘ 
+        //         var item = arr[i];
+        //         //  将item值 用 = 切割成数组
+        //         var temp = item.split("=");
+        //         // 当temp的第一个值等于 传入的cookiename时
+        //         if (temp[0].trim() == cookieName) {
+        //             // 输出cookiename 对应的值
+        //             return temp[1];
+        //         }
+        //     }
+        // }
+        // 调用方法 获取对应cookiename 的值
+        var str = getCookieValue("username");
+        console.log(str);
+        function getCookieValue(cookieName) {
+            var str = document.cookie;
+            str += ";"; //在最后面再拼接一个分号，方便正则匹配
+            // 匹配以传入的'cookieName=' 开头 以;结尾的 中间部分
+            var reg = new RegExp("/(?<=" + cookieName + "=).*?(?=;)/");
+            var arr = str.match(reg);
+            return arr ? arr[0] : undefined;
+        }
+
+        //删除cookie
+        function deleteCookie(cookieName) {
+            var d = new Date("1970-1-1");
+            //过期了就删除了
+            document.cookie = cookieName + "=;Expires=" + d.toGMTString();
+        }
+
+        const str1 = getCookieValue('a');
+        console.log(str1);
+
+        // var cookieHelper = {
+        //         setCookie: function (cookieName, cookieValue, expires, path) {
+        //             var cookieStr = cookieName + "=" + cookieValue;
+        //             if (expires) {
+        //                 cookieStr += ";Expires=" + expires;
+        //             }
+        //             if (path) {
+        //                 cookieStr += ";path" + path;
+        //             }
+        //             document.cookie = cookieStr;
+        //         },
+        //         getCookieValue: function (cookieName) {
+        //             var str = document.cookie;
+        //             str += ";"; //在最后面添加一个分号，方便我们使用正则
+        //             var reg = new RegExp("(?<=" + cookieName + "=).*?(?=;)", "g"); //(?<=userinfo=).*?(?=;)
+        //             var arr = str.match(reg);
+        //             return arr ? arr[0] : undefined;
+        //         },
+        //         deleteCookie: function (cookieName) {
+        //             this.setCookie(cookieName, "", new Date("1970-1-1").toGMTString());
+        //         }
+        //     }
+    </script>
+</body>
+
+</html>
