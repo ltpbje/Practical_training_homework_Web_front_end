@@ -94,12 +94,12 @@ color: white;
 
 .left_box{
     width: 616px;
-    height: 386px;
+    height: 266px;
     float: left;
 }
  .right_box{
     width: 576px;
-    height: 350px;
+    height: 266px;
     padding-top: 25px;
     float: right;
 }
@@ -122,15 +122,42 @@ color: white;
     height: 56px;
     width: 576px;
     margin-top: 20px;
+    border: none;
+}
+ .post-title1{
+    display: block;
+    float: left;
+    color: #1d4e91;
+    height: 42px;
+    line-height: 42px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.header_bar1{
+    height: 56px;
+    width: 576px;
+    margin-top: 20px;
+    border-top: 1px solid #002685;
+}
+.post-more{
+    float: right;
 }
 .main_inform  .main_inform_box .left_box .post-more{
     float: right;
+}
+.post-more img{
+    width: 41px;
+    height: 11px;
 }
 .main_inform  .main_inform_box .left_box .post-more img{
     width: 41px;
     height: 11px;
 }
-
+.post-more{
+    height: 20px;
+    line-height: 20px;
+    margin-top: 6px;
+}
 .main_inform  .main_inform_box .left_box .post-more{
     height: 20px;
     line-height: 20px;
@@ -219,4 +246,36 @@ color: white;
 }
 .main_same:nth-of-type(1){
     background-color: #fff;
+}
+.main_same2{
+     background-color: #FAFAFA;
+}
+
+.list_item{
+    width: 576px;
+    height: 35px;
+   
+}
+
+.Article_Index{
+    display: none;
+}
+
+.ex_fields{
+    width: 87px;
+    height: 35px;
+    float: right;
+}
+
+.Article_PublishDate {
+    color: #666;
+    line-height: 35px;
+}
+.pr_fields{
+    width: fit-content;
+     float: left;
+    line-height: 35px;
+}
+.pr_fields:hover span a{
+    color: #1D4E91;
 }
