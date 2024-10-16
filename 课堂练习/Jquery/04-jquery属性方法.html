@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="box"></div>
+    <input type="text" name="" id="uname">
+    <input type="checkbox" name="" id="checkbox">
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        // $('.box').html("<a href='https://www.htu.edu.cn/xkb/main.htm'>i am a box</a>")
+        // $('.box').text("<a href='https://www.htu.edu.cn/xkb/main.htm'>i am a box</a>")
+        // $('#uname').change(function () {
+        //     console.log($('#uname').val());
+        // })
+        // console.log($('#uname').attr('id'));
+        // console.log($('#uname').attr('name', 'yourFather'));
+        // $('#uname').attr('data-uage', 18);
+        // $('#uname').removeAttr('data-uage');
+
+        // 针对单属性进行修改
+        // prop()
+        $('#checkbox').prop('checked', false);
+        console.log($('#checkbox').prop('checked'));
+
+    </script>
+</body>
+
+</html>

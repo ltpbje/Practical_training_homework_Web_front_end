@@ -92,16 +92,15 @@ color: white;
     background-color: #FAFAFA;
 }
 
-.main_inform .main_inform_box .left_box{
+.left_box{
     width: 616px;
     height: 386px;
     float: left;
 }
-.main_inform .main_inform_box .right_box{
+ .right_box{
     width: 576px;
     height: 350px;
     padding-top: 25px;
-    border: 1px solid #000;
     float: right;
 }
 
@@ -206,5 +205,18 @@ color: white;
 }
 
 .main_inform .main_inform_box .right_box .swiper-pagination{
-   left: 221px;
+   left: 200px;
+}
+
+
+
+.main_same{
+    padding: 10px 0;
+    height: 296px;
+}
+.main_same .right_box{
+    padding: 0;
+}
+.main_same:nth-of-type(1){
+    background-color: #fff;
 }

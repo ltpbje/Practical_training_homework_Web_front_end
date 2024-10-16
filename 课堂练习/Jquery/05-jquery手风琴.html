@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            width: 400px;
+            text-align: center;
+        }
+
+        ul li>span {
+            display: block;
+            /* width: 100%; */
+            line-height: 50px;
+            background-color: #fff;
+        }
+
+        ul li>span+ul {
+            height: 0px;
+            overflow: hidden;
+            transition: all 0.6s ease-out;
+        }
+
+        ul li>span+ul li {
+            line-height: 50px;
+            background-color: gray;
+        }
+    </style>
+</head>
+
+<body>
+    <ul>
+        <li>
+            <span data-num="0">一级导航</span>
+            <ul>
+                <li>二级导航</li>
+                <li>二级导航</li>
+                <li>二级导航</li>
+                <li>二级导航</li>
+                <li>二级导航</li>
+            </ul>
+        </li>
+        <li>
+            <span data-num="0">一级导航</span>
+            <ul>
+                <li>二级导航</li>
+                <li>二级导航</li>
+                <li>二级导航</li>
+                <li>二级导航</li>
+            </ul>
+        </li>
+        <li>
+            <span data-num="0">一级导航</span>
+            <ul>
+                <li>二级导航</li>
+                <li>二级导航</li>
+                <li>二级导航</li>
+            </ul>
+        </li>
+
+    </ul>
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        $('ul li>span').click(function () {
+            // this.nextElementSibling.children.length;
+            // console.log(this.dataset.num);
+            if (this.dataset.num == 0) {
+                const totalHeight = 50 * this.nextElementSibling.children.length;
+                $(this).next().css('height', `${totalHeight}px`);
+                this.dataset.num = 1;
+            } else {
+                $(this).next().css('height', `0px`);
+                this.dataset.num = 0;
+            }
+        })
+    </script>
+</body>
+
+</html>
