@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // const m1 = new Map([
+        //     ['name', '张三'],
+        //     ['age', 18]
+        // ]);
+
+        // console.log(m1.get('name'));
+        // // keys() 生成器方法
+        // for (let [key, value] of m1) {
+        //     console.log(key, value);
+
+        // }
+
+        // 无构造函数的函数
+        let obj = {
+            name: 'zs',
+            sayHello() {
+                console.log('你好');
+
+            }
+        };
+        // obj.sayHello(); //普通调用
+        // new obj.sayHello();//构造函数调用
+
+        const sayHello = () => {
+            console.log('hi');
+        };
+        new sayHello();
+    </script>
+</body>
+
+</html>
