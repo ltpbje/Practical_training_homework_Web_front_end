@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        // // 访问器属性
+        // class Student {
+        //     constructor(firstName, lastName) {
+        //         this.firstName = firstName;
+        //         this.lastName = lastName;
+        //     }
+        //     get username() {
+        //         return this.firstName + this.lastName;
+        //     }
+        //     set username(v) {
+        //         this.firstName = v[0];
+        //         this.lastName = v.slice(1,);
+        //     }
+
+        // }
+        // const s1 = new Student('张', '三年');
+        // s1.username = '张三丰';
+
+        // //静态属性和方法
+        // class Person {
+        //     static categoty = '人类';
+        //     static sayHello() {
+
+        //         console.log('你好');
+        //     }
+        // }
+        // const p1 = new Person();
+        // // p1.sayHello();// 报错  p1.sayHello is not a function
+        // // console.log(p1.categoty);//  undefined
+        // Person.sayHello();
+        // console.log(Person.categoty);
+
+
+        // class Person {
+        //     constructor(name, age) {
+        //         this.name = name;
+        //         this.age = age;
+        //     }
+        // }
+        // class Student extends Person {
+        //     constructor(name, age, sex) {
+        //         //05-class.html:54 Uncaught ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor
+        //         this.sex = sex;
+        //         super(name, age);
+        //     }
+        // }
+        // const s1 = new Student('张三', 18, '男');
+
+
+
+        //         根据要求创建对象
+
+        //* 定义一构造函数Person, 它有5个属性，分别是姓名(userName)，性别(sex)，年龄(age)，生日(birthday)，身份证号(IDCard)，
+        // * 用户在创建对象的时候，这个构造函数接收二个参数，分别是姓名(userName)，和身份证号(IDCard)
+        //* 所有的属性都不能被delete, 也不能更改它的初始值
+        //* 所以的属性都可以被 for...in遍历出来
+        //* 根据身份证号来得到用户的性别
+        //* 根据身份证号来得到用户的生日（身份证号里面是包含生日的，如420984199905041016）。
+        //* 根据生日来得到年龄
+        //* 根据上面定义好的构造函数去创建一个对象，然后再去遍历这个对象，打印这个对象里面的属性名与当前属性的值;
+        //提示：字符串可以通过索引取到里面的某个值var str = "abc"; str[0] == "a";
+        //再创建一个对象根据出生地，生日，性别，等必要的个人信息组成身份证号
+        class Person {
+            constructor(username, IDCard) {
+                this.username = username;
+                this.IDCard = IDCard;
+            }
+            get sex() {
+                if (this.IDCard.slice(16, 17) % 2 == 1) {
+                    return '男';
+                } else {
+                    return '女';
+                }
+            }
+            get birthday() {
+                return `${this.IDCard.slice(10, 12)}月${this.IDCard.slice(12, 14)}日`;
+            }
+            get age() {
+                return (+new Date().getFullYear()) - +this.IDCard.slice(6, 10);
+            }
+        }
+        const p1 = new Person('李四', '41111120000112352X');
+        console.log(p1);
+        // console.log(new Date().getFullYear());
+
+
+        // const IDCard = '41111111222222673X'
+    </script>
+
+</body>
+
+</html>

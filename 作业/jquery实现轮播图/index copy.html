@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #slider {
+            width: 600px;
+            overflow: hidden;
+            border: 1px solid #000;
+            position: relative;
+        }
+
+        .slides img {
+            width: 600px;
+            height: 300px;
+            /* display: none; */
+            /* 初始隐藏所有图片 */
+            float: left;
+        }
+
+        .slides {
+            width: 2400px;
+            /* position: relative; */
+        }
+
+        .prev,
+        .next {
+            position: absolute;
+            width: 20px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            background-color: gray;
+        }
+
+        .prev {
+            left: 0px;
+            top: 115px;
+        }
+
+        .next {
+            right: 0;
+            top: 115px;
+        }
+    </style>
+</head>
+
+
+
+
+<body>
+    <div id="slider">
+        <div class="slides">
+            <img src="./img/black-mate60.webp" alt="Image 1">
+            <img src="./img/huawei-watch-gt-5-pro-trail-running-1-2x.webp" alt="Image 2">
+            <img src="./img/main-mate-xt-ultimate-design.jpg" alt="Image 3">
+            <img src="./img/monkeybrother.jpg" alt="Image 4">
+            <div class="prev">&lt;</div>
+            <div class="next">&gt;</div>
+        </div>
+    </div>
+
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let currentSlide = 0;
+            let timer = 0;
+            let slides = $('.slides img').length;
+
+            function showSlide(index) {
+                $('.slides img').hide(); // 隐藏所有图片
+                $('.slides img').eq(index).fadeIn(1000); // 显示当前图片
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides;
+                showSlide(currentSlide);
+            }
+            $('.slides img').eq(0).show(); // 初始显示第一张图片
+            timer = setInterval(nextSlide, 3000);// 每3秒切换到下一张图片
+            //鼠标移上去的时候图片轮播要暂停
+            $('.slides').mouseover(function () {
+                clearInterval(timer);
+            });
+            //鼠标移走的时候再次开始
+            $('.slides').mouseleave(function () {
+                timer = setInterval(nextSlide, 3000); // 每3秒切换到下一张图片
+            });
+        });
+    </script>
+</body>
+
+</html>

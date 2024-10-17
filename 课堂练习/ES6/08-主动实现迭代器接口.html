@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let obj = {
+            0: '张三',
+            1: '李四',
+            2: '王五',
+            length: 3,
+            *[Symbol.iterator]() {
+                let index = 0;
+                while (index < this.length) {
+                    yield this[index];
+                    index++;
+                }
+                /*
+                    yield obj1[0];
+                    yield obj1[1];
+                    yield obj1[2];
+                    yield obj1[3];
+                */
+            }
+        };
+        for (let item of obj) {
+            console.log(item);
+
+        }
+    </script>
+</body>
+
+</html>

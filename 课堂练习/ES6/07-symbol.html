@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        // const s1 = Symbol('');
+        // const s2 = Symbol('');
+        // console.log(s1 == s2);
+
+
+        // const s1 = Symbol.for('');
+        // const s2 = Symbol.for('');
+        // console.log(s1 == s2);
+
+
+        const obj1 = {
+            [Symbol('username')]: '张三',
+            age: 10
+        };
+
+        const obj2 = {
+            [Symbol('username')]: '张三',
+            gender: 0
+        };
+        const obj3 = {
+            ...obj1,
+            ...obj2
+        };
+
+        console.log(Object.keys(obj3));
+        console.log(Object.getOwnPropertySymbols(obj3));
+
+    </script>
+</body>
+
+</html>
