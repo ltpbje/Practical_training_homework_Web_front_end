@@ -41,6 +41,72 @@
                 }
             }
 
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function kemu1(callback) {
+            console.log("张三正在考试科目一");
+            //3秒之后得到考试结果
+            setTimeout(() => {
+                let result1 = parseInt(Math.random() * 30) + 70;
+                if (typeof callback == "function") {
+                    callback(result1);
+                }
+            }, 3000);
+        }
+        function kemu2(callback) {
+            console.log("张三正在考试科目二");
+            //3秒之后得到考试结果
+            setTimeout(() => {
+                let result2 = parseInt(Math.random() * 20) + 80;
+                if (typeof callback == "function") {
+                    callback(result2);
+                }
+            }, 3000);
+        }
+        function kemu3(callback) {
+            console.log("张三正在考试科目三");
+            //3秒之后得到考试结果
+            setTimeout(() => {
+                let result3 = parseInt(Math.random() * 20) + 80;
+                if (typeof callback == "function") {
+                    callback(result3);
+                }
+            }, 3000);
+        }
+
+
+        kemu1(result1 => {
+            if (result1 > 89) {
+                console.log(`你的科目一成绩为${result1},请继续开始考试`);
+                kemu2(result2 => {
+                    if (result2 > 79) {
+                        console.log(`你的科目二成绩为${result2},请继续开始考试`);
+                        kemu3(result3 => {
+                            if (result3 > 89) {
+                                console.log(`你的科目三成绩为${result3},恭喜你`);
+                            } else {
+                                console.log(`你的科目三成绩为${result3},不及格`);
+                            }
+                        });
+                    } else {
+                        console.log(`你的科目二成绩为${result2},不合格`);
+                    }
+                });
+            } else {
+                console.log(`你的科目一成绩为${result1},不合格`);
+            }
         })
     </script>
 </body>
