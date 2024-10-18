@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const p1 = new Proxy((() => {
+            return {
+                username: '张三',
+                age: 18,
+                gender: '男',
+                address: '南极'
+            };
+
+        })(), {
+            get(target, p) {
+                if (p == 'username' || p == 'gender') {
+                    return target[p];
+                } else {
+                    return undefined;
+                }
+            },
+            set(target, property, value) {
+                if (property == 'username' || property == 'gender') {
+                    target[property] = value;
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
