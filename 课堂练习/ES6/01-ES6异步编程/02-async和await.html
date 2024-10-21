@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const kemu1 = () => {
+            console.log('张三在考科目一');
+            const p1 = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const result1 = parseInt(Math.random() * 20) + 80;
+                    if (result1 > 89) {
+                        resolve(result1);
+                    } else {
+                        reject(result1);
+                    }
+                }, 2000);
+
+            });
+            return p1;
+
+        };
+
+        async function abc() {
+            try {
+
+                const result1 = await kemu1();
+                console.log(`科目一及格,成绩为${result1}`);
+                const result2 = await kemu2();
+                console.log(`科目二及格,成绩为${result2}`);
+                const result3 = await kemu3();
+                console.log(`科目三及格,成绩为${result3}`);
+
+
+            } catch (error) {
+                console.log(error);
+
+            }
+
+        }
+        abc();
+        const kemu2 = () => {
+            console.log('张三在考科目二');
+            const p2 = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const result2 = parseInt(Math.random() * 20) + 80;
+                    if (result2 > 89) {
+                        resolve(result2);
+                    } else {
+                        reject(result2);
+                    }
+                }, 3000);
+
+            });
+            return p2;
+
+        };
+        const kemu3 = () => {
+            console.log('张三在考科目三');
+            const p3 = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const result3 = parseInt(Math.random() * 20) + 80;
+                    if (result3 > 89) {
+                        resolve(result3);
+                    } else {
+                        reject(result3);
+                    }
+                }, 3000);
+
+            });
+            return p3;
+
+        };
+    </script>
+</body>
+
+</html>

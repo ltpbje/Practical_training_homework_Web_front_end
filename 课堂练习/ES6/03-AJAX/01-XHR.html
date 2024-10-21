@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const url = "http://www.softeem.xin:8888/kuaiDi/getkuaiDiCom";
+        const xhr = new XMLHttpRequest();
+        // 第二步：建立链接
+        //
+        //    在建立链接的时候我们需要先确定好三个东西;
+        // 1、请求方式·GET· /·POST;
+        // 2、请求地址;
+        // 3、是否是异步请求
+        xhr.open("GET", url, true);
+        // 第三步：对XHR进行实时监控
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                //如果请求成功并响应，那么现在xhr中有一个responseText的属性中会有响应的数据
+                const result = xhr.responseText;
+                const obj = JSON.parse(result);
+                console.log(obj);
+
+            }
+        };
+        // 第四步：发送请求;
+        xhr.send();
+    </script>
+</body>
+
+</html>
