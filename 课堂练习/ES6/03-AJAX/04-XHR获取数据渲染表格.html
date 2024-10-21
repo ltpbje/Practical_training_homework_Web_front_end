@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        table tr td,
+        th {
+            border: 1px solid #000;
+            height: 40px;
+            line-height: 40px;
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+    </table>
+    <script src="./template-web.js"></script>
+    <script type="text/html" id="temp1">
+                <tr>
+                    <th>序号</th>
+                    <th>快递简称</th>
+                    <th>快递全称</th>
+                </tr>
+         {{each arr item key }}
+                <tr>
+                    <td>{{key+1}}</td>
+                    <td>{{item.key}}</td>
+                    <td>{{item.com}}</td>
+                </tr>
+        {{/each}}
+        </script>
+    <script>
+        const url = "http://www.softeem.xin:8888/kuaiDi/getkuaiDiCom";
+        const xhr = new XMLHttpRequest();
+        // 第二步：建立链接
+        //
+        //    在建立链接的时候我们需要先确定好三个东西;
+        // 1、请求方式·GET· /·POST;
+        // 2、请求地址;
+        // 3、是否是异步请求
+        xhr.open("GET", url, true);
+        // 第三步：对XHR进行实时监控
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                //如果请求成功并响应，那么现在xhr中有一个responseText的属性中会有响应的数据
+                const result = xhr.responseText;
+                const obj = JSON.parse(result);
+                console.log(obj);
+                const htmlStr = template('temp1', {
+                    arr: obj
+                });
+                document.querySelector('table').innerHTML = htmlStr;
+            }
+        };
+        // 第四步：发送请求;
+        xhr.send();
+    </script>
+
+</body>
+
+</html>
