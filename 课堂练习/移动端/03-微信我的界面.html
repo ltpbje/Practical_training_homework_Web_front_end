@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-size: 32rem;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        html {
+            font-size: calc(100vw / 750);
+            /* font-size: calc(750 / 100vw); */
+        }
+
+        #app {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .tab_box {
+            height: 98rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            border-top: 1px solid #ccc;
+        }
+
+        .tab_box li span {
+            font-size: 45rem;
+        }
+
+        .tab_box li p {
+            font-size: 26rem;
+        }
+
+        .tit_bar {
+            height: 99rem;
+            background-color: #fff;
+        }
+
+        .content {
+            flex: 1;
+            background-color: #EDEDED;
+            overflow: auto;
+        }
+
+        .user_info {
+            background-color: #fff;
+        }
+
+        .user_box {
+            font-size: 40rem;
+            height: 150rem;
+            display: flex;
+        }
+
+        .user_box .avatar {
+            width: 150rem;
+            height: 150rem;
+            border-radius: 10rem;
+            overflow: hidden;
+            margin-left: 20rem;
+        }
+
+        .user_box .number {
+            display: flex;
+            justify-content: space-between;
+            line-height: 80rem;
+            color: #BCBCBC;
+        }
+
+        .user_box .number p {
+            font-size: 20rem;
+            color: #BCBCBC;
+        }
+
+        .name_box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding-left: 20rem;
+        }
+
+        .user_status {
+            display: flex;
+            padding-left: 180rem;
+            margin-top: 20rem;
+            padding-bottom: 60rem;
+        }
+
+        .user_status .add_status {
+            border: 1px solid #ccc;
+            border-radius: 20rem;
+            padding: 10rem 20rem;
+            margin-right: 20rem;
+        }
+
+        .user_status .current_status {
+            border: 1px solid #ccc;
+            border-radius: 20rem;
+            padding: 10rem 20rem;
+        }
+
+        .function_list .list_item {
+            display: flex;
+            line-height: 100rem;
+            background-color: #fff;
+        }
+
+        .function_list .list_item:nth-of-type(1) {
+            margin-top: 20rem;
+        }
+
+        .function_list .list_item:nth-of-type(2) {
+            margin-top: 20rem;
+        }
+
+        .function_list .list_item:last-of-type {
+            margin-top: 20rem;
+        }
+
+        .function_list .function_name {
+            flex: 1;
+            padding-left: 20rem;
+        }
+
+        .function_list .function_name span:nth-of-type(1) {
+            padding-right: 20rem;
+        }
+
+        .function_name>span {
+            font-size: 40rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="tit_bar"></div>
+        <div class="content">
+            <div class="user_info">
+                <div class="user_box">
+                    <div class="avatar"><img src="./img/avatar.jpg" width="100%" height="100%" alt=""></div>
+                    <div class="name_box">
+                        <h3>哈哈哈哈哈</h3>
+                        <div class="number">
+                            <p>微信号:hhhhhhhhh</p>
+                            <span>&gt;</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user_status">
+                    <div class="add_status">状态</div>
+                    <div class="current_status">一个朋友</div>
+                </div>
+            </div>
+
+            <div class="function_list">
+                <div class="list_item">
+                    <div class="function_name">
+                        <span class="icon-weixin iconfont"></span>
+                        <span>
+                            服务
+                        </span>
+                    </div>
+                    <div class="arrows">&gt;</div>
+                </div>
+                <div class="list_item">
+                    <div class="function_name">
+                        <span class="icon-weixin iconfont"></span>
+                        <span>
+                            服务
+                        </span>
+                    </div>
+                    <div class="arrows">&gt;</div>
+                </div>
+                <div class="list_item">
+                    <div class="function_name">
+                        <span class="icon-weixin iconfont"></span>
+                        <span>
+                            服务
+                        </span>
+                    </div>
+                    <div class="arrows">&gt;</div>
+                </div>
+                <div class="list_item">
+                    <div class="function_name">
+                        <span class="icon-weixin iconfont"></span>
+                        <span>
+                            服务
+                        </span>
+                    </div>
+                    <div class="arrows">&gt;</div>
+                </div>
+                <div class="list_item">
+                    <div class="function_name">
+                        <span class="icon-weixin iconfont"></span>
+                        <span>
+                            服务
+                        </span>
+                    </div>
+                    <div class="arrows">&gt;</div>
+                </div>
+                <div class="list_item">
+                    <div class="function_name">
+                        <span class="icon-weixin iconfont"></span>
+                        <span>
+                            服务
+                        </span>
+                    </div>
+                    <div class="arrows">&gt;</div>
+                </div>
+            </div>
+        </div>
+        <div class="tab_bar">
+            <ul class="tab_box">
+                <li>
+                    <span class="iconfont icon-weixin"></span>
+                    <p>微信</p>
+                </li>
+                <li>
+                    <span class="iconfont icon-tongxunlu"></span>
+                    <p>通信录</p>
+                </li>
+                <li>
+                    <span class="iconfont icon-faxian"></span>
+                    <p>发现</p>
+                </li>
+                <li>
+                    <span class="iconfont icon-wo"></span>
+                    <p>我</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
