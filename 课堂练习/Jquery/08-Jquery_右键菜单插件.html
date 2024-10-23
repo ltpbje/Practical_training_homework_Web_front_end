@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    .context_menu_box {
+        width: 200px;
+        border: 1px solid #ccc;
+        border-bottom: 0px;
+        list-style: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+    }
+
+    .context_menu_box li {
+        line-height: 50px;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+    }
+</style>
+
+<body>
+    <!-- <ul class="context_menu_box">
+        <li>11</li>
+        <li>11</li>
+        <li>11</li>
+        <li>11</li>
+    </ul> -->
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script src="./js/jquery.context.js"></script>
+    <script>
+        let menuList = [
+            {
+                text: "返回",
+                click: function () {
+                    console.log("你要退回么");
+                }
+            },
+            {
+                text: "提交",
+                click: function () {
+                    console.log("你正在提交");
+                }
+            },
+            {
+                text: "登录",
+                click: function () {
+                    console.log("你在登录");
+                }
+            }
+        ];
+        $(document).addContextMenu(menuList);
+    </script>
+</body>
+
+</html>
