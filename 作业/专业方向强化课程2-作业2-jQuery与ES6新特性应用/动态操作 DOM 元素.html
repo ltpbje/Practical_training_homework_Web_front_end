@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="box">
+        <input type="text"><button id="addBtn">添加</button>
+    </div>
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const input = document.querySelector('input');
+            const box = document.querySelector('.box');
+            $('#addBtn').click(function () {
+                // console.log(1);
+
+                const item = document.createElement('div');
+                item.classList.add('list_item');
+                // console.log(item);
+                if (input.value) {
+                    item.innerText = input.value;
+                    item.innerHTML += `<button id="delBtn">删除</button>`;
+                    box.appendChild(item);
+                }
+                const list_items = $('.list_item');
+                console.log(list_items);
+                // console.log(list_items[0]);
+
+                for (let i = 0; i < list_items.length; i++) {
+                    list_items[i].querySelector('#delBtn').addEventListener('click', function (e) {
+                        // console.log(e.target.parentElement);
+                        e.target.parentElement.remove();
+                    });
+                }
+                //     console.log(list_items[i].querySelector('.delBtn'));
+
+                //     // list_items[i].querySelector('.delBtn').addEventListener('click', function (e) {
+                //     //     console.log(e);
+
+                //     // });
+                // }
+            });
+        })
+    </script>
+</body>
+
+</html>

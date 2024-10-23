@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            color: red;
+            display: none;
+        }
+
+        input {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    姓名: <input type="text" id="name">
+    <div></div>
+    电子邮件：<input type="text" id="email">
+    <div></div>
+    电话号码：<input type="text" id="phone">
+    <div></div>
+    <button id="submitBtn">验证表单</button>
+    <div></div>
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const name = document.querySelector('#name');
+            const email = document.querySelector('#email');
+            const phone = document.querySelector('#phone');
+            const nameReg = /^.+$/;
+            const emailReg = /^.{3,22}@163\.com$/;
+            const phoneReg = /^1[345789][0-9]{9}$/;
+            $('#submitBtn').click(function () {
+                if (!nameReg.test(name.value)) {
+                    name.nextElementSibling.style.display = 'block';
+                    name.nextElementSibling.innerText = '姓名错误';
+                    // alert('姓名错误');
+                } else {
+                    name.nextElementSibling.style.display = 'none';
+                }
+                if (!emailReg.test(email.value)) {
+                    email.nextElementSibling.style.display = 'block';
+                    email.nextElementSibling.innerText = '邮箱错误';
+                    // alert('邮箱错误');
+                } else {
+                    email.nextElementSibling.style.display = 'none';
+                }
+                if (!phoneReg.test(phone.value)) {
+                    phone.nextElementSibling.style.display = 'block';
+                    phone.nextElementSibling.innerText = '手机号错误';
+                    // alert('手机号错误');
+                } else {
+                    phone.nextElementSibling.style.display = 'none';
+                }
+
+            });
+        });
+    </script>
+</body>
+
+</html>
