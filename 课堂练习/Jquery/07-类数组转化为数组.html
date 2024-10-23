@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        let lis = document.querySelectorAll('li');//NodeList的类数组
+        let arr = [];
+        // 把上面的NodeList转换成数组怎么办?
+
+        //第一种
+        // for (let i = 0; i < lis.length; i++) {
+        //     arr.push(lis[i]);
+        // }
+        // console.log(arr);
+
+        // //第二种
+        // arr = Array.prototype.slice.call(lis);
+        // console.log(arr);
+        //第三种
+        // arr = $(lis).toArray();
+
+        // 第四种
+        // arr = $.makeArray(lis);
+        // console.log(arr);
+    </script>
+</body>
+
+</html>

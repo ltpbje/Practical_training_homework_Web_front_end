@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .big_box {
+            width: 400px;
+            height: 400px;
+            border: 1px solid #000;
+        }
+
+        .box1 {
+            width: 200px;
+            height: 200px;
+            background-color: skyblue;
+        }
+
+        .box2 {
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="big_box"></div>
+    <div class="box1" draggable="true">1</div>
+    <div class="box2" draggable="true">2</div>
+    <script>
+        let bigBox = document.querySelector('.big_box');
+
+        let box1 = document.querySelector('.box1');
+        let box2 = document.querySelector('.box2');
+        bigBox.addEventListener('dragenter', function (e) {
+            e.preventDefault();
+        });
+        bigBox.addEventListener('dragover', function (e) {
+            e.preventDefault();
+        });
+        // 开始拖动box1
+        box1.addEventListener('dragstart', function (e) {
+            console.log('开始拖动box1');
+            // console.log(this.className);
+            // 向box1中设置一个需要传递的数据
+            e.dataTransfer.setData('domId', this.outerHTML);
+        });
+        // 开始拖动box2
+        box2.addEventListener('dragstart', function (e) {
+            console.log('开始拖动box2');
+            // console.log(this.className);
+            // 向box2中设置一个需要传递的数据
+            e.dataTransfer.setData('domId', this.outerHTML);
+        });
+        // 当放下被拖动元素时候
+        bigBox.addEventListener("drop", function (e) {
+            // console.log(111);
+            // console.log(1111);
+            const domStr = e.dataTransfer.getData('domId');
+            console.log(domStr);
+
+            // const dragDom = document.querySelector(`.${domId}`);
+            // console.log(dragDom);
+
+            this.insertAdjacentHTML('beforeend', domStr);
+
+        });
+    </script>
+</body>
+
+</html>

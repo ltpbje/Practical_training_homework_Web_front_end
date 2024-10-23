@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+            height: 200px;
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="" alt="">
+    <input type="file" style="display: none;">
+    <button onclick="this.previousElementSibling.click()">上传文件</button>
+
+    <script>
+        const img = document.querySelector('img');
+        const fileInp = document.querySelector('input');
+        // 图片上传本地预览
+        fileInp.addEventListener('change', function (e) {
+            console.log(e.target.files);
+            console.log(e.target.files[0].type);
+            const reg = /^image/;
+            if (reg.test(e.target.files[0].type)) {
+                img.src = URL.createObjectURL(e.target.files[0]);
+            }
+
+        });
+        document.addEventListener('dragenter', function (e) {
+            e.preventDefault();
+        });
+        document.addEventListener('dragover', function (e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        #app {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .item {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #000;
+            position: relative;
+        }
+
+        .delDiv {
+            width: 60px;
+            height: inherit;
+            line-height: 40px;
+            text-align: center;
+            background-color: tomato;
+            color: aliceblue;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .content {
+            height: inherit;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            line-height: 40px;
+            text-align: center;
+            background-color: skyblue;
+            transition: all 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="item">
+            <div class="delDiv">删除</div>
+            <div class="content" data-startX="">这是一个商品项</div>
+        </div>
+    </div>
+
+    <script>
+        const delDiv = document.querySelector('.delDiv');
+        const content = document.querySelector('.content');
+
+        // -----------------触摸开始-----------------
+        content.addEventListener('touchstart', function (e) {
+            // e = event || window.event;
+            console.log(e.changedTouches[0].clientX);
+            // 判断是否是一根手指头在触摸
+            if (e.changedTouches.length == 1)
+                // 就是一根手指头在触摸
+                this.dataset.startX = e.changedTouches[0].clientX;
+            // console.log(1);
+
+
+        });
+
+        // -----------------------触摸滑动-----------------------
+        content.addEventListener('touchmove', function (e) {
+            console.log(e.changedTouches[0].clientX);
+            //实时记录滑动时候的X坐标
+            let currenX = e.changedTouches[0].clientX;
+            let _length = currenX - this.dataset.startX;
+            if (_length < 0) {
+                if (e.changedTouches.length == 1) {
+                    if (-1 * _length > delDiv.clientWidth) {
+                        content.style.left = (-1 * delDiv.clientWidth) + 'px';
+                    } else {
+                        content.style.left = _length + 'px';
+                    }
+                }
+            } else {
+                content.style.left = 0;
+            }
+        });
+
+        // ---------------------------触摸结束-------------------------
+        content.addEventListener('touchend', function (e) {
+            //记录触摸结束时候的X坐标
+            let currenX = e.changedTouches[0].clientX;
+            let _length = currenX - this.dataset.startX;
+
+            if (_length < 0 && e.changedTouches.length == 1 && -1 * _length > delDiv.clientWidth / 2) {
+                content.style.left = (-1 * delDiv.clientWidth) + 'px';
+            }
+            // if (_length < 0) {
+            //     if (e.changedTouches.length == 1) {
+            //         if (-1 * _length > delDiv.clientWidth / 2) {
+            //             content.style.left = (-1 * delDiv.clientWidth) + 'px';
+            //         } else {
+            //             content.style.left = 0;
+            //         }
+            //     }
+            // } 
+            else {
+                content.style.left = 0;
+            }
+        })
+    </script>
+</body>
+
+</html>
