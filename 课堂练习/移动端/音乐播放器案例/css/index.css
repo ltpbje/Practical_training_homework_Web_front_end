@@ -1,0 +1,71 @@
+#app{
+    width: 100vw;
+    height: 100vh;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+html{
+    font-size: calc(100vw / 750);
+}
+
+@media only screen and (min-width:768px) {
+    #app{
+        width: 768px;
+        margin: auto;
+    }
+    html{
+    font-size: calc(768px / 750);
+}
+}
+
+body{
+    font-size: 36rem;
+}
+
+.title-bar{
+    height: 120rem;
+    /* background-color: pink; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 36rem;
+}
+
+.title-bar span:nth-of-type(2){
+    font-size: 36rem;
+    font-weight: bold;
+}
+
+.content-box{
+    flex: 1;
+}
+
+.controll-bar{
+    height: 160rem;
+    background-color: aqua;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.controll-bar .progress_box{
+    height: 50rem;
+}
+.controll-bar .controller{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30rem;
+ 
+}
+.controll-bar .controller span{
+   font-size: 60rem;
+
+}
+
+.controll-bar .progress_box{
+    
+}
