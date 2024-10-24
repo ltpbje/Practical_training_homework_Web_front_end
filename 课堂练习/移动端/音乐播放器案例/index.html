@@ -12,22 +12,32 @@
 
 <body>
     <div id="app">
+        <img src="./img/cover.png" alt="" class="bg_img">
         <div class="title-bar">
             <span class="iconfont icon-fanhui"></span>
             <span>你就是拒绝别人的理由</span>
             <span class="iconfont icon-fenxiang"></span>
 
         </div>
-        <div class="content-box"></div>
+        <div class="content-box flex_column">
+            <div class="pin_box">
+                <img src="./img/point.png" class="pin">
+
+            </div>
+            <div class="cover_disk">
+                <img src="./img/cover.png" alt="">
+                <img src="./img/disk.png" alt="">
+            </div>
+        </div>
         <div class="controll-bar">
-            <div class="progress_box">
-                <div class="current_time"></div>
-                <div class="progress"></div>
-                <div class="duration_time"></div>
+            <div class="progress_box align_item_center">
+                <div class="current_time">00:00</div>
+                <div class="progress flex_1"></div>
+                <div class="duration_time">00:00</div>
             </div>
             <div class="controller">
                 <span class="iconfont icon-xiangyoujiantou"></span>
-                <span>
+                <span class="shift_btn">
                     <span class="iconfont icon-yduishangyiqu"></span>
                     <span class="iconfont icon-bofang"></span>
                     <span class="iconfont icon-yduixiayiqu"></span>
