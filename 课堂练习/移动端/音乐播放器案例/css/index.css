@@ -46,16 +46,24 @@ body{
 .content-box .pin_box{
     height: 140rem;
     position: relative;
+    display: flex;
+    margin-top: 10rem;
 }
+
+
 .content-box .pin{
-    /* height: 140rem; */
+    display: block;
     width: 160rem;
     position: absolute;
     left: 50%;
+    top: 0;
     margin-left: -80rem;
-    z-index: 2;
-    transform: rotate(30reg);
-    transform-origin: 0 0;
+    z-index:2;
+    transform-origin: left top;
+    transition: all 0.3s ease-out;
+}
+.content-box .pin[data-playState="0"]{
+    transform: rotate(-40deg) ;
 }
 .content-box .cover_disk{
     position: relative;
@@ -134,7 +142,9 @@ body{
     background-color:#ccc;
     height: 16rem;
     border-radius: 10rem;
-    background-image: linear-gradient(to right,red ,yellow);
+    background-image: linear-gradient(to right,red ,red);
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
 }
 
 .bg_img{
@@ -146,4 +156,16 @@ body{
     z-index: -1;
     object-fit: cover;
     filter: blur(30px);
+}
+
+
+[data-play-mode="0"]::before {
+    content: "\e704";
+}
+
+[data-play-mode="1"]::before {
+     content: "\e649";
+}
+[data-play-mode="2"]::before {
+       content: "\e64a";
 }

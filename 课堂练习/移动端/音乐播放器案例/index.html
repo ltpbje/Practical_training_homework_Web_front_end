@@ -15,17 +15,17 @@
         <img src="./img/cover.png" alt="" class="bg_img">
         <div class="title-bar">
             <span class="iconfont icon-fanhui"></span>
-            <span>你就是拒绝别人的理由</span>
+            <span class="title_text">你就是拒绝别人的理由</span>
             <span class="iconfont icon-fenxiang"></span>
 
         </div>
         <div class="content-box flex_column">
             <div class="pin_box">
-                <img src="./img/point.png" class="pin">
+                <img class="pin" src="./img/point.png" data-playState="0">
 
             </div>
             <div class="cover_disk">
-                <img src="./img/cover.png" alt="">
+                <img class="cover" src="./img/cover.png" alt="">
                 <img src="./img/disk.png" alt="">
             </div>
         </div>
@@ -36,16 +36,119 @@
                 <div class="duration_time">00:00</div>
             </div>
             <div class="controller">
-                <span class="iconfont icon-xiangyoujiantou"></span>
+                <span class="iconfont  play_mode" data-play-mode="0"></span>
                 <span class="shift_btn">
-                    <span class="iconfont icon-yduishangyiqu"></span>
-                    <span class="iconfont icon-bofang"></span>
-                    <span class="iconfont icon-yduixiayiqu"></span>
+                    <span class="iconfont icon-yduishangyiqu prev_btn "></span>
+                    <span class="iconfont icon-bofang play_btn"></span>
+                    <span class="iconfont icon-yduixiayiqu next_btn"></span>
                 </span>
                 <span class="iconfont icon-bofangliebiao"></span>
             </div>
         </div>
     </div>
+    <audio src="./audio/jaychou.flac" id="bgm"></audio>
+
+    <script>
+        const musicControll = {
+            dom: {
+                // 音频
+                bgm: document.querySelector('#bgm'),
+                // 标题
+                title_text: document.querySelector('.title_text'),
+                // 指针
+                pin: document.querySelector('.pin'),
+                // 播放按钮
+                play_btn: document.querySelector('.play_btn'),
+                // 封面
+                cover: document.querySelector('.cover'),
+                // 播放模式
+                play_mode: document.querySelector('.play_mode'),
+                // 音频总时长
+                duration_time: document.querySelector('.duration_time'),
+                // 音频当前时长
+                currentTime: document.querySelector('.current_time'),
+                // 进度条
+                progress: document.querySelector('.progress')
+            },
+            data: {
+
+            },
+            bindEvent: function () {
+                //1、播放点击 切换暂停图标
+                const that = this;
+                that.dom.play_btn.addEventListener('click', function () {
+                    if (that.dom.bgm.paused) {
+                        that.dom.bgm.play();
+                    } else {
+                        that.dom.bgm.pause();
+                    }
+                });
+                that.dom.bgm.addEventListener('play', function () {
+                    that.dom.play_btn.className = 'iconfont icon-icon_bofang play_btn';
+                    // console.log(1);
+                    that.dom.pin.dataset.playstate = 1;
+                    // console.log(that.dom.pin.dataset.playstate);
+                });
+                that.dom.bgm.addEventListener('pause', function () {
+                    that.dom.play_btn.className = 'iconfont icon-bofang play_btn';
+                    // console.log(1);
+                    that.dom.pin.dataset.playstate = 0;
+                    // console.log(that.dom.pin.dataset.playstate);
+                });
+                // 修改播放模式
+                that.dom.play_mode.addEventListener('click', function () {
+                    let playMode = that.dom.play_mode.dataset.playMode;
+                    // console.log(playMode);
+                    // console.log(that.dom.play_mode.dataset);
+                    playMode++;
+                    if (playMode > 2) {
+                        playMode = 0;
+                    }
+                    that.dom.play_mode.dataset.playMode = playMode;
+
+
+                });
+                //  获取音频总时长
+                that.dom.bgm.addEventListener('canplay', function () {
+                    let durationTime = that.dom.bgm.duration;
+                    let minute = parseInt(durationTime / 60).toString().padStart(2, 0);
+                    let second = parseInt(durationTime % 60).toString().padStart(2, 0);
+                    that.dom.duration_time.innerText = `${minute}:${second}`;
+                    // console.log(durationTime, minute, second);
+                });
+
+                //  获取音频当前时长
+                that.dom.bgm.addEventListener('timeupdate', function () {
+                    let currentTime = that.dom.bgm.currentTime;
+                    let minute = parseInt(currentTime / 60).toString().padStart(2, 0);
+                    let second = parseInt(currentTime % 60).toString().padStart(2, 0);
+                    that.dom.currentTime.innerText = `${minute}:${second}`;
+                    const precent = (currentTime / that.dom.bgm.duration) * 100 + '%';
+                    that.dom.progress.style.backgroundSize = precent + ' 100%';
+                });
+                function loadLine(e) {
+                    that.dom.bgm.currentTime = (e.offsetX / this.clientWidth) * that.dom.bgm.duration;
+                }
+                that.dom.progress.addEventListener('click', loadLine);
+                that.dom.progress.addEventListener('mousedown', function () {
+                    console.log(11);
+
+                    that.dom.progress.addEventListener('mousemove', loadLine);
+                    that.dom.progress.addEventListener('mouseup', function () {
+                        that.dom.progress.removeEventListener('mousemove', loadLine);
+                    });
+
+                });
+            },
+            init: function () {
+                this.bindEvent();
+            }
+        };
+        musicControll.init();
+        //1、播放点击 切换暂停图标
+
+        //2、play-bar转动
+    </script>
 </body>
 
 </html>
