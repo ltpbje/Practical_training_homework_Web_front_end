@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        class Animal {
+            constructor(name) {
+                this.name = name;
+            }
+            speak() {
+                // 输出通用的动物声音
+            }
+        }
+        // 创建一个 Dog 类，继承 Animal
+        class Dog extends Animal {
+            constructor(name) {
+                super(name);
+            }
+            speak() {
+                console.log('Woof');
+            }
+        }
+        const dog = new Dog('大黄');
+        dog.speak();
+        console.log(dog.name);
+
+    </script>
+</body>
+
+</html>
