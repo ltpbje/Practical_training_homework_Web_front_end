@@ -32,11 +32,32 @@
 
         });
         document.addEventListener('dragenter', function (e) {
+            // console.log(1);
+
             e.preventDefault();
         });
         document.addEventListener('dragover', function (e) {
+            // console.log(1);
+
             e.preventDefault();
         });
+
+
+        document.addEventListener('drop', function (e) {
+            // 阻止事件冒泡
+            e.stopPropagation();
+            // 阻止默认事件（与dragover事件结合，阻止拖拽文件在浏览器打开的默认行为）
+            e.preventDefault();
+            // 获取拖拽上传的文件（files是个数组 此处默认限制只能上传一个）
+            // console.log('获取拖拽上传的文件---', e.dataTransfer.files[0]);
+            const reg = /^image/;
+            // 第二次验证选择的文件类型是否正确
+            if (reg.test(e.dataTransfer.files[0].type)) {
+                img.src = URL.createObjectURL(e.dataTransfer.files[0]);
+            } else {
+                alert('请选择正确的文件类型');
+            }
+        })
     </script>
 </body>
 
