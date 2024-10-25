@@ -127,15 +127,22 @@
                     that.dom.progress.style.backgroundSize = precent + ' 100%';
                 });
                 function loadLine(e) {
-                    that.dom.bgm.currentTime = (e.offsetX / this.clientWidth) * that.dom.bgm.duration;
-                }
-                that.dom.progress.addEventListener('click', loadLine);
-                that.dom.progress.addEventListener('mousedown', function () {
-                    console.log(11);
 
-                    that.dom.progress.addEventListener('mousemove', loadLine);
-                    that.dom.progress.addEventListener('mouseup', function () {
-                        that.dom.progress.removeEventListener('mousemove', loadLine);
+                    // console.log(e);
+
+                    console.log(e.changedTouches[0].clientX - e.target.offsetLeft);
+
+                    that.dom.bgm.currentTime = ((e.changedTouches[0].clientX - e.target.offsetLeft) / this.clientWidth) * that.dom.bgm.duration;
+
+
+                }
+                that.dom.progress.addEventListener('touchstart', loadLine);
+                that.dom.progress.addEventListener('touchstart', function () {
+                    // console.log(11);
+
+                    that.dom.progress.addEventListener('touchmove', loadLine);
+                    that.dom.progress.addEventListener('touchup', function () {
+                        that.dom.progress.removeEventListener('touchmove', loadLine);
                     });
 
                 });
