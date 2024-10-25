@@ -92,7 +92,9 @@
                 // 进度条
                 progress: document.querySelector('.progress'),
                 // 音乐列表
-                musicList: document.querySelector('.music_list')
+                musicList: document.querySelector('.music_list'),
+                // 背景图片
+                bg_img: document.querySelector('.bg_img')
             },
             data: {
                 APIURL: "http://www.softeem.xin:8888/public/musicData/musicData.json",
@@ -215,8 +217,14 @@
                     musicControl.data._currentIndex = v;
                     //通过索引拿歌曲
                     const currentMusic = musicControl.data.musicList[v];
+                    // 切换歌名
                     musicControl.dom.title_text.innerText = currentMusic.musicName;
-                    musicControl.dom.cover.src = currentMusic.;
+                    // 切换封面
+                    musicControl.dom.cover.src = musicControl.data.BASEURL + currentMusic.picPath;
+                    // 切换背景
+                    musicControl.dom.bg_img.src = musicControl.data.BASEURL + currentMusic.picPath;
+                    // 切换音乐源
+                    musicControl.dom.bgm.src = musicControl.data.BASEURL + currentMusic.musicPath;
                     // console.log(1);
 
                 }

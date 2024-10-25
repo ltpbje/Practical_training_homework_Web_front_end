@@ -4,7 +4,9 @@
     margin: auto;
     display: flex;
     flex-direction: column;
+    /* overflow: hidden; */
 }
+
 
 html{
     font-size: calc(100vw / 750);
@@ -22,6 +24,7 @@ html{
 
 body{
     font-size: 36rem;
+    overflow: hidden;
 }
 
 .title-bar{
