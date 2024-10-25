@@ -1,0 +1,100 @@
+{
+  "id": "2001098",
+  "name": "H2001",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1008272",
+      "name": "关闭",
+      "font_class": "iconddgb",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "3315100",
+      "name": "分享",
+      "font_class": "fenxiang",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "924674",
+      "name": "返回",
+      "font_class": "fanhui",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "6378605",
+      "name": "播放列表",
+      "font_class": "bofangliebiao",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "670161",
+      "name": "YDUI-上一曲",
+      "font_class": "yduishangyiqu",
+      "unicode": "e698",
+      "unicode_decimal": 59032
+    },
+    {
+      "icon_id": "670192",
+      "name": "YDUI-下一曲",
+      "font_class": "yduixiayiqu",
+      "unicode": "e6a1",
+      "unicode_decimal": 59041
+    },
+    {
+      "icon_id": "2767709",
+      "name": "单曲循环",
+      "font_class": "icon-",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "2767712",
+      "name": "随机播放",
+      "font_class": "icon-1",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "6544529",
+      "name": "向右箭头",
+      "font_class": "xiangyoujiantou",
+      "unicode": "e704",
+      "unicode_decimal": 59140
+    },
+    {
+      "icon_id": "3782916",
+      "name": "查询",
+      "font_class": "chaxun",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "5771110",
+      "name": "我的",
+      "font_class": "My",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "4328008",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "12683552",
+      "name": "播放",
+      "font_class": "icon_bofang",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    }
+  ]
+}

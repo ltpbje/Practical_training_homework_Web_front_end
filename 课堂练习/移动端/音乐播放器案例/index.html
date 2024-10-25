@@ -42,14 +42,36 @@
                     <span class="iconfont icon-bofang play_btn"></span>
                     <span class="iconfont icon-yduixiayiqu next_btn"></span>
                 </span>
-                <span class="iconfont icon-bofangliebiao"></span>
+                <span class="iconfont icon-bofangliebiao" onclick="musicControl.dom.musicList.dataset.show=1"></span>
             </div>
         </div>
+        <div class="music_list" data-show="1">
+            <!-- <span class="iconfont icon-iconddgb close_list" onclick="musicControl.dom.musicList.dataset.show=0"></span>
+            <ul>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+            </ul> -->
+        </div>
+        <script src="./js/template-web.js" type="text/javascript"></script>
+        <script type="text/html" id="temp">
+            <span class="iconfont icon-iconddgb close_list" onclick="musicControl.dom.musicList.dataset.show=0"></span>
+            <ul>
+                {{each arr item index}}
+              
+                <li onclick="musicControl.data.currentIndex = {{ index }}">{{item.musicName}}</li>
+              
+                {{/each}}
+            </ul>
+        </script>
+
     </div>
     <audio src="./audio/jaychou.flac" id="bgm"></audio>
+    <script src="./js/xhrHelper.js"></script>
 
     <script>
-        const musicControll = {
+        const musicControl = {
             dom: {
                 // 音频
                 bgm: document.querySelector('#bgm'),
@@ -68,10 +90,15 @@
                 // 音频当前时长
                 currentTime: document.querySelector('.current_time'),
                 // 进度条
-                progress: document.querySelector('.progress')
+                progress: document.querySelector('.progress'),
+                // 音乐列表
+                musicList: document.querySelector('.music_list')
             },
             data: {
-
+                APIURL: "http://www.softeem.xin:8888/public/musicData/musicData.json",
+                musicList: [],
+                BASEURL: 'http://www.softeem.xin:8888/public/musicData/',
+                _currentIndex: -1,
             },
             bindEvent: function () {
                 //1、播放点击 切换暂停图标
@@ -149,11 +176,52 @@
             },
             init: function () {
                 this.bindEvent();
+                this.getMusicList();
+            },
+            getMusicList: function () {
+                const that = this;
+                XHRHelper.get(this.data.APIURL, function (jsonStr) {
+                    console.log(JSON.parse(jsonStr));
+                    that.data.musicList = JSON.parse(jsonStr);
+                    that.renderMusicList();
+                });
+            },
+            renderMusicList: function () {
+                const that = this;
+                const htmlStr = template("temp", { arr: that.data.musicList });
+                that.dom.musicList.innerHTML = htmlStr;
             }
-        };
-        musicControll.init();
-        //1、播放点击 切换暂停图标
 
+        };
+        musicControl.init();
+        //1、播放点击 切换暂停图标
+        Object.defineProperty(musicControl.data, "currentIndex", {
+            configurable: true,
+            enumerable: true,
+            get: function () {
+
+            },
+            set: function (v) {
+                if (musicControl.data.musicList.length <= 0) {
+                    return;
+                }
+                if (/\d+/.test(v)) {
+                    if (v < 0) {
+                        v = musicControl.data.musicList.length - 1;
+                    }
+                    else if (v > musicControl.data.musicList.length - 1) {
+                        v = 0;
+                    }
+                    musicControl.data._currentIndex = v;
+                    //通过索引拿歌曲
+                    const currentMusic = musicControl.data.musicList[v];
+                    musicControl.dom.title_text.innerText = currentMusic.musicName;
+                    musicControl.dom.cover.src = currentMusic.;
+                    // console.log(1);
+
+                }
+            }
+        });
         //2、play-bar转动
     </script>
 </body>

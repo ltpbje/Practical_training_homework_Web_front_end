@@ -169,3 +169,36 @@ body{
 [data-play-mode="2"]::before {
        content: "\e64a";
 }
+
+
+
+.music_list{
+    width: 100%;
+    height: 50%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    box-sizing: border-box;
+    left: 0;
+    bottom: 0px;
+    padding: 0 10rem;
+    transition: all 0.3s ease-out;
+}
+.music_list span{
+    position: fixed;
+    right: 10rem;
+    top:10rem;
+    color: white;
+    font-size: 40rem;
+}
+.music_list ul li{
+    line-height: 60rem;
+    border-bottom: 1px solid #ccc;
+}
+
+[data-show="0"]{
+    transform: translateY(100%);
+}
+[data-show="1"]{
+     transform: translateY(0);
+}

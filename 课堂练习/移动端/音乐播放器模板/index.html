@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/index.css">
+		<link rel="stylesheet" href="iconfont/iconfont.css">
+		<script src="js/xhrHelper.js"></script>
+		<script src="js/template-web.js"></script>
+	</head>
+	<body>
+		<audio src="audio/abc.mp3" id="bgm"></audio>
+		<div id="app" class="flex-column">
+			<img src="img/05.jpg" alt="" class="bg-img">
+			<div class="title-bar flex-row j-c-b a-c">
+				<span class="iconfont icon-fanhui"></span>
+				<span class="title-text">你就是拒绝别人的理由</span>
+				<span class="iconfont icon-fenxiang"></span>
+			</div>
+			<div class="content-box flex-1">
+				<img src="img/player_bar.png" data-play-state="0" class="player-bar" alt="">
+				<div class="disc-box">
+					<img src="img/05.jpg" alt="" class="poster">
+					<img src="img/disc.png" alt="">
+				</div>
+			</div>
+			<div class="control-bar flex-column">
+				<div class="progress-box flex-row a-c">
+					<div class="current-time">00:00</div>
+					<div class="progress flex-1"></div>
+					<div class="duration-time">00:00</div>
+				</div>
+				<div class="btn-group flex-row j-c-b flex-1 a-c">
+					<span class="iconfont play-mode" data-play-mode="0"></span>
+					<div class="flex-row a-c">
+						<span class="iconfont icon-yduishangyiqu" id="prev-music"></span>
+						<span class="iconfont icon-bofang play-btn"></span>
+						<span class="iconfont icon-yduixiayiqu" id="next-music"></span>
+					</div>
+					<span class="iconfont icon-bofangliebiao play-list" onclick="musicControl.dom.musicList.dataset.show=1"></span>
+				</div>
+				<div class="music-list" data-show="0">
+					
+				</div>
+				<div class="alert">
+					<img src="img/loading.gif" alt="">
+					<p>数据加载中......</p>
+				</div>
+			</div>
+			<script type="text/html" id="temp">				
+					<span class="iconfont icon-iconddgb" onclick="musicControl.dom.musicList.dataset.show = 0"></span>
+					<ul>
+						{{each arr item index}}
+						<li onclick="musicControl.data.currentIndex = {{index}}">{{item.musicName}}</li>
+						{{/each}}
+					</ul>				
+			</script>			
+		</div>
+		<script>
+			var musicControl = {
+				dom:{
+					bgm:document.querySelector("#bgm"),
+					titleText:document.querySelector(".title-text"),
+					playBar:document.querySelector(".player-bar"),
+					bgImg:document.querySelector(".bg-img"),
+					poster:document.querySelector(".poster"),
+					currentTime:document.querySelector(".current-time"),
+					durationTime:document.querySelector(".duration-time"),
+					progress:document.querySelector(".progress"),
+					playMode:document.querySelector(".play-mode"),
+					playBtn:document.querySelector(".play-btn"),
+					playList:document.querySelector(".play-list"),
+					musicList:document.querySelector(".music-list"),
+					alert:document.querySelector(".alert"),
+					prevMusic:document.querySelector("#prev-music"),
+					nextMusic:document.querySelector("#next-music")
+				},
+				data:{
+					APIURL:"http://www.softeem.xin:8888/public/musicData/musicData.json",
+					musicList:[],
+					BASEURL:"http://www.softeem.xin:8888/public/musicData/",
+					_currentIndex:-1
+				},
+				bindEvent:function(){
+					var that = this;
+					this.dom.playBtn.addEventListener("click",function(){
+						if(that.dom.bgm.paused){
+							that.dom.bgm.play()
+						}else{
+							that.dom.bgm.pause()
+						}
+					})
+					this.dom.bgm.addEventListener("play",function(){
+						
+						that.dom.playBtn.className = "iconfont icon-icon_bofang play-btn"
+						that.dom.playBar.dataset.playState = 1;						
+					})
+					this.dom.bgm.addEventListener("pause",function(){
+						that.dom.playBtn.className = "iconfont icon-bofang play-btn"
+						that.dom.playBar.dataset.playState = 0;						
+					})
+					this.dom.playMode.addEventListener("click",function(){
+						var playModeNum = that.dom.playMode.dataset.playMode;
+						playModeNum++;
+						if(playModeNum > 2){
+							playModeNum = 0;
+						}
+						that.dom.playMode.dataset.playMode = playModeNum;
+					})
+					this.dom.bgm.addEventListener("canplay",function(){
+						that.dom.alert.style.display = "none";
+						var durationTime = that.dom.bgm.duration;
+						var minute = parseInt(durationTime / 60).toString().padStart(2,0);
+						var second = parseInt(durationTime % 60).toString().padStart(2,0);
+						that.dom.durationTime.innerText = `${minute}:${second}`;
+					})
+					this.dom.bgm.addEventListener("timeupdate",function(){
+						var currentTime = that.dom.bgm.currentTime;
+						var minute = parseInt(currentTime / 60).toString().padStart(2,0);
+						var second = parseInt(currentTime % 60).toString().padStart(2,0);
+						that.dom.currentTime.innerText = `${minute}:${second}`;
+						//以下是进度条
+						var percent = currentTime / that.dom.bgm.duration * 100 + "%";
+						// console.log(percent);
+						that.dom.progress.style.backgroundSize = percent + " 100%";
+					})
+					function loadLine(e){
+						e = event || window.event;
+						that.dom.bgm.currentTime = (e.changedTouches[0].clientX - e.changedTouches[0].target.offsetLeft) / this.clientWidth * that.dom.bgm.duration;
+					}
+					this.dom.progress.addEventListener("touchstart",loadLine);
+					this.dom.progress.addEventListener("touchstart",function(){
+						that.dom.progress.addEventListener("touchmove",loadLine)
+						that.dom.progress.addEventListener("touchend",function(){
+							that.dom.progress.removeEventListener("touchmove",loadLine)
+						})
+					})
+					this.dom.bgm.addEventListener("waiting",function(){
+						that.dom.alert.style.display = "block";
+					})
+					this.dom.prevMusic.addEventListener("click",function(){
+						var playMode = that.dom.playMode.dataset.playMode;
+						if(playMode == 0 || playMode == 2){
+							//顺序播放或单曲循环
+							that.data.currentIndex--;
+						}else if(playMode == 1){
+							//随机
+							var index = parseInt(Math.random() * that.data.musicList.length);
+							that.data.currentIndex = index;
+						}
+					})
+					this.dom.nextMusic.addEventListener("click",function(){
+						var playMode = that.dom.playMode.dataset.playMode;
+						if(playMode == 0 || playMode == 2){
+							//顺序播放或单曲循环
+							that.data.currentIndex++;
+						}else if(playMode == 1){
+							//随机
+							var index = parseInt(Math.random() * that.data.musicList.length);
+							that.data.currentIndex = index;
+						}
+					})
+				},
+				init:function(){
+					this.bindEvent();
+					this.getMusicList();
+				},
+				getMusicList:function(){
+					var that = this;
+					this.dom.alert.style.display = "block";
+					XHRHelper.get(this.data.APIURL,function(jsonStr){
+						that.data.musicList = JSON.parse(jsonStr);
+						that.dom.alert.style.display = "none";
+						that.renderMusicList();
+						console.log(that.data.musicList);
+					})
+				},
+				renderMusicList:function(){
+					var htmlStr = template("temp",{
+						arr:this.data.musicList
+					})
+					this.dom.musicList.innerHTML = htmlStr;					
+				}
+				//方法1
+				//方法2
+				//.......
+			}
+			
+			
+			//1、播放点击，切换暂停图标
+			//2、play-bar转动
+			musicControl.init();
+			
+			Object.defineProperty(musicControl.data,"currentIndex",{
+				configurable:false,
+				enumerable:true,
+				get:function(){
+					return musicControl.data._currentIndex
+				},
+				set:function(v){
+					if(musicControl.data.musicList.length <= 0){
+						return;
+					}
+					if(/\d+/.test(v)){
+						if(v < 0){
+							v = musicControl.data.musicList.length - 1;
+						}
+						else if(v > musicControl.data.musicList.length - 1){
+							v = 0;
+						}
+						musicControl.data._currentIndex = v;
+						//通过索引拿歌曲
+						var currentMusic = musicControl.data.musicList[v];
+						musicControl.dom.titleText.innerText = currentMusic.musicName;
+						musicControl.dom.bgImg.src = musicControl.data.BASEURL + currentMusic.picPath;
+						musicControl.dom.poster.src = musicControl.data.BASEURL + currentMusic.picPath;
+						musicControl.dom.bgm.src = 	musicControl.data.BASEURL + currentMusic.musicPath;
+						musicControl.dom.bgm.play()
+					}
+				}
+			})
+		</script>
+	</body>
+</html>
