@@ -45,7 +45,7 @@
                 <span class="iconfont icon-bofangliebiao" onclick="musicControl.dom.musicList.dataset.show=1"></span>
             </div>
         </div>
-        <div class="music_list" data-show="1">
+        <div class="music_list" data-show="0">
             <!-- <span class="iconfont icon-iconddgb close_list" onclick="musicControl.dom.musicList.dataset.show=0"></span>
             <ul>
                 <li>1</li>
@@ -94,7 +94,15 @@
                 // 音乐列表
                 musicList: document.querySelector('.music_list'),
                 // 背景图片
-                bg_img: document.querySelector('.bg_img')
+                bg_img: document.querySelector('.bg_img'),
+                // 下一首歌
+                next_btn: document.querySelector('.next_btn'),
+                // 上一首歌
+                prev_btn: document.querySelector('.prev_btn'),
+                // 内容区域
+                content_box: document.querySelector('.content-box '),
+                // 碟片
+                cover_disk: document.querySelector('.cover_disk')
             },
             data: {
                 APIURL: "http://www.softeem.xin:8888/public/musicData/musicData.json",
@@ -116,12 +124,14 @@
                     that.dom.play_btn.className = 'iconfont icon-icon_bofang play_btn';
                     // console.log(1);
                     that.dom.pin.dataset.playstate = 1;
+                    that.dom.cover_disk.style.animationPlayState = 'running';
                     // console.log(that.dom.pin.dataset.playstate);
                 });
                 that.dom.bgm.addEventListener('pause', function () {
                     that.dom.play_btn.className = 'iconfont icon-bofang play_btn';
                     // console.log(1);
                     that.dom.pin.dataset.playstate = 0;
+                    that.dom.cover_disk.style.animationPlayState = 'paused';
                     // console.log(that.dom.pin.dataset.playstate);
                 });
                 // 修改播放模式
@@ -154,6 +164,27 @@
                     that.dom.currentTime.innerText = `${minute}:${second}`;
                     const precent = (currentTime / that.dom.bgm.duration) * 100 + '%';
                     that.dom.progress.style.backgroundSize = precent + ' 100%';
+                });
+                // 播放下一首
+                that.dom.next_btn.addEventListener('click', function () {
+                    if (that.dom.play_mode.dataset.playMode == 0 || that.dom.play_mode.dataset.playMode == 1) {
+                        that.data.currentIndex++;
+                    } else if (that.dom.play_mode.dataset.playMode == 2) {
+                        const randomNum = parseInt(Math.random() * that.data.musicList.length);
+                        that.data.currentIndex = randomNum;
+                    }
+                });
+                // 播放上一首
+                that.dom.prev_btn.addEventListener('click', function () {
+                    if (that.dom.play_mode.dataset.playMode == 0 || that.dom.play_mode.dataset.playMode == 1) {
+                        that.data.currentIndex--;
+                    } else if (that.dom.play_mode.dataset.playMode == 2) {
+                        const randomNum = parseInt(Math.random() * that.data.musicList.length);
+                        that.data.currentIndex = randomNum;
+                    }
+                });
+                that.dom.content_box.addEventListener('click', function () {
+                    that.dom.musicList.dataset.show = 0;
                 });
                 function loadLine(e) {
 
@@ -201,7 +232,7 @@
             configurable: true,
             enumerable: true,
             get: function () {
-
+                return musicControl.data._currentIndex;
             },
             set: function (v) {
                 if (musicControl.data.musicList.length <= 0) {
