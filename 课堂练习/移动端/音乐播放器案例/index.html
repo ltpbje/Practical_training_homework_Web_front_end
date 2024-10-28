@@ -16,7 +16,7 @@
         <div class="title-bar">
             <span class="iconfont icon-fanhui"></span>
             <span class="title_text">你就是拒绝别人的理由</span>
-            <span class="iconfont icon-fenxiang"></span>
+            <span class="iconfont icon-fenxiang" id="btn-share"></span>
 
         </div>
         <div class="content-box flex_column">
@@ -69,7 +69,7 @@
     </div>
     <audio src="./audio/jaychou.flac" id="bgm"></audio>
     <script src="./js/xhrHelper.js"></script>
-
+    <script src="./js/clipboard.js"></script>
     <script>
         const musicControl = {
             dom: {
@@ -105,21 +105,30 @@
                 cover_disk: document.querySelector('.cover_disk')
             },
             data: {
+                // 请求歌曲信息的api地址
                 APIURL: "http://www.softeem.xin:8888/public/musicData/musicData.json",
+                // 音乐列表
                 musicList: [],
+                // 文件路径的基地址
                 BASEURL: 'http://www.softeem.xin:8888/public/musicData/',
+                // 当前播放音乐的索引
                 _currentIndex: -1,
             },
             bindEvent: function () {
                 //1、播放点击 切换暂停图标
                 const that = this;
+                // 点击播放按钮的时候播放音频
+                // 给play_btn添加点击事件监听器
                 that.dom.play_btn.addEventListener('click', function () {
+                    // 如果bgm暂停，则播放
                     if (that.dom.bgm.paused) {
                         that.dom.bgm.play();
+                        // 否则暂停
                     } else {
                         that.dom.bgm.pause();
                     }
                 });
+                // 当音频开始播放的时候
                 that.dom.bgm.addEventListener('play', function () {
                     that.dom.play_btn.className = 'iconfont icon-icon_bofang play_btn';
                     // console.log(1);
@@ -127,12 +136,24 @@
                     that.dom.cover_disk.style.animationPlayState = 'running';
                     // console.log(that.dom.pin.dataset.playstate);
                 });
+                // 当音频开始暂停的时候
                 that.dom.bgm.addEventListener('pause', function () {
                     that.dom.play_btn.className = 'iconfont icon-bofang play_btn';
                     // console.log(1);
                     that.dom.pin.dataset.playstate = 0;
                     that.dom.cover_disk.style.animationPlayState = 'paused';
                     // console.log(that.dom.pin.dataset.playstate);
+                });
+                // 当音频播放结束的时候
+                that.dom.bgm.addEventListener("ended", function () {
+                    let playMode = that.dom.play_mode.dataset.playMode;
+                    // 当播放模式不是单曲循环的时候
+                    if (playMode !== 1) {
+                        // 触发下一首歌的点击事件
+                        // console.log(1);
+
+                        that.dom.next_btn.click();
+                    }
                 });
                 // 修改播放模式
                 that.dom.play_mode.addEventListener('click', function () {
@@ -144,19 +165,28 @@
                         playMode = 0;
                     }
                     that.dom.play_mode.dataset.playMode = playMode;
-
+                    // 当播放模式是单曲循环的时候
+                    // 开启音乐循环播放
+                    if (playMode == 1) {
+                        that.dom.bgm.loop = true;
+                    } else {
+                        // 关闭音乐循环播放
+                        that.dom.bgm.loop = false;
+                    }
 
                 });
-                //  获取音频总时长
+                // 当音频可以播放的时候  获取音频总时长
                 that.dom.bgm.addEventListener('canplay', function () {
+                    // 当前的总时长 单位是 s 
                     let durationTime = that.dom.bgm.duration;
+                    // 转变为 01 格式的分钟
                     let minute = parseInt(durationTime / 60).toString().padStart(2, 0);
                     let second = parseInt(durationTime % 60).toString().padStart(2, 0);
                     that.dom.duration_time.innerText = `${minute}:${second}`;
                     // console.log(durationTime, minute, second);
                 });
 
-                //  获取音频当前时长
+                // 当音频播放 当前时间变化的时候 获取音频当前时长
                 that.dom.bgm.addEventListener('timeupdate', function () {
                     let currentTime = that.dom.bgm.currentTime;
                     let minute = parseInt(currentTime / 60).toString().padStart(2, 0);
@@ -183,14 +213,22 @@
                         that.data.currentIndex = randomNum;
                     }
                 });
+                // 当点击content_box 盒子的时候关闭音乐列表
                 that.dom.content_box.addEventListener('click', function () {
                     that.dom.musicList.dataset.show = 0;
+                });
+                // 当musicList盒子内容滚动的时候
+                // 让关闭列表的 .close_list盒子跟随向下移动 使其可见
+                that.dom.musicList.addEventListener('scroll', function (e) {
+                    // console.log(e.target.scrollTop);
+                    // console.log(document.querySelector('.close_list').style.top = e.target.scrollTop + 'px');
+                    document.querySelector('.close_list').style.top = e.target.scrollTop + 'px';
                 });
                 function loadLine(e) {
 
                     // console.log(e);
 
-                    console.log(e.changedTouches[0].clientX - e.target.offsetLeft);
+                    // console.log(e.changedTouches[0].clientX - e.target.offsetLeft);
 
                     that.dom.bgm.currentTime = ((e.changedTouches[0].clientX - e.target.offsetLeft) / this.clientWidth) * that.dom.bgm.duration;
 
@@ -214,7 +252,7 @@
             getMusicList: function () {
                 const that = this;
                 XHRHelper.get(this.data.APIURL, function (jsonStr) {
-                    console.log(JSON.parse(jsonStr));
+                    // console.log(JSON.parse(jsonStr));
                     that.data.musicList = JSON.parse(jsonStr);
                     that.renderMusicList();
                 });
@@ -223,11 +261,14 @@
                 const that = this;
                 const htmlStr = template("temp", { arr: that.data.musicList });
                 that.dom.musicList.innerHTML = htmlStr;
+            },
+            shareMusic: function () {
+                var clipBoard = new Clipboard();
             }
 
         };
         musicControl.init();
-        //1、播放点击 切换暂停图标
+        // 访问器属性    
         Object.defineProperty(musicControl.data, "currentIndex", {
             configurable: true,
             enumerable: true,
