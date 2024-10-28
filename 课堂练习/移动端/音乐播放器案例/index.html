@@ -16,7 +16,9 @@
         <div class="title-bar">
             <span class="iconfont icon-fanhui"></span>
             <span class="title_text">你就是拒绝别人的理由</span>
-            <span class="iconfont icon-fenxiang" id="btn-share"></span>
+
+            <span class="iconfont icon-fenxiang" id="btn-share" data-clipboard-text=""
+                onclick="musicControl.shareMusic()"></span>
 
         </div>
         <div class="content-box flex_column">
@@ -102,7 +104,9 @@
                 // 内容区域
                 content_box: document.querySelector('.content-box '),
                 // 碟片
-                cover_disk: document.querySelector('.cover_disk')
+                cover_disk: document.querySelector('.cover_disk'),
+                // 分享按钮
+                btnShare: document.querySelector('#btn-share')
             },
             data: {
                 // 请求歌曲信息的api地址
@@ -244,10 +248,13 @@
                     });
 
                 });
+                // 分享音乐 获取分享链接
+                // that.dom.btnShare.addEventListener('click', that.shareMusic);
             },
             init: function () {
                 this.bindEvent();
-                this.getMusicList();
+                this.localChche();
+                // this.getMusicList();
             },
             getMusicList: function () {
                 const that = this;
@@ -255,15 +262,50 @@
                     // console.log(JSON.parse(jsonStr));
                     that.data.musicList = JSON.parse(jsonStr);
                     that.renderMusicList();
+
+
+                    // ---------------------------
+                    // 缓存
+                    localStorage.setItem('musicListchche', JSON.stringify({
+                        data: that.data.musicList,
+                        expires: Date.now() + (1000 * 60 * 30)
+                    }));
                 });
+            },
+            localChche: function () {
+                var musicListCache = localStorage.getItem('musicListchche');
+                // 查看本地是否有存储的有 有效的音乐数据
+                if (musicListCache) {
+                    // 有存储 有效的音乐数据
+                    musicListCache = JSON.parse(musicListCache);
+                    // 判断是否过期
+                    if (musicListCache.expires > Date.now()) {
+                        // 没有过期
+                        this.data.musicList = musicListCache.data;
+                        this.renderMusicList();
+                    } else {
+                        // 发送请求获取数据
+                        this.getMusicList();
+                    }
+                } else {
+                    // 发送请求获取数据
+                    this.getMusicList();
+                }
             },
             renderMusicList: function () {
                 const that = this;
                 const htmlStr = template("temp", { arr: that.data.musicList });
                 that.dom.musicList.innerHTML = htmlStr;
             },
+            // 分享音乐
             shareMusic: function () {
-                var clipBoard = new Clipboard();
+                const that = this;
+                var clipBoard = new ClipboardJS('#btn-share');
+
+                var u = new URL(location.href);
+                u.searchParams.set('currentIndex', this.data.currentIndex);
+                that.dom.btnShare.dataset.clipboardText = u.href;
+                console.log(clipBoard);
             }
 
         };
