@@ -5,6 +5,7 @@ import assetsConfig from "./assetsConfig.js";
 import GameObject from "./GameObject.js";
 import Bullet from "./Bullet.js";
 import gameContainer from "./gameContainer.js";
+import gameConfig from "./gameConfig.js";
 class Hero extends GameObject {
     constructor() {
         let img = assetsConfig.imgList[1];
@@ -20,6 +21,17 @@ class Hero extends GameObject {
     //     );
     // }
     move(x, y) {
+        if (x < 0) {
+            x = 0;
+        } else if (x > gameConfig.gameWidth - this.width) {
+            x = gameConfig.gameWidth - this.width;
+        }
+        if (y < 0) {
+            y = 0;
+        } else if (y > gameConfig.gameHeight - this.height) {
+            y = gameConfig.gameHeight - this.height;
+        }
+
         this.x = x;
         this.y = y;
     }

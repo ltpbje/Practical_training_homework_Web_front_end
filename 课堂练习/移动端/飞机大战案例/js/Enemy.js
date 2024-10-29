@@ -22,7 +22,7 @@ export default class Enemy extends GameObject {
             img = assetsConfig.imgList[4];
         }
         // 生成一个0-gameConfig.gameWidth之间的随机数
-        let x = parseInt(Math.random() * (gameConfig.gameWidth - 100));
+        let x = parseInt(Math.random() * (gameConfig.gameWidth - img.width));
         // 调用父类构造函数，传入x坐标、y坐标和图片
         super(x, 0, img);
         // 生成一个1-3之间的随机数，并加1，赋值给speed
