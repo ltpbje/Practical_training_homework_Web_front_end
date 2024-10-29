@@ -5,6 +5,7 @@ import gameContainer from "./gameContainer.js";
 import GameObject from "./GameObject.js";
 import gameConfig from "./gameConfig.js";
 import Enemy from "./Enemy.js";
+import Boom from "./Boom.js";
 const gameControl = {
     dom: {
         game: document.querySelector('#game')
@@ -94,7 +95,7 @@ const gameControl = {
         }
     },
     checkBulletAndEnemyCrash() {
-        // 检测子代与敌机相撞
+        // 检测子弹与敌机相撞
         for (let i = gameContainer.bulletList.length - 1; i >= 0; i--) {
             for (let j = gameContainer.enemyList.length - 1; j >= 0; j--) {
                 let b = gameContainer.bulletList[i];
@@ -103,6 +104,9 @@ const gameControl = {
                 if (result) {
                     gameContainer.bulletList.splice(i, 1);
                     gameContainer.enemyList.splice(j, 1);
+                    // 加入生成爆炸的操作
+                    let boom = new Boom(e.x + e.width / 2, e.y + e.height / 2);
+                    gameContainer.boomList.push(boom);
                     break;
                 }
             }

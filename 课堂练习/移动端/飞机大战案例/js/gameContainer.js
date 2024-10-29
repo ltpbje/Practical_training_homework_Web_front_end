@@ -5,7 +5,8 @@ const gameContainer = {
     bg: null,
     p1: null,
     bulletList: [],
-    enemyList: []
+    enemyList: [],
+    boomList: []
 };
 
 export default gameContainer;

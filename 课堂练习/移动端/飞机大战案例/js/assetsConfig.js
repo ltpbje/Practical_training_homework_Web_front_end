@@ -2,11 +2,12 @@
 
 
 const assetsList = [
-    './assets/bg1.jpg',
+    './assets/bg2.jpg',
     './assets/plane_0.png',
     './assets/fire.png',
     './assets/enemy_big.png',
-    './assets/enemy_small.png'
+    './assets/enemy_small.png',
+    './assets/boom_big.png',
 ];
 
 
