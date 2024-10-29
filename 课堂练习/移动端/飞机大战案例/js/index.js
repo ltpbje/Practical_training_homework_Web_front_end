@@ -10,7 +10,8 @@ const gameControl = {
     data: {
         gameWidth: 512,
         gameHeight: 768,
-        ctx: null
+        ctx: null,
+        p1FireTimerID: null
     },
     // gameContainer: {
     //     //游戏容器，专业存入在页面上需要使用的游戏对象
@@ -19,10 +20,19 @@ const gameControl = {
     // },
     bindEvent() {
         this.dom.game.addEventListener('mousemove', event => {
+            // 获取鼠标在游戏区域内的坐标
             let { offsetX, offsetY } = event;
+            // 如果游戏区域有玩家1，则调用玩家1的移动方法
             if (gameContainer.p1) {
                 gameContainer.p1.move(offsetX - 50, offsetY - 50);
             }
+        });
+        // 监听鼠标按下事件，如果按下的是左键，则调用玩家1的射击方法
+        this.dom.game.addEventListener('mousedown', event => event.button == 0 && this.p1Fire()
+        );
+        // 监听鼠标松开事件，调用玩家1的停止射击方法
+        document.addEventListener('mouseup', event => {
+            this.p1StopFire();
         });
     },
     async init() {
@@ -44,6 +54,18 @@ const gameControl = {
 
 
     },
+    p1Fire() {
+        // 玩家一飞机开火方法
+        this.data.p1FireTimerID = setInterval(() => {
+            if (gameContainer.p1) {
+                gameContainer.p1.fire();
+            }
+        }, 90);
+    },
+    p1StopFire() {
+        // 玩家一飞机停火方法
+        clearInterval(this.data.p1FireTimerID);
+    },
     draw() {
         setInterval(() => {
             // 在画布上绘制背景
@@ -53,6 +75,10 @@ const gameControl = {
             Reflect.ownKeys(gameContainer).forEach(item => {
                 if (gameContainer[item] && gameContainer[item] instanceof GameObject) {
                     gameContainer[item].draw(this.data.ctx);
+                } else if (gameContainer[item] instanceof Array) {
+                    gameContainer[item].forEach(item2 => {
+                        item2.draw(this.data.ctx);
+                    });
                 }
             });
         }, 20);
