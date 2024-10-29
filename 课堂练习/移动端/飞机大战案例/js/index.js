@@ -3,6 +3,8 @@ import Background from "./Background.js";
 import Hero from "./Hero.js";
 import gameContainer from "./gameContainer.js";
 import GameObject from "./GameObject.js";
+import gameConfig from "./gameConfig.js";
+import Enemy from "./Enemy.js";
 const gameControl = {
     dom: {
         game: document.querySelector('#game')
@@ -37,8 +39,8 @@ const gameControl = {
     },
     async init() {
         // 设置游戏区域的宽度和高度
-        this.dom.game.width = this.data.gameWidth;
-        this.dom.game.height = this.data.gameHeight;
+        this.dom.game.width = gameConfig.gameWidth;
+        this.dom.game.height = gameConfig.gameHeight;
         // 获取游戏区域的绘图上下文
         this.data.ctx = this.dom.game.getContext('2d');
         // 加载游戏资源
@@ -50,6 +52,7 @@ const gameControl = {
         gameContainer.p1 = new Hero();
         // // 在画布上绘制背景
         // this.gameContainer.bg.draw(this.data.ctx);
+        this.addEnemy();
         this.draw();
 
 
@@ -65,6 +68,19 @@ const gameControl = {
     p1StopFire() {
         // 玩家一飞机停火方法
         clearInterval(this.data.p1FireTimerID);
+    },
+    addEnemy() {
+        //添加敌机
+        setInterval(() => {
+            let { maxEnemyCount } = gameConfig;
+            let count = maxEnemyCount - gameContainer.enemyList.length;
+            for (let i = 0; i < count; i++) {
+                let e = new Enemy();
+                gameContainer.enemyList.push(e);
+
+            }
+
+        }, 250);
     },
     draw() {
         setInterval(() => {

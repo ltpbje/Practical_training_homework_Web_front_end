@@ -27,7 +27,7 @@ class Hero extends GameObject {
     fire() {
         let b = new Bullet(this.x, this.y);
         // 修正子弹坐标
-        // b.x = b.x + this.width / 2 - b.width / 2;
+        b.x = b.x + this.width / 2 - b.width / 2;
         gameContainer.bulletList.push(b);
     }
 }

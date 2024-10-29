@@ -4,7 +4,9 @@
 const assetsList = [
     './assets/bg1.jpg',
     './assets/plane_0.png',
-    './assets/fire.png'
+    './assets/fire.png',
+    './assets/enemy_big.png',
+    './assets/enemy_small.png'
 ];
 
 
