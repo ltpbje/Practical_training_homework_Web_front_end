@@ -9,12 +9,63 @@
         #game {
             border: 2px solid #000;
             cursor: none;
+            visibility: hidden;
+            float: left;
+        }
+
+        .score {
+            /* width: 50px; */
+            min-width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            text-align: center;
+            line-height: 50px;
+            float: left;
+        }
+
+        .select_menu {
+            width: 100px;
+            float: left;
+            text-align: center;
+            border: 1px solid #000;
+            /* transition: all 0.3s ease-out; */
+        }
+
+        .select_menu .level {
+            line-height: 0px;
+            overflow: hidden;
+            transition: all 0.3s ease-out;
+
+        }
+
+
+        .select_menu div {
+            line-height: 30px;
+            /* transition: all 0.3s ease-out; */
         }
     </style>
 </head>
 
 <body>
-    <canvas id="game"></canvas>
+    <!-- 
+    1、制作积分功能：小飞机5分，大飞机10分，进行累加运算，并实时显示在游戏中，同时下次进入游戏时依然能够接着上次积分继续累加
+    
+    2、制作游戏开始按钮，当点击按钮时才开始游戏
+    
+    3、制作游戏难度设置入口，可以修改游戏难度（难度选择的样式采用下拉二级菜单的样式完成，不能使用表单的下拉菜单select+option）
+     -->
+    <canvas id="game"> </canvas>
+    <button id="start_game">开始</button>
+    <div class="score">0分</div>
+    <button class="clearScore">清除分数</button>
+    <div class="select_menu ">
+        <div class="level_title">level选择</div>
+        <div class="level ">1</div>
+        <div class="level ">2</div>
+        <div class="level ">3</div>
+
+    </div>
+
     <script src="./js/index.js" type="module"></script>
 </body>
 

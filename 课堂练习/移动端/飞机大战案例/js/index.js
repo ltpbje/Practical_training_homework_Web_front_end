@@ -6,9 +6,13 @@ import GameObject from "./GameObject.js";
 import gameConfig from "./gameConfig.js";
 import Enemy from "./Enemy.js";
 import Boom from "./Boom.js";
+// 分数
+let score = 0;
 const gameControl = {
     dom: {
-        game: document.querySelector('#game')
+        game: document.querySelector('#game'),
+        clearScore: document.querySelector('.clearScore'),
+        start_game: document.querySelector('#start_game')
     },
     data: {
         gameWidth: 512,
@@ -37,8 +41,26 @@ const gameControl = {
         document.addEventListener('mouseup', event => {
             this.p1StopFire();
         });
+        this.dom.clearScore.addEventListener('click', function () {
+            localStorage.removeItem('score');
+            score = 0;
+            document.querySelector('.score').innerText = '0分';
+        });
+        // this.dom.start_game.addEventListener('click', () => {
+        //     gameControl.init();
+        //     this.dom.game.style.visibility = 'visible';
+
+        // });
     },
     async init() {
+        // 检测本地是否存有分数
+        if (localStorage.getItem('score')) {
+            score = +localStorage.getItem('score');
+            document.querySelector('.score').innerText = localStorage.getItem('score') + '分';
+        } else {
+            score = 0;
+            document.querySelector('.score').innerText = '0分';
+        }
         // 设置游戏区域的宽度和高度
         this.dom.game.width = gameConfig.gameWidth;
         this.dom.game.height = gameConfig.gameHeight;
@@ -102,6 +124,21 @@ const gameControl = {
                 let e = gameContainer.enemyList[j];
                 let result = this.checkCrash(b, e);
                 if (result) {
+                    // console.log(gameContainer.enemyList[j].width);
+                    // 小飞机加5分
+                    if (gameContainer.enemyList[j].width == 108) {
+
+                        score += 5;
+                        document.querySelector('.score').innerText = score + '分';
+                    }
+
+                    // 大飞机加5分
+                    if (gameContainer.enemyList[j].width > 108) {
+                        score += 10;
+                        document.querySelector('.score').innerText = score + '分';
+                    }
+                    // 本地持久化存储 分数
+                    localStorage.setItem('score', score);
                     gameContainer.bulletList.splice(i, 1);
                     gameContainer.enemyList.splice(j, 1);
                     // 加入生成爆炸的操作
@@ -133,7 +170,38 @@ const gameControl = {
     }
 };
 
+gameControl.dom.start_game.addEventListener('click', () => {
+    gameControl.init();
+    gameControl.dom.game.style.visibility = 'visible';
+    gameControl.dom.start_game.disabled = true;
+});
+
+document.querySelector('.select_menu .level_title').addEventListener('click', function () {
+    const levelList = document.querySelectorAll('.select_menu .level');
+    // console.log(levelList[0].style.lineHeight);
+
+    if (levelList[0].style.lineHeight == "30px") {
+
+        for (let i = 0; i < levelList.length; i++) {
+            levelList[i].style.lineHeight = '0px';
+        }
+    } else {
+        // console.log(levelList);
+        for (let i = 0; i < levelList.length; i++) {
+            levelList[i].style.lineHeight = '30px';
+        }
+    }
+});
+const levelList = document.querySelectorAll('.select_menu .level');
+// console.log(levelList);
+for (let i = 0; i < levelList.length; i++) {
+    levelList[i].addEventListener('click', function (e) {
+        // console.log(e.target.innerText);
+        const level = +e.target.innerText;
+        gameConfig.level = level;
+        document.querySelector('.select_menu .level_title').innerText = `当前level为${level}`;
+    });
+}
 
 
-
-gameControl.init();
+// gameControl.init();
