@@ -82,8 +82,36 @@ const gameControl = {
 
         }, 250);
     },
+    checkCrash(a, b) {
+        // a 子弹  b 敌机
+        // 检测两个对象是否相交
+        // 撞不上
+        if (a.x + a.width < b.x || b.x + b.width < a.x || a.y + a.height < b.y || b.y + b.height < a.y
+        ) {
+            return false;
+        } else {
+            return true;
+        }
+    },
+    checkBulletAndEnemyCrash() {
+        // 检测子代与敌机相撞
+        for (let i = gameContainer.bulletList.length - 1; i >= 0; i--) {
+            for (let j = gameContainer.enemyList.length - 1; j >= 0; j--) {
+                let b = gameContainer.bulletList[i];
+                let e = gameContainer.enemyList[j];
+                let result = this.checkCrash(b, e);
+                if (result) {
+                    gameContainer.bulletList.splice(i, 1);
+                    gameContainer.enemyList.splice(j, 1);
+                    break;
+                }
+            }
+        }
+    },
     draw() {
         setInterval(() => {
+            // 检查是否相撞
+            gameControl.checkBulletAndEnemyCrash();
             // 在画布上绘制背景
             // this.gameContainer.bg.draw(this.data.ctx);
             // this.gameContainer.p1.draw(this.data.ctx);
