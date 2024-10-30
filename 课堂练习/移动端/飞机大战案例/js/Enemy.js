@@ -27,6 +27,8 @@ export default class Enemy extends GameObject {
         super(x, 0, img);
         // 生成一个1-3之间的随机数，并加1，赋值给speed
         this.speed = parseInt(Math.random() * 3) + 2;
+        // this.speed = 3;
+
     }
     move() {
         this.y += this.speed;

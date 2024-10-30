@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // var obj = {};
+        // obj.log = console.log;
+        // obj.log.call(console, this);
+
+
+        // 定义一个Product构造函数，接受name和price两个参数
+        function Product(name, price) {
+            this.name = name;
+            this.price = price;
+        }
+
+        // 定义一个Food构造函数，继承Product构造函数，并添加category属性
+        function Food(name, price) {
+            // 调用Product构造函数，将name和price参数传递给Product构造函数
+            Product.call(this, name, price);
+            this.category = 'food';
+        }
+
+        // 创建一个Food实例，并输出name属性
+        console.log(new Food('cheese', 5).name);
+        // Expected output: "cheese"
+
+    </script>
+</body>
+
+</html>
