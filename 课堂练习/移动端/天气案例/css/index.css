@@ -81,3 +81,19 @@ html {
     font-size: 20rem;
     margin-top: 10rem;
  }
+.future {
+    width: 100vw;
+    height: 400rem;
+    display: flex;
+    overflow: hidden;
+}
+.future  .future_item{
+    width: 300rem;
+    height: 400rem;
+    border: 1px solid #000;
+}
+.future .slide_box{
+     display: flex;
+
+}
+

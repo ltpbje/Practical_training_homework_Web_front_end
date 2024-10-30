@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<!-- 现有如下两个数组，找出两个数组当中相同的元素，放在一个新的数组里面
+
+var arr1 = [1,2,7,4,3,"a","d","g"];
+var arr2 = [7,3,"d","g","h",3,7]; -->
+
+<body>
+    <script>
+        var arr1 = [1, 2, 7, 4, 3, "a", "d", "g"];
+        var arr2 = [7, 3, "d", "g", "h", 3, 7];
+        let arr = [];
+        // for (let i = 0; i < arr1.length; i++) {
+        //     for (let j = 0; j < arr2.length; j++) {
+        //         if (arr1[i] == arr2[j]) {
+        //             arr.push(arr1[i]);
+        //         }
+        //     }
+        // }
+        arr = arr1.filter(item => {
+            return arr2.includes(item);
+        });
+        console.log(arr);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- 现有以下一个数组，里面有几个重复的元素，找出重复次数最多的元素，并列出每个元素重复多少次
+
+var arr= ["a","b","c","a","a","b","d","e","f","c","g","d","e","g","a","c","a" ,"h","a"]; -->
+    <script>
+        var arr = ["a", "b", "c", "a", "a", "b", "d", "e", "f", "c", "g", "d", "e", "g", "a", "c", "a", "h", "a"];
+        let obj = {};
+        arr.forEach((item1, index) => {
+            obj[item1] = (arr.filter(item2 => {
+                return item2 == item1;
+            }));
+        });
+        let maxCount = 0;
+        let mostFrequentItem = null;
+        for (let key in obj) {
+            // console.log(key);
+            if (obj[key].length > maxCount) {
+                maxCount = obj[key].length;
+                mostFrequentItem = key;
+            }
+            console.log(key + ": " + obj[key].length + "次");
+        }
+        console.log(`${mostFrequentItem}出现最多:出现了${maxCount}次`);
+
+        console.log(obj);
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
