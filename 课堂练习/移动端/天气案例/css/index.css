@@ -94,6 +94,6 @@ html {
 }
 .future .slide_box{
      display: flex;
-
+    /* transition: all 0.3s linear; */
 }
 
