@@ -103,8 +103,9 @@ html {
 }
 .future  .future_item{
     width: 200rem;
+    border-radius: 10rem;
     /* height: 400rem; */
-    border: 1px solid #000;
+    /* border: 1px solid #000; */
     margin-right: 20rem;
     display: flex;
     flex-direction: column;

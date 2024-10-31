@@ -23,7 +23,7 @@
             </div>
             <div class="future">
                 <div class="slide_box">
-                    <div class="future_item">
+                    <!-- <div class="future_item">
                         <h4>今天</h4>
                         <p>10/31</p>
                         <span class="iconfont icon-yintian"></span>
@@ -34,7 +34,7 @@
                     <div class="future_item">2</div>
                     <div class="future_item">3</div>
                     <div class="future_item">4</div>
-                    <div class="future_item">5</div>
+                    <div class="future_item">5</div> -->
                 </div>
             </div>
         </div>
@@ -71,14 +71,14 @@
 
     <script type="text/html" id="temp2">
         {{each data item index}}
-        <div class="future_item">
-            <h4>{{今天}}</h4>
-            <p>10/31</p>
-            <span class="iconfont icon-yintian"></span>
-            <span>阴</span>
-            <div>19°C</div>
-            <div>9°C</div>
-        </div>
+            <div class="future_item">
+                <h4>{{item.day}}</h4>
+                <p>{{item.date}}</p>
+                <span class="iconfont icon-yintian"></span>
+                <span>{{item.weather}}</span>
+                <div>{{item.temp[1]}}</div>
+                <div>{{item.temp[0]}}</div>
+            </div>
         {{/each}}
     </script>
     <script>
@@ -90,21 +90,50 @@
         document.querySelector('.real-time').innerHTML = htmlStr1;
 
         var dataList = data.result.future;
-        dataList.forEach(element => {
-            for (let i = 0; i < dataList.length; i++) {
-                var wd = new Date(dataList[i].date);
-                var obj = {};
-
-                obj.date = `${wd.getMonth() + 1}/${wd.getDate()}`;
-
-                let arr = dataList[i].temperature.split('/');
-                arr[0] = arr[0] + '°C';
-
+        let futureList = [];
+        for (let i = 0; i < dataList.length; i++) {
+            var obj = {};
+            var wd = new Date(dataList[i].date);
+            switch (wd.getDay()) {
+                case 0:
+                    obj.day = '星期天';
+                    break;
+                case 1:
+                    obj.day = '星期一';
+                    break;
+                case 2:
+                    obj.day = '星期二';
+                    break;
+                case 3:
+                    obj.day = '星期三';
+                    break;
+                case 4:
+                    obj.day = '星期四';
+                    break;
+                case 5:
+                    obj.day = '星期五';
+                    break;
+                case 6:
+                    obj.day = '星期六';
+                    break;
             }
-        });
+
+
+            obj.date = `${wd.getMonth() + 1}/${wd.getDate()}`;
+            // 温度
+            let arr = dataList[i].temperature.split('/');
+            // 
+            arr[0] = arr[0] + '℃';
+            // console.log(arr);
+            obj.temp = arr;
+            obj.weather = dataList[i].weather;
+            obj.wid = dataList[i].wid.day;
+            futureList.push(obj);
+        }
         let htmlStr2 = template('temp2', {
-            data: data.result.future
+            data: futureList
         });
+        document.querySelector('.slide_box').innerHTML = htmlStr2;
     </script>
     <!-- <script src="./js/ajax.js" type="module"></script> -->
 </body>

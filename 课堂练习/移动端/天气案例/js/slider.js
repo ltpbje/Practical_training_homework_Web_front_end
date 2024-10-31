@@ -24,7 +24,7 @@ function touchMove(e) {
 
 // 监听触摸结束事件
 slide_box.addEventListener('touchend', function () {
-    console.log(slide_box.getBoundingClientRect().x);
+    // console.log(slide_box.getBoundingClientRect().x);
     if (slide_box.getBoundingClientRect().x > 0) {
         // console.log(1);
         let startX = slide_box.getBoundingClientRect().x;
