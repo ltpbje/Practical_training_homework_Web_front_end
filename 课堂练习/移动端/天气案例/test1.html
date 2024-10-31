@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var F = function () { };
+        Object.prototype.a = function () {
+            return 2;
+        };
+        Function.prototype.b = function () {
+            return 1;
+        };
+        // 
+        var f = new F();
+
+        console.log(F.a());
+        console.log(f.a());
+
+    </script>
+</body>
+
+</html>
