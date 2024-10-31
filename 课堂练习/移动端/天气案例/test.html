@@ -9,12 +9,65 @@
 
 <body>
     <script>
-        console.log(Array.from('foo'));
-        // Expected output: Array ["f", "o", "o"]
+        // 效果实现说明：整个滑动效果都是基于修改transform: translateX()的横向偏移值来完成;
 
-        console.log(Array.from([1, 2, 3], (x) => x + x));
-        // Expected output: Array [2, 4, 6]
+        // 在开始之前需要先给需要滑动的DOM元素添加两个自定义属性用来左临时记录;
+        // 1、data - startx="" 用于记录每次单指触摸是的横向点位;
+        // 2、data - length="0" 用于记录每次滑动的距离和方向，负值为左，默认值为0表示还没有滑动过，没有上次滑动距离需要记录;
 
+        // 获取 滑动盒子
+        let slideBox = document.querySelector("#slide-box");
+
+        slideBox.addEventListener("touchstart", event => {
+            // 当仅有一个手指触摸的时候
+            if (event.changedTouches.length == 1) {
+                // 开始触摸时候 x的位置 存入自定义属性 startx 中
+                slideBox.dataset.startx = event.changedTouches[0].clientX - slideBox.dataset.length;
+            }
+        });
+        slideBox.addEventListener("touchmove", event => {
+            // 手指移动是  手指所在的X轴位置
+            var currentX = event.changedTouches[0].clientX;
+            // 获取触摸 滑动的距离
+            var _length = currentX - parseInt(slideBox.dataset.startx);
+            //  滑动的距离   存入自定义属性 length 中
+            slideBox.dataset.length = _length;
+            // 当滑动距离小于 0  的时候 
+            if (_length < 0) {
+                // 当滑动距离 大于 屏幕宽度 - 滑动盒子的宽度  的时候
+                if (_length > screen.width - slideBox.clientWidth) {
+                    // 没有 超出滑动盒子的右边界
+                    // 使盒子移动滑动的距离
+                    slideBox.style.transform = `translateX(${_length}px)`;
+                } else {
+                    // 超出滑动盒子的右边界
+                    slideBox.style.transform = `translateX(${screen.width - slideBox.clientWidth - 80}px)`;
+                    // 将自定义属性 length 改为 屏幕宽度 - 滑动盒子的宽度
+                    slideBox.dataset.length = screen.width - slideBox.clientWidth;
+                }
+            } else {
+                // 超出滑动盒子的左边界
+                // 向右移动 80px
+                slideBox.style.transform = `translateX(80px)`;
+                // 将自定义属性 length 改为 0
+                slideBox.dataset.length = 0;
+            }
+
+            // 监听触控结束事件
+            slideBox.addEventListener("touchend", event => {
+                // 自定义属性 length  等于 屏幕宽度 - 滑动盒子的宽度 时候
+                if (slideBox.dataset.length == screen.width - slideBox.clientWidth) {
+                    // 超出滑动盒子的右边界
+                    // 使滑动盒子translateX  等于 屏幕宽度 - 滑动盒子的宽度 
+                    slideBox.style.transform = `translateX(${screen.width - slideBox.clientWidth}px`;
+                } else if (slideBox.dataset.length == 0) {
+                    // 自定义属性 length  等于 0
+                    // 超出滑动盒子的左边界
+                    console.log("11");
+                    slideBox.style.transform = `translateX(0px)`;
+                }
+            });
+        })
     </script>
 </body>
 

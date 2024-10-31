@@ -81,19 +81,26 @@ html {
     font-size: 20rem;
     margin-top: 10rem;
  }
+ .content-box{
+    display: flex;
+    flex-direction: column;
+ }
 .future {
     width: 100vw;
     height: 400rem;
     display: flex;
     overflow: hidden;
+    flex: 1;
 }
 .future  .future_item{
-    width: 300rem;
-    height: 400rem;
+    width: 200rem;
+    /* height: 400rem; */
     border: 1px solid #000;
+    margin-right: 20rem;
 }
 .future .slide_box{
      display: flex;
+    /* justify-content:space-around ; */
     /* transition: all 0.3s linear; */
 }
 
