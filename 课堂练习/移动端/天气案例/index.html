@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <script src="./js/template-web.js"></script>
 </head>
 
 <body>
@@ -16,12 +18,19 @@
         <div class="content-box">
             <div class="real-time flex-column a-c">
                 <span>20<span>°C</span></span>
-                <span>16°C/22°C</span>
                 <span>阴 中度污染</span>
+                <span class="iconfont icon-yintian"></span>
             </div>
             <div class="future">
                 <div class="slide_box">
-                    <div class="future_item">1</div>
+                    <div class="future_item">
+                        <h4>今天</h4>
+                        <p>10/31</p>
+                        <span class="iconfont icon-yintian"></span>
+                        <span>阴</span>
+                        <div>19°C</div>
+                        <div>9°C</div>
+                    </div>
                     <div class="future_item">2</div>
                     <div class="future_item">3</div>
                     <div class="future_item">4</div>
@@ -31,7 +40,73 @@
         </div>
     </div>
 
+
+    <script src="./js/slider.js"></script>
     <script src="./js/index.js"></script>
+
+
+    <script type="text/html" id="temp1">
+        <div class="real-time flex-column a-c">
+            <span>{{data.temperature}}<span>°C</span></span>
+          
+            <span>{{data.info}} 
+                {{if data.aqi > 0 && data.aqi <= 50}}优
+                {{else if data.aqi>50 && data.aqi<=100}}
+                良
+                {{else if data.aqi>100&& data.aqi<=150}}
+                轻度污染
+                {{else}}
+                重度污染
+                {{/if}}
+            </span>
+            {{if data.wid =='00'}}
+            <span class="iconfont icon-qingtian"></span>
+            {{else if data.wid == '01'}}
+            <span class="iconfont icon-yintian"></span>
+            {{else if data.wid =='02'}}
+            <span class="iconfont icon-yintian"></span>
+            {{/if}}
+        </div>
+    </script>
+
+    <script type="text/html" id="temp2">
+        {{each data item index}}
+        <div class="future_item">
+            <h4>{{今天}}</h4>
+            <p>10/31</p>
+            <span class="iconfont icon-yintian"></span>
+            <span>阴</span>
+            <div>19°C</div>
+            <div>9°C</div>
+        </div>
+        {{/each}}
+    </script>
+    <script>
+        let data = checkWeather();
+        console.log(data);
+        let htmlStr1 = template('temp1', {
+            data: data.result.realtime
+        });
+        document.querySelector('.real-time').innerHTML = htmlStr1;
+
+        var dataList = data.result.future;
+        dataList.forEach(element => {
+            for (let i = 0; i < dataList.length; i++) {
+                var wd = new Date(dataList[i].date);
+                var obj = {};
+
+                obj.date = `${wd.getMonth() + 1}/${wd.getDate()}`;
+
+                let arr = dataList[i].temperature.split('/');
+                arr[0] = arr[0] + '°C';
+
+            }
+        });
+        let htmlStr2 = template('temp2', {
+            data: data.result.future
+        });
+    </script>
+    <!-- <script src="./js/ajax.js" type="module"></script> -->
 </body>
 
 </html>

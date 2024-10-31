@@ -1,93 +1,78 @@
-// 滑动盒子
-const slide_box = document.querySelector('.slide_box');
-let startX = 0;
-let slide_box_X;
-function touchMove(e) {
-
-    // console.log(e);
-    // 触摸时候的位置
-    const currentX = e.touches[0].clientX;
-    const moveX = currentX - startX;
-    const finalX = slide_box_X + moveX;
-    // console.log(finalX);
-
-    if (finalX > 80) {
-        slide_box.style.transform = `translateX(80px)`;
-    }
-    else if (finalX < -1 * (slide_box.clientWidth - document.querySelector('.future').clientWidth) - 80) {
-        slide_box.style.transform = `translateX(${-1 * (slide_box.clientWidth - document.querySelector('.future').clientWidth) - 80}px)`;
-    }
-    else {
-        slide_box.style.transform = `translateX(${finalX}px)`;
-    }
-}
-
-// 监听触摸结束事件
-slide_box.addEventListener('touchend', function () {
-    console.log(slide_box.getBoundingClientRect().x);
-    if (slide_box.getBoundingClientRect().x > 0) {
-        // console.log(1);
-        let startX = slide_box.getBoundingClientRect().x;
-        // 回弹效果
-        let timer = setInterval(() => {
-            startX -= 5;
-            slide_box.style.transform = `translateX(${startX}px)`;
-
-            if (startX <= 0) {
-                clearInterval(timer);
+// 将手动粘贴复制到本地的服务器数据，进行反序列化操作
+// 
+const data1 = {
+    "reason": "查询成功!",
+    "result": {
+        "city": "北京",
+        "realtime": {
+            "temperature": "12",
+            "humidity": "70",
+            "info": "阴",
+            "wid": "02",
+            "direct": "东北风",
+            "power": "2级",
+            "aqi": "52"
+        },
+        "future": [
+            {
+                "date": "2024-10-30",
+                "temperature": "10\/17℃",
+                "weather": "多云转阴",
+                "wid": {
+                    "day": "01",
+                    "night": "02"
+                },
+                "direct": "东北风转北风"
+            },
+            {
+                "date": "2024-10-31",
+                "temperature": "8\/16℃",
+                "weather": "多云转晴",
+                "wid": {
+                    "day": "01",
+                    "night": "00"
+                },
+                "direct": "西北风转北风"
+            },
+            {
+                "date": "2024-11-01",
+                "temperature": "7\/19℃",
+                "weather": "晴转多云",
+                "wid": {
+                    "day": "00",
+                    "night": "01"
+                },
+                "direct": "东北风转西南风"
+            },
+            {
+                "date": "2024-11-02",
+                "temperature": "7\/16℃",
+                "weather": "多云转阴",
+                "wid": {
+                    "day": "01",
+                    "night": "02"
+                },
+                "direct": "南风"
+            },
+            {
+                "date": "2024-11-03",
+                "temperature": "2\/16℃",
+                "weather": "多云转晴",
+                "wid": {
+                    "day": "01",
+                    "night": "00"
+                },
+                "direct": "北风"
             }
-        }, 10);
-        // slide_box.style.transform = `translateX(0px)`;
-    }
-    // console.log(-1 * (slide_box.clientWidth - document.querySelector('.future_item').clientWidth));
-    // 滑块向左移动的最大距离
-    const maxLeft = -1 * (slide_box.clientWidth - document.querySelector('.future').clientWidth);
-    if (slide_box.getBoundingClientRect().x < maxLeft) {
-        // console.log(1);
-        let startX = slide_box.getBoundingClientRect().x;
-        // 回弹效果
-        let timer = setInterval(() => {
-            startX += 5;
-            slide_box.style.transform = `translateX(${startX}px)`;
+        ]
+    },
+    "error_code": 0
+};
 
-            if (startX >= maxLeft) {
-                clearInterval(timer);
-            }
-        }, 10);
-        // slide_box.style.transform = `translateX(${maxLeft}px)`;
-    }
-    // slide_box.removeEventListener('touchmove', touchMove);
-});
-// 监听触摸开始事件
-slide_box.addEventListener('touchstart', function (e) {
-    // 记录刚触摸时候 滑动盒子的位置
-    slide_box_X = slide_box.getBoundingClientRect().x;
-    // 记录刚触摸时候的位置
-    startX = e.touches[0].clientX;
-    // console.log(startX);
-
-    // // 记录 触摸移动事件
-    // // console.log(e.touches[0].clientX);
-    // slide_box.addEventListener('touchmove', touchMove);
-    // slide_box.addEventListener('touchend', function () {
-    //     console.log(slide_box.getBoundingClientRect().x);
-    //     if (slide_box.getBoundingClientRect().x > 0) {
-    //         // console.log(1);
-
-    //         slide_box.style.transform = `translateX(0px)`;
-    //     }
-    //     // console.log(-1 * (slide_box.clientWidth - document.querySelector('.future_item').clientWidth));
-    //     // 滑块向左移动的最大距离
-    //     const maxLeft = -1 * (slide_box.clientWidth - document.querySelector('.future').clientWidth);
-    //     if (slide_box.getBoundingClientRect().x < maxLeft) {
-    //         // console.log(1);
-
-    //         slide_box.style.transform = `translateX(${maxLeft}px)`;
-    //     }
-    //     slide_box.removeEventListener('touchmove', touchMove);
-    // });
-});
+const checkWeather = () => {
+    var result = JSON.parse(JSON.stringify(data1));
+    return result;
+};
 
 
-slide_box.addEventListener('touchmove', touchMove);
 
