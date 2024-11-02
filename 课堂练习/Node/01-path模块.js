@@ -19,3 +19,5 @@ console.log(p3);
 let p4 = path.resolve('./text/abc');
 console.log(p4);
 
+
+
