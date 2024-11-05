@@ -565,3 +565,225 @@ fs.writeFileSync(path.join(__dirname,"/new.xlsx"),excelBuffer,
 console.log("写入成功")
 ```
 
+# nodeJS连接mysql数据库
+
+安装第三方模块mysql
+
+```cmd
+npm i mysql -S
+```
+
+创建数据库链接
+
+```js
+const mysql = require("mysql");
+//创建mysql链接
+const conn = mysql.createConnection({
+    host:"127.0.0.1",
+    port:3306,
+    user:"root",
+    password:"root",
+    database:"h2003"
+})
+conn.connect(error => {
+if(error){
+    console.log("链接数据库失败");
+    console.log(error);
+}else{
+    console.log("数据库连接成功")
+}
+})
+```
+
+## 1、新增操作
+
+```js
+//先准备好，需要使用的sql语句
+let insertSql = `insert into test (name,age) value ("赵六","80")`;
+//然后，使用conn中的query方法，把sql语句作为参数传入
+//同时query方法还接收一个回调函数，其中sql语句操作的结果集就回作为该回调函数的
+第二个实参传入
+conn.query(insertSql,(error,result) => {
+if(error){
+    console.log("执行失败",error);
+}else{
+    console.log(result);
+}
+    conn.end();
+})
+```
+
+分析返回结果
+
+```js
+OkPacket {
+    fieldCount: 0,
+    affectedRows: 1,
+    insertId: 7,
+    serverStatus: 2,
+    warningCount: 0,
+    message: '',
+    protocol41: true,
+    changedRows: 0
+}
+```
+
+上面的就是数据库新增成功之后返回的结果集，我们来分析下
+
+- insertId：表示当前表里面的id是自动增长的，就回返回这个自动增长的id
+- affectedRows：表示操作的行数
+- changedRows：表示更改的行数
+
+以上这些结果集中的属性都可以作为判断依据来决定返回给前端的结果
+
+## 2、带参新增
+
+```js
+let insertSql = `insert into test (name,age) value (?,?)`;
+conn.query(insertSql,["张三",77],(error,result) => {
+if(error){
+    console.log(error);
+}else{
+    console.log(result);
+}
+    conn.end();
+})
+```
+
+## 3、修改操作
+
+```js
+let updateSql = `update test set name = ? where age = ?`
+conn.query(updateSql,["zhangsan",77],(error,result) => {
+if(error){
+    console.log(error);
+}else{
+    console.log(result);
+}
+    conn.end();
+})
+```
+
+## 4、删除操作
+
+```js
+
+let deleteSql = `delete from test where age = ?`;
+conn.query(deleteSql, [80], (error, result) => {
+    if (error) {
+        console.log(error);
+    } else {
+        console.log(result);
+    }
+    conn.end();
+});
+```
+
+## 5、查询操作
+
+数据库的查询操作与之前的增、删、改不属于同一个类型操作，查询是回把查询结果返回给用户
+
+### 5.1、普通查询
+
+```js
+let strSql = `select * from test`;
+conn.query(strSql, (error, result) => {
+    if (error) {
+        console.log(error);
+    } else {
+        console.log(result);
+    }
+    conn.end();
+})
+```
+
+查询结果
+
+```js
+[
+    RowDataPacket { name: '的撒', age: 12, id: 1 },
+    RowDataPacket { name: '哈哈', age: 18, id: 2 },
+    RowDataPacket { name: '哈哈', age: 18, id: 4 },
+    RowDataPacket { name: '李四', age: 40, id: 5 },
+    RowDataPacket { name: '王五', age: 20, id: 6 },
+    RowDataPacket { name: 'zhangsan', age: 77, id: 8 }
+]	
+```
+
+查询的时候返回的是一个数组，这个数组里面的每一个对象就是一行数据，用字段名做属性名，当前字段的值作为属性值
+
+### 5.2、带参查询
+
+```js
+ let strSql = `select * from test where age = ?`;
+    conn.query(strSql, [77], (error, result) => {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log(result);
+        }
+        conn.end();
+    })
+```
+
+### 5.3、模糊查询
+
+```js
+let strSql = `select * from test where age like ?`;
+conn.query(strSql,[77],(error,result) => {
+if(error){
+    console.log(error);
+}else{
+    console.log(result);
+}
+    conn.end();
+})
+```
+
+### 5.4、SQL语句动态拼接（重点！！！！！！！）
+
+我们先来看两个语句
+
+```sql
+select * from test where 1
+select * from test
+```
+
+这两条语句执行效果是一样的，但是有区别
+
+第一条sql语句的后面我们添加了where，这样后期即使再添加条件，我们直接链接一个and即可，而第二条就很麻烦
+
+```js
+let sname;
+let ssex = "男";
+let snation
+//准备sql语句
+//select * from stuinfo where 1 and sname like ? and ssex = ? and
+snation like ?
+let strSql = `select * from stuinfo where 1`;
+let arr = [];
+//开始拼接
+if(sname){
+    strSql = strSql + ` and sname like ?`;
+    arr.push(sname);
+}
+if(ssex){
+    strSql = strSql + ` and ssex = ?`;
+    arr.push(ssex);
+}
+
+if(snation){
+strSql = strSql + ` and snation like ?`;
+    arr.push(snation);
+}
+conn.query(strSql,arr,(error,result) => {
+if(error){
+    console.log("执行失败",error)
+}else{
+    console.log("查询成功")
+    console.log(result)
+}
+    conn.end();
+})
+```
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        var a, b;
+        (function () {
+            console.log(a);//undefined
+            console.log(b);//undefined
+            // 声明变量a，并将变量b的值赋给变量a，同时将3赋给变量b
+            var a = b = 3;
+            console.log(a);// 3
+            console.log(b);// 3 
+        })();
+        console.log(a);// underfined
+        console.log(b);// 3
+
+
+    </script>
+</body>
+
+</html>
