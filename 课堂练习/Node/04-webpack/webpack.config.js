@@ -20,9 +20,13 @@ const config = {
     },
     // module在打包过程 根据你自己的需求载入 webpack的第三方模块  对打包过程添加规则
     module: {
+        //rules是一个webpack的规则数组，数组中的每一个元素就是一条规则  每一条规则就是一个匿名的配置对象
         rules: [
+            //创建一条规则，这条规则适用于所有的JS文件
             {
-                test: /\.js$/
+                test: /\.js$/, //匹配所有的JS文件
+                exclude: /node_modules/, //把node_modules目录中的js文件排除在babel的转换以外
+                loader: "babel-loader",//把当前规则所匹配的JS文件在打包过程中需要进入到babel中进行处理
             }
         ]
     },
