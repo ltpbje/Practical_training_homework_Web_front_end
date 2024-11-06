@@ -1,1 +1,31 @@
 // babel的配置文件
+{
+  // 预设信息
+    "presets": [
+        // 代表现在使用默认配置好的插件包集合
+        [
+            "@babel/preset-env",{
+                // 使用了插件包中的哪个插件，在打包的时候就打包哪个插件
+                "useBuiltIns":"usage",
+                // 指定core-js 的版本是3
+                "corejs":"3",
+                // 目标环境
+                "targets":{
+                    "browsers":[
+                        // "ie 6"
+                        //最新的两个大版本
+                        "last 2 versions",
+                       //全球使用人数超过1%的浏览器
+                        "> 1%",
+                      //排除超过两年没有更新的浏览器
+                        "not dead"
+                        //这里最终的过滤结果就是通过last 2 versions筛选的浏览器中，全球使用率低于1%  且官方声明不再维护或者事实上已经两年没有更新过版本的浏览器
+                    ]
+                }
+            }
+        ]
+    ],
+    "plugins": [
+        "@babel/plugin-transform-runtime"
+    ]
+}

@@ -10,17 +10,18 @@
 <body>
     <script>
 
-        var a, b;
-        (function () {
-            console.log(a);//undefined
-            console.log(b);//undefined
-            // 声明变量a，并将变量b的值赋给变量a，同时将3赋给变量b
-            var a = b = 3;
-            console.log(a);// 3
-            console.log(b);// 3 
-        })();
-        console.log(a);// underfined
-        console.log(b);// 3
+        const object1 = {
+            a: 'somestring',
+            b: 42,
+        };
+
+        for (const [key, value] of Object.entries(object1)) {
+            console.log(`${key}: ${value}`);
+
+        }
+
+        console.log(Object.entries(object1));
+
 
 
     </script>
