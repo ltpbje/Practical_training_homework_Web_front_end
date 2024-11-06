@@ -341,4 +341,86 @@ npm i @babel/runtime-corejs3 -D
 
  -  commonjs 使用commonjs模块化语法做导入导出
  -  auto
- - 1false 使用ESModules规范
+ - false 使用ESModules规范
+
+## 6、配置html-webpack-plugin
+
+上面打包好的JS文件最终是要在html文件里面使用的，所以我们生成的JS文件需要自动插入到所需要的html文件中，这个时候我们可以使用webpack的插件html-webpack-plugin
+
+安装插件
+
+```cmd
+npm i html-webpack-plugin -D
+```
+
+**准备一个html文件作为引入打包好的JS文件的模板文件使用**
+
+配置插件
+
+```js
+// webpack 配置文件
+//我们把这个文件看成事webpack的配置文件，以后的webpack就使用这个配置文件进行打包
+
+//webpack的配置文件中，使用commonJs模块化规范
+
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const config = {
+    //.........
+    // plugins对webpack本身的打包功能做额外的扩展配置
+    plugins: [
+        new HtmlWebpackPlugin({
+            //配置模板文件的位置
+            template: path.join(__dirname, './index.html'),
+            //生成的新文件名称
+            filename: 'index.html',
+            //生成的js和css自动插入
+            inject: true
+        }),
+        new CleanWebpackPlugin(),
+
+    ]
+};
+
+
+module.exports = config;
+
+```
+
+## 7、配置clean-webpack-plugin
+
+我们在生成目录中，会有一些不需要的文件，这个时候手动删除是一个很危险的行为，现在我们可以使用clean-webpack-plugin它会自动分析，将不需要的文件删除
+
+安装包
+
+```cmd
+npm i clean-webpack-plugin -D
+```
+
+配置
+
+```js
+// webpack 配置文件
+//我们把这个文件看成事webpack的配置文件，以后的webpack就使用这个配置文件进行打包
+
+//webpack的配置文件中，使用commonJs模块化规范
+
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const config = {
+
+    // plugins对webpack本身的打包功能做额外的扩展配置
+    plugins: [
+       //.........
+        new CleanWebpackPlugin(),
+
+    ]
+};
+
+
+module.exports = config;
+
+```
+

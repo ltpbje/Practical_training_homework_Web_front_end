@@ -4,8 +4,8 @@
 //webpack的配置文件中，使用commonJs模块化规范
 
 const path = require('path');
-
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
     // mode设置webpack基于开发或者生产环境打包
     mode: 'development',
@@ -27,12 +27,31 @@ const config = {
                 test: /\.js$/, //匹配所有的JS文件
                 exclude: /node_modules/, //把node_modules目录中的js文件排除在babel的转换以外
                 loader: "babel-loader",//把当前规则所匹配的JS文件在打包过程中需要进入到babel中进行处理
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: "style-loader"
+                    },
+                    {
+                        loader: "css-loader"
+                    },
+                ]
             }
         ]
     },
     // plugins对webpack本身的打包功能做额外的扩展配置
     plugins: [
-
+        new HtmlWebpackPlugin({
+            //配置模板文件的位置
+            template: path.join(__dirname, './index.html'),
+            //生成的新文件名称
+            filename: 'index.html',
+            //生成的js和css自动插入
+            inject: true
+        }),
+        new CleanWebpackPlugin(),
 
     ]
 };
