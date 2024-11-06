@@ -6,6 +6,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const config = {
     // mode设置webpack基于开发或者生产环境打包
     mode: 'development',
@@ -32,10 +33,13 @@ const config = {
                 test: /\.css$/,
                 use: [
                     {
-                        loader: "style-loader"
+                        loader: MiniCssExtractPlugin.loader
                     },
                     {
-                        loader: "css-loader"
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 1
+                        }
                     },
                     {
                         loader: 'postcss-loader'
@@ -55,7 +59,11 @@ const config = {
             inject: true
         }),
         new CleanWebpackPlugin(),
-
+        new MiniCssExtractPlugin({
+            filename: "css/index.[hash:8].css",
+            //是否忽略第三方插件处理
+            ignoreOrder: false,
+        }),
     ]
 };
 

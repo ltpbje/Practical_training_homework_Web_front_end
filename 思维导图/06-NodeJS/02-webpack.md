@@ -410,7 +410,6 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
-
     // plugins对webpack本身的打包功能做额外的扩展配置
     plugins: [
        //.........
@@ -424,3 +423,220 @@ module.exports = config;
 
 ```
 
+## 8、使用webpack处理css
+
+首先我们先明确，webpack本身只能处理JS，是不支持css执行的，所以我们把css通过import导入JS中来实现CSS打包
+
+新建一个css文件，导入到打包的入口文件中
+
+```js
+import "../css/index.css"
+```
+
+webpack本身不能加载css代码，在js里面也不能带入css代码，但是可以借助loader来实现
+
+**安装loader**
+
+```cmd
+npm i css-loader style-loader -D
+```
+
+css-loader：负责解析导入到JS中的css代码
+
+style-loader：在DOM中创建一个style，将css-loader负责解析的样式代码写入到style标签中形成一个内部样式
+**配置规则**
+
+```js
+//.......
+rules: [
+    //......
+    {
+        test: /\.css$/,
+        use: [
+            "style-loader",
+            "css-loader"
+        ]
+    }
+];
+//......
+```
+
+把配置完成之后，我们可以先去设置css目标环境
+
+可以在package.json设置
+
+```json
+"browserslist":[
+    "last 2 version",
+    "> 1%",
+    "ie 6"
+]
+```
+
+>**扩展：**
+>
+>这里再package.json中设置的browserslist其实跟.babelrc中配置的targets是一个东西，都是目标环境，只不过在 .babelrc中的是针对babel转换ES语法时配置的目标环境，不会影响到css
+>
+>而在package.json中写的browserslist是项目全局可用，冰鞋写在不同的位置有优先级存在
+>
+>
+>
+>基于上面的内容，我们简单来说下如何管理目标环境（项目需要兼容的浏览器）的几种写法
+>
+>- 作为babel预设配置文件中的配置写入，这样只针对JS
+>- 在项目的package.json中写入，针对项目全局（推荐写法）
+>- 在项目的根目录下新建一个 .browserslistrc 文件写入
+>
+>
+
+
+
+
+
+## 9、使用postcss处理css的兼容性
+
+安装loader
+
+```cmd
+npm i postcss-loader -D
+```
+
+配置
+
+```js
+{
+    test:/\.css$/,
+    use:[
+        "style-loader",
+        "css-loader",
+        "postcss-loader"
+    ]
+}
+```
+
+当完成配置之后，我们发现postcss并没有帮助我们解决css兼容性问题，因为postcss只是提供了一个编译环境，在这个环境要如何编译css需要做一个预设信息的配置，这些**预设信息的配置我们通过postcss这个loader自身来完成**
+
+### 9.1、安装postcss的预设信息插件
+
+```cmd
+npm i postcss-import postcss-preset-env cssnano -D
+```
+
+postcss-import ：如果在css中发现@import指令，进行处理
+
+postcss-preset-env：提供css兼容性处理的插件，自动添加厂家前缀，自动转化代码（以前我们使用的postcss-cssnext已经被弃用）
+
+cssnano：可以对需要处理的css做进一步压缩
+
+### 9.2、配置postcss的预设信息
+
+在当前项目根目录下创建一个文件postcss.config.js，**文件名必须是这个名字**
+
+```js
+module.exports = {
+    plugins:[
+        require("postcss-import"),
+        reuqire("postcss-preset-env"),
+        require("cssnano")
+    ]
+}
+```
+
+> 注意：
+> 如果在编译的时候报 true is not Postcss Plugin 是因为postcss版本过低，我们可以手动提升版本
+>
+> ```cmd
+> npm i postcss@latest -D
+> ```
+>
+
+## 10、重新分离CSS
+
+我们需要把打包之后的css代码，再单独分离出来方便我们后续的一些处理，需要使用到webpack的一个第三方插件 mini-css-extract-plugin
+
+安装插件
+
+```cmd
+npm i mini-css-extract-plugin -D
+```
+
+**修改配置规则，并调用css分离插件**
+
+```js
+// webpack 配置文件
+//我们把这个文件看成事webpack的配置文件，以后的webpack就使用这个配置文件进行打包
+
+//webpack的配置文件中，使用commonJs模块化规范
+
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const config = {
+    // mode设置webpack基于开发或者生产环境打包
+    mode: 'development',
+    // entry 入口
+    //entry设置webpack的入口文件路径
+    entry: path.join(__dirname, './js/index.js'),
+    // output设置webpack打包之后生成的新文件的文件名和保存路径  出口
+    output: {
+        filename: 'bundle.js',
+        path: path.join(__dirname, './dist'),
+        publicPath: './'
+    },
+    // module在打包过程 根据你自己的需求载入 webpack的第三方模块  对打包过程添加规则
+    module: {
+        //rules是一个webpack的规则数组，数组中的每一个元素就是一条规则  每一条规则就是一个匿名的配置对象
+        rules: [
+            //创建一条规则，这条规则适用于所有的JS文件
+            {
+                test: /\.js$/, //匹配所有的JS文件
+                exclude: /node_modules/, //把node_modules目录中的js文件排除在babel的转换以外
+                loader: "babel-loader",//把当前规则所匹配的JS文件在打包过程中需要进入到babel中进行处理
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader
+                    },
+                    {
+                        loader: "css-loader",
+                        options: {
+                            importLoaders: 1
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader'
+                    }
+                ]
+            }
+        ]
+    },
+    // plugins对webpack本身的打包功能做额外的扩展配置
+    plugins: [
+        new HtmlWebpackPlugin({
+            //配置模板文件的位置
+            template: path.join(__dirname, './index.html'),
+            //生成的新文件名称
+            filename: 'index.html',
+            //生成的js和css自动插入
+            inject: true
+        }),
+        new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin({
+            filename: "css/index.[hash:8].css",
+            //是否忽略第三方插件处理
+            ignoreOrder: false,
+        }),
+    ]
+};
+
+
+module.exports = config;
+
+```
+
+> 注意：
+>
+> 这里我们把分离的css样式放到了一个独立的css文件中，就相当于是把导入到JS中的css做成了一个外部样式，所以，我们这里就不再需要style-loader，因为style-loader本质上来讲是把css-loader解析的css代码做成了一个内部样式
