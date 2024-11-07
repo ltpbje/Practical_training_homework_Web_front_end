@@ -7,6 +7,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const loader = require('sass-loader');
 const config = {
     // mode设置webpack基于开发或者生产环境打包
     mode: 'development',
@@ -30,7 +31,7 @@ const config = {
                 loader: "babel-loader",//把当前规则所匹配的JS文件在打包过程中需要进入到babel中进行处理
             },
             {
-                test: /\.css$/,
+                test: /\.s[ca]ss$/,
                 use: [
                     {
                         loader: MiniCssExtractPlugin.loader
@@ -38,15 +39,34 @@ const config = {
                     {
                         loader: "css-loader",
                         options: {
-                            importLoaders: 1
+                            importLoaders: 2
                         }
                     },
                     {
                         loader: 'postcss-loader'
+                    },
+                    {
+                        loader: 'sass-loader'
                     }
                 ]
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg|bmp|webp)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: '[name].[hash:8].[ext]',
+                            outputPath: "img/",
+                            esModule: false,
+                            publicPath: '../img',
+                            limit: 8 * 1024 //把小于8KB的图片转换成base64格式
+                        }
+                    },
+                ]
             }
-        ]
+        ],
+
     },
     // plugins对webpack本身的打包功能做额外的扩展配置
     plugins: [

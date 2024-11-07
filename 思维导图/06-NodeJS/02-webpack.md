@@ -640,3 +640,38 @@ module.exports = config;
 > 注意：
 >
 > 这里我们把分离的css样式放到了一个独立的css文件中，就相当于是把导入到JS中的css做成了一个外部样式，所以，我们这里就不再需要style-loader，因为style-loader本质上来讲是把css-loader解析的css代码做成了一个内部样式
+
+
+
+## 11、配置sass
+
+我们通过第三方 sass-loader 来实现
+
+安装包
+
+```cmd
+npm i sass-loader -D
+```
+
+```js
+ {
+    test: /\.s[ca]ss$/,
+        use: [
+            MiniCssExtractPlugin.loader,
+            {
+                loader: "css-loader",
+                options: {
+                    importLoaders: 2
+                }
+            },
+            "postcss-loader",
+            "sass-loader"
+        ];
+}
+```
+
+## 12、webpack文件处理
+
+在css样式中我们使用了背景图片，字体文件等一些静态资源，那么，在打包的时候针对这些文件我们需要怎么处理？
+
+现在我们使用的webpack5的版本其实可以自动对文件进行处理，但是处理效果很稀烂，所以，我们还是自己来通过loader去实现，这里我们会使用到 url-loader 和file-loader
