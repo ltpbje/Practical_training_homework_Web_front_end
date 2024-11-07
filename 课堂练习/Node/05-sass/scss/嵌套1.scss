@@ -1,0 +1,16 @@
+.box1{
+    width: 100px;
+    &:hover{
+        color: red;
+    }
+    a{
+        color: red;
+        p{
+            font-size: 20px;
+        }
+
+    }
+    h2{
+        color: blue;
+    }
+}

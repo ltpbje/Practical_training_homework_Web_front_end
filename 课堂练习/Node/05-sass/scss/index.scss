@@ -1,0 +1,12 @@
+$color1 :red;
+
+.box{
+    width: 100px;
+    height: 100px;
+    color: $color1;
+}
+
+$color1:blue!default;
+.box1{
+    color:$color1;
+}

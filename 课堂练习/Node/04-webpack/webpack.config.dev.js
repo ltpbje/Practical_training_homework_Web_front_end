@@ -6,7 +6,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const chalk = require('chalk');
 const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin');
 const loader = require('sass-loader');
@@ -15,7 +14,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { type } = require('os');
 const config = {
     // mode设置webpack基于开发或者生产环境打包
-    mode: 'production',
+    mode: 'development',
     // entry 入口
     //entry设置webpack的入口文件路径
     entry: {
@@ -26,7 +25,6 @@ const config = {
     output: {
         filename: 'js/[name].[fullhash:8].js',
         path: path.join(__dirname, './dist'),
-        publicPath: './',
         clean: true
     },
     // module在打包过程 根据你自己的需求载入 webpack的第三方模块  对打包过程添加规则
@@ -43,7 +41,7 @@ const config = {
                 test: /\.css$/,
                 use: [
                     {
-                        loader: MiniCssExtractPlugin.loader
+                        loader: "style-loader"
                     },
                     {
                         loader: "css-loader",
@@ -88,7 +86,6 @@ const config = {
                             name: '[name].[hash:8].[ext]',
                             outputPath: "img/",
                             esModule: false,
-                            publicPath: '../img',
                             limit: 8 * 1024 //把小于8KB的图片转换成base64格式
                         }
                     },
@@ -144,17 +141,40 @@ const config = {
             ]
         }),
         new CleanWebpackPlugin(),
-        new MiniCssExtractPlugin({
-            filename: "css/index.[hash:8].css",
-            //是否忽略第三方插件处理
-            ignoreOrder: false,
-        }),
         // 创建一个ProgressBarWebpackPlugin实例，设置进度条的格式为绿色文字“进度:”，白色文字“[:bar]”，绿色文字“:percent”，并且不清除进度条
         new ProgressBarWebpackPlugin({
             format: chalk.green('进度:') + chalk.white("[:bar]") + chalk.green(':percent'),
             clear: false
         })
-    ]
+    ],
+    // 配置开发服务器
+    devServer: {
+        // 设置端口号为8088
+        port: 8088,
+        // 允许所有主机访问
+        allowedHosts: '*',
+        // 配置静态文件目录
+        static: {
+            // 静态文件目录为当前目录下的static文件夹
+            directory: path.join(__dirname, './static')
+        },
+        // 配置客户端
+        client: {
+            // 显示错误信息
+            overlay: true,
+            // 显示编译进度
+            progress: true,
+        },
+        // 监听文件变化
+        watchFiles: [
+            // 监听index.html文件变化
+            "./index.html",
+            // 监听login.html文件变化
+            './login.html',
+        ],
+        // 启用热更新
+        hot: true
+    }
 };
 
 

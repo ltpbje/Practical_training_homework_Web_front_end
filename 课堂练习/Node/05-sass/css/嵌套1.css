@@ -1,0 +1,15 @@
+.box1 {
+  width: 100px;
+}
+.box1:hover {
+  color: red;
+}
+.box1 a {
+  color: red;
+}
+.box1 a p {
+  font-size: 20px;
+}
+.box1 h2 {
+  color: blue;
+}
