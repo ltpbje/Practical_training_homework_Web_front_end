@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const loader = require('sass-loader');
+const { type } = require('os');
 const config = {
     // mode设置webpack基于开发或者生产环境打包
     mode: 'development',
@@ -31,7 +32,7 @@ const config = {
                 loader: "babel-loader",//把当前规则所匹配的JS文件在打包过程中需要进入到babel中进行处理
             },
             {
-                test: /\.s[ca]ss$/,
+                test: /\.css$/,
                 use: [
                     {
                         loader: MiniCssExtractPlugin.loader
@@ -39,15 +40,15 @@ const config = {
                     {
                         loader: "css-loader",
                         options: {
-                            importLoaders: 2
+                            importLoaders: 1
                         }
                     },
                     {
                         loader: 'postcss-loader'
                     },
-                    {
-                        loader: 'sass-loader'
-                    }
+                    // {
+                    //     loader: 'sass-loader'
+                    // }
                 ]
             },
             {
@@ -63,7 +64,24 @@ const config = {
                             limit: 8 * 1024 //把小于8KB的图片转换成base64格式
                         }
                     },
-                ]
+                ],
+                type: 'javascript/auto'
+            },
+            {
+                test: /\.(ttf|eot|woff|woff2)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: '[name].[hash:8].[ext]',
+                            outputPath: "fonts/",
+                            esModule: false,
+                            publicPath: '../fonts',
+                            limit: 8 * 1024 //把小于8KB的图片转换成base64格式
+                        }
+                    },
+                ],
+                type: 'javascript/auto'
             }
         ],
 

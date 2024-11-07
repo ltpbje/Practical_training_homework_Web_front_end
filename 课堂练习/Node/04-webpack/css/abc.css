@@ -1,3 +1,9 @@
 div{
     transform: translateX(100px);
 }
+
+.box{
+    height: 50px;
+    width:  50px;
+    background: url(../images/icon.png) no-repeat center;
+}
