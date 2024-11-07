@@ -1,0 +1,11 @@
+.box1 {
+  width: 500px;
+  display: flex;
+  flex-direction: row;
+}
+
+.box2 {
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}

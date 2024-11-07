@@ -1,0 +1,14 @@
+@mixin flex-box($dir:row){
+    display: flex;
+    flex-direction: $dir;
+}
+.box1{
+    width: 500px;
+    @include flex-box();
+}
+.box2{
+    height: 500px;
+    @include flex-box(column);
+}
+
+  

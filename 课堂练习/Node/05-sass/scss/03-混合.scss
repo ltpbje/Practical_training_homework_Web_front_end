@@ -1,0 +1,20 @@
+//定义一个混合器
+@mixin btn(){
+    min-width: 100px;
+    height: 36px;
+    border: 1px solid #000;
+    text-align: center;
+    border-radius: 10px;
+}
+
+
+
+.btn1{
+    background-color: red;
+    @include btn();
+}
+
+.btn2{
+    background-color: blue;
+    @include btn();
+}
