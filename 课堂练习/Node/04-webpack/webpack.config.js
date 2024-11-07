@@ -7,6 +7,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const chalk = require('chalk');
+const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin');
 const loader = require('sass-loader');
 const { type } = require('os');
 const config = {
@@ -102,6 +104,11 @@ const config = {
             //是否忽略第三方插件处理
             ignoreOrder: false,
         }),
+        // 创建一个ProgressBarWebpackPlugin实例，设置进度条的格式为绿色文字“进度:”，白色文字“[:bar]”，绿色文字“:percent”，并且不清除进度条
+        new ProgressBarWebpackPlugin({
+            format: chalk.green('进度:') + chalk.white("[:bar]") + chalk.green(':percent'),
+            clear: false
+        })
     ]
 };
 
