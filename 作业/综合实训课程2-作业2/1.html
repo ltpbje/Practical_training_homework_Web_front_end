@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<!-- 题目一：
+实现一个函数，该函数接受一个数组和一个函数作为参数，返回一个新的数组，新数组中的每个元素是
+原数组中对应的元素通过给定的函数处理后的结果。要求使用 Array.prototype.reduce 方法来完成
+这一操作，而不是直接使用 map 。
+输入：一个整数数组 [1, 2, 3] 和一个函数 function(x) { return x * 2; }
+输出：一个新的数组 [2, 4, 6] -->
+
+<body>
+    <script>
+        function myMap(x, fn) {
+            let arr = [];
+            x.reduce((prev, current) => {
+                arr.push(fn(current));
+            }, 0);
+            // console.log(arr);
+            return arr;
+        }
+        const newArr = myMap([2, 4, 10], function (x) { return x * 2; });
+        console.log(newArr);
+    </script>
+</body>
+
+</html>

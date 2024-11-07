@@ -1,0 +1,11 @@
+@media only screen and (max-width: 768px) {
+  .box1 {
+    width: 100px;
+  }
+  .box1 .abc {
+    height: 100px;
+  }
+  .def {
+    color: red;
+  }
+}

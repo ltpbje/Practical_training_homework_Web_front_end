@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<!-- 题目二：
+创建一个Promise链，该链首先执行一个异步操作，模拟网络请求，成功后打印“请求成功”，如果失败
+则捕获错误并打印“请求失败”。然后，在链的最后添加一个finally方法，无论前面的操作成功还是失
+败，都打印“操作结束”。
+提示：可以使用 setTimeout 来模拟异步操作的成功或失败。 -->
+
+<body>
+
+    <script>
+        const p = new Promise((reslove, reject) => {
+            try {
+                setTimeout(() => {
+                    reslove('成功');
+                }, 2000);
+            } catch {
+                reject('错误');
+            }
+        });
+        p.then(() => {
+            console.log('请求成功');
+
+        });
+        p.catch((error) => {
+            console.log("请求失败");
+        });
+        p.finally(() => {
+            console.log('操作结束');
+
+        })
+    </script>
+</body>
+
+</html>

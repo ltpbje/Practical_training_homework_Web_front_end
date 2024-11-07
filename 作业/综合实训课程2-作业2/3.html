@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 题目三：
+设计一个装饰器模式的函数，用于记录任何函数的调用次数。这个装饰器应该能够接收任何函数，并返
+回一个新的函数，每次调用新的函数时，都会增加计数器，并在控制台输出当前的调用次数。
+输入：一个简单的函数 function sayHello(name) { console.log('Hello ' + name); }
+输出：当调用装饰后的函数三次时，控制台应显示 "Called 1 time", "Called 2 times", "Called 3
+times" -->
+</head>
+
+<body>
+    <script>
+        // 定义一个装饰器函数，用于装饰其他函数
+        function decoratorFn(fn) {
+            // 定义一个计数器，用于记录函数被调用的次数
+            let count = 0;
+
+            // 返回一个新的函数，用于替换原来的函数
+            return function (...args) {
+                // 每次调用函数时，计数器加1
+                count++;
+                // 输出函数被调用的次数
+                console.log(`Called ${count} time${count > 1 ? 's' : ''}`);
+                // 调用原来的函数，并返回结果
+                return fn.apply(this, args);
+            };
+        }
+        const sayHello = (name) => console.log('Hello ' + name);
+        const sayHelloWithCount = decoratorFn(sayHello);
+        sayHelloWithCount('张三');
+        sayHelloWithCount('张三');
+        sayHelloWithCount('张三');
+    </script>
+</body>
+
+</html>

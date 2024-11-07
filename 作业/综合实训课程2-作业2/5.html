@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 题目五：
+实现一个简单的发布-订阅模式。你需要定义两个类，一个是 EventEmitter ，另一个是 Listener 。
+EventEmitter 应该有 on 方法用于注册监听器， emit 方法用于触发事件。 Listener 类应该有一个
+handle 方法，当事件被触发时调用。
+功能要求：
+可以注册多个监听同一事件的监听器。
+当事件被触发时，所有注册了该事件的监听器都应该被执行。
+应支持取消注册特定的监听器。 -->
+</head>
+
+<body>
+    <script>
+        class EventEmitter {
+            constructor() {
+                // 创建一个空对象，用于存储事件和对应的监听器
+                this.events = {};
+            }
+
+            // 注册监听器
+            on(event, listener) {
+                if (!this.events[event]) {
+                    this.events[event] = [];
+                }
+                this.events[event].push(listener);
+            }
+
+            // 触发事件
+            emit(event, ...args) {
+                if (this.events[event]) {
+                    this.events[event].forEach(listener => {
+                        listener(...args);
+                    });
+                }
+            }
+
+            // 取消注册监听器
+            off(event, listenerToRemove) {
+                if (this.events[event]) {
+                    this.events[event] = this.events[event].filter(listener => listener !== listenerToRemove);
+                }
+            }
+        }
+
+        class Listener {
+            constructor(name) {
+                this.name = name;
+            }
+            // 处理事件
+            handle(data) {
+                console.log(`${this.name} received data: ${data}`);
+            }
+        }
+
+        // 使用示例
+        const eventEmitter = new EventEmitter();
+
+        const listener1 = new Listener('Listener1');
+        const listener2 = new Listener('Listener2');
+
+        eventEmitter.on('myEvent', listener1.handle);
+        eventEmitter.on('myEvent', listener2.handle);
+
+        eventEmitter.emit('myEvent', 'Hello World!'); // 输出：Listener1 received data: Hello World! 和 Listener2 received data: Hello World!
+
+        eventEmitter.off('myEvent', listener1.handle);
+
+        eventEmitter.emit('myEvent', 'Hello Again!'); // 输出：Listener2 received data: Hello Again!
+    </script>
+</body>
+
+</html>

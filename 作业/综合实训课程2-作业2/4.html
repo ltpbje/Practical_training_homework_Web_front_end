@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 题目四：
+编写一个函数，该函数可以将一个对象的所有属性值转换为字符串类型，包括嵌套的对象属性。如果属
+性值已经是字符串，则保持不变。要求使用递归方式实现。
+输入：对象 { a: 1, b: { c: 2, d: '3' }, e: [4, 5, 6] }
+输出：对象 { a: "1", b: { c: "2", d: "3" }, e: ["4", "5", "6"] } -->
+</head>
+
+<body>
+    <script>
+        function objValueToString(obj) {
+            // 如果obj不是对象，直接返回字符串
+            if (typeof obj !== 'object' || obj === null) {
+                return String(obj);
+            }
+            // 处理数组
+            if (Array.isArray(obj)) {
+                return obj.map(item => objValueToString(item));
+            }
+            // 处理普通对象
+            const result = {};
+            for (let key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    result[key] = objValueToString(obj[key]);
+                }
+            }
+            return result;
+        }
+
+        const input = { a: 1, b: { c: 2, d: '3' }, e: [4, 5, 6] };
+
+        const output = objValueToString(input);
+        console.log(output);
+
+
+
+    </script>
+</body>
+
+</html>
