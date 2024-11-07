@@ -675,3 +675,189 @@ npm i sass-loader -D
 在css样式中我们使用了背景图片，字体文件等一些静态资源，那么，在打包的时候针对这些文件我们需要怎么处理？
 
 现在我们使用的webpack5的版本其实可以自动对文件进行处理，但是处理效果很稀烂，所以，我们还是自己来通过loader去实现，这里我们会使用到 url-loader 和file-loader
+
+- url-loader：用于处理路径
+- file-loader：用于处理文件，它会把涉及到的文件拷贝到出口目录中
+
+安装包
+
+```cmd
+npm i url-loader file-loader -D
+```
+
+### 12.1、图片文件处理
+
+```js
+// webpack 配置文件
+//我们把这个文件看成事webpack的配置文件，以后的webpack就使用这个配置文件进行打包
+
+//webpack的配置文件中，使用commonJs模块化规范
+
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const chalk = require('chalk');
+const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin');
+const loader = require('sass-loader');
+const { type } = require('os');
+const config = {
+     //......
+    // module在打包过程 根据你自己的需求载入 webpack的第三方模块  对打包过程添加规则
+    module: {
+        //rules是一个webpack的规则数组，数组中的每一个元素就是一条规则  每一条规则就是一个匿名的配置对象
+        rules: [
+        	//.......
+            {
+                test: /\.(jpe?g|png|gif|svg|bmp|webp)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: '[name].[hash:8].[ext]',
+                            outputPath: "img/",
+                            esModule: false,
+                            publicPath: '../img',
+                            limit: 8 * 1024 //把小于8KB的图片转换成base64格式
+                        }
+                    },
+                ],
+                type: 'javascript/auto'
+            },
+
+    },
+   
+};
+
+
+module.exports = config;
+
+```
+
+> 注意：
+在上面规则配置过程中，我们发现我们并没有载入file-loader，但是文件依然处理成功，因为url-loader模块中有一个options叫做fallBack，这个配置默认调用的就是file-loader
+**记得把需要打包的图片文件引入到css文件中，不然在webpack打包的时候无法被检索到**
+
+### 12.2、字体文件处理
+
+```js
+// webpack 配置文件
+//我们把这个文件看成事webpack的配置文件，以后的webpack就使用这个配置文件进行打包
+
+//webpack的配置文件中，使用commonJs模块化规范
+
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const chalk = require('chalk');
+const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin');
+const loader = require('sass-loader');
+const { type } = require('os');
+const config = {
+   //.......
+    // module在打包过程 根据你自己的需求载入 webpack的第三方模块  对打包过程添加规则
+    module: {
+        //rules是一个webpack的规则数组，数组中的每一个元素就是一条规则  每一条规则就是一个匿名的配置对象
+        rules: [
+          	// ......
+            {
+                test: /\.(ttf|eot|woff|woff2)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: '[name].[hash:8].[ext]',
+                            outputPath: "fonts/",
+                            esModule: false,
+                            publicPath: '../fonts',
+                            limit: 8 * 1024 //把小于8KB的图片转换成base64格式
+                        }
+                    },
+                ],
+                type: 'javascript/auto'
+            }
+        ],
+
+    },
+    // plugins对webpack本身的打包功能做额外的扩展配置
+    plugins: [
+        new HtmlWebpackPlugin({
+            //配置模板文件的位置
+            template: path.join(__dirname, './index.html'),
+            //生成的新文件名称
+            filename: 'index.html',
+            //生成的js和css自动插入
+            inject: true
+        }),
+        new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin({
+            filename: "css/index.[hash:8].css",
+            //是否忽略第三方插件处理
+            ignoreOrder: false,
+        }),
+        // 创建一个ProgressBarWebpackPlugin实例，设置进度条的格式为绿色文字“进度:”，白色文字“[:bar]”，绿色文字“:percent”，并且不清除进度条
+        new ProgressBarWebpackPlugin({
+            format: chalk.green('进度:') + chalk.white("[:bar]") + chalk.green(':percent'),
+            clear: false
+        })
+    ]
+};
+
+
+module.exports = config;
+
+```
+
+总结：
+
+按照上面的逻辑，我们可以认为，其他类型的文件我们都可以按照找个规则设置的逻辑来进行处理
+
+> 注意：
+字体和图片作为文件被处理的时候我们设置了limit，所以如果处理的文件大小，小于limit的设置，那么这个文件不会有新文件出现在导出目录中生成，因为小于limit设置的文件都会被转换成base64的格式
+
+## 13、配置打包进度条
+
+因为webpack的打包过程比较慢，所以打包过程中，会给人一种卡住的感觉，我们希望通过进度条来表示我们的打包时在正确的执行中，所以我们会做一个进度条，来查看webpack的打包进度，这个需要一个插件完成
+
+```cmd
+npm i chalk@4 progress-bar-webpack-plugin -D
+```
+
+chalk 是一个可以在终端例显示彩色字体的包，注意，5的版本不支持node环境下的导入
+
+progress-bar-webpack-plugin 可以显示webpack的打包进度条
+
+```js
+// webpack 配置文件
+//我们把这个文件看成事webpack的配置文件，以后的webpack就使用这个配置文件进行打包
+
+//webpack的配置文件中，使用commonJs模块化规范
+
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const chalk = require('chalk');
+const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin');
+const loader = require('sass-loader');
+const { type } = require('os');
+const config = {
+     //.....
+    // plugins对webpack本身的打包功能做额外的扩展配置
+    plugins: [
+      //.......
+        // 创建一个ProgressBarWebpackPlugin实例，设置进度条的格式为绿色文字“进度:”，白色文字“[:bar]”，绿色文字“:percent”，并且不清除进度条
+        new ProgressBarWebpackPlugin({
+            format: chalk.green('进度:') + chalk.white("[:bar]") + chalk.green(':percent'),
+            clear: false
+        })
+    ]
+};
+
+
+module.exports = config;
+
+```
+
+**至此，我们的生产环境配置就完成了，如果要打包生产环境的代码，需要把mod的值改成production**

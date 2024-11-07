@@ -10,18 +10,24 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const chalk = require('chalk');
 const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin');
 const loader = require('sass-loader');
+
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { type } = require('os');
 const config = {
     // mode设置webpack基于开发或者生产环境打包
-    mode: 'development',
+    mode: 'production',
     // entry 入口
     //entry设置webpack的入口文件路径
-    entry: path.join(__dirname, './js/index.js'),
+    entry: {
+        index: './js/index.js',
+        login: "./js/login.js"
+    },
     // output设置webpack打包之后生成的新文件的文件名和保存路径  出口
     output: {
-        filename: 'bundle.js',
+        filename: 'js/[name].[fullhash:8].js',
         path: path.join(__dirname, './dist'),
-        publicPath: './'
+        publicPath: './',
+        clean: true
     },
     // module在打包过程 根据你自己的需求载入 webpack的第三方模块  对打包过程添加规则
     module: {
@@ -96,7 +102,26 @@ const config = {
             //生成的新文件名称
             filename: 'index.html',
             //生成的js和css自动插入
-            inject: true
+            inject: true,
+            chunks: ["index"]
+        }),
+        new HtmlWebpackPlugin({
+            //配置模板文件的位置
+            template: path.join(__dirname, './login.html'),
+            //生成的新文件名称
+            filename: 'login.html',
+            //生成的js和css自动插入
+            inject: true,
+            //指定要插入的chunk
+            chunks: ["login"]
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: path.join(__dirname, './static'),
+                    to: path.join(__dirname, './dist/static'),
+                }
+            ]
         }),
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
