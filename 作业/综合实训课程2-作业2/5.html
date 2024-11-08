@@ -17,62 +17,66 @@ handle 方法，当事件被触发时调用。
 
 <body>
     <script>
+        class Listener {
+            constructor(name) {
+                this.name = name;
+            }
+
+            handle(data) {
+                console.log(`${this.name} received data:`, data);
+            }
+        }
+
         class EventEmitter {
             constructor() {
-                // 创建一个空对象，用于存储事件和对应的监听器
                 this.events = {};
             }
 
             // 注册监听器
-            on(event, listener) {
-                // 如果事件对象中没有该事件，则创建一个空数组
-                if (!this.events[event]) {
-                    this.events[event] = [];
+            on(eventName, listener) {
+                if (!this.events[eventName]) {
+                    this.events[eventName] = [];
                 }
-                this.events[event].push(listener);
+                this.events[eventName].push(listener);
             }
 
             // 触发事件
-            emit(event, ...args) {
-                if (this.events[event]) {
-                    this.events[event].forEach(listener => {
-                        listener(...args);
+            emit(eventName, data) {
+                if (this.events[eventName]) {
+                    this.events[eventName].forEach(listener => {
+                        listener.handle(data);
                     });
                 }
             }
 
             // 取消注册监听器
-            off(event, listenerToRemove) {
-                if (this.events[event]) {
-                    this.events[event] = this.events[event].filter(listener => listener !== listenerToRemove);
+            off(eventName, listener) {
+                if (this.events[eventName]) {
+                    this.events[eventName] = this.events[eventName].filter(l => l !== listener);
                 }
             }
         }
 
-        class Listener {
-            constructor(name) {
-                this.name = name;
-            }
-            // 处理事件
-            handle(data) {
-                console.log(`${this.name} received data: ${data}`);
-            }
-        }
 
-        // 使用示例
+        // 创建 EventEmitter 实例
         const eventEmitter = new EventEmitter();
 
-        const listener1 = new Listener('Listener1');
-        const listener2 = new Listener('Listener2');
+        // 创建两个 Listener 实例
+        const listener1 = new Listener('Listener 1');
+        const listener2 = new Listener('Listener 2');
 
-        eventEmitter.on('myEvent', listener1.handle);
-        eventEmitter.on('myEvent', listener2.handle);
+        // 注册监听器
+        eventEmitter.on('event1', listener1);
+        eventEmitter.on('event1', listener2);
 
-        eventEmitter.emit('myEvent', 'Hello World!'); // 输出：Listener1 received data: Hello World! 和 Listener2 received data: Hello World!
+        // 触发事件
+        eventEmitter.emit('event1', { message: 'Hello, World!' });
 
-        eventEmitter.off('myEvent', listener1.handle);
+        // 取消注册 listener1
+        eventEmitter.off('event1', listener1);
 
-        eventEmitter.emit('myEvent', 'Hello Again!'); // 输出：Listener2 received data: Hello Again!
+        // 再次触发事件，只有 listener2 会被调用
+        eventEmitter.emit('event1', { message: 'Goodbye, World!' });
     </script>
 </body>
 
