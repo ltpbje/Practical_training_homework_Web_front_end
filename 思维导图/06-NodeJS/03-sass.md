@@ -353,16 +353,16 @@ $color1:blue!default;
 > @at-root默认情况下不能跳出 @media媒体查询
 > ```scss
 > @media only screen and (max-width:768px) {
->  .box1{
->  width: 100px;
->  .abc{
->      height: 100px;
->      @at-root{
->          .def{
->              color: red;
->          }
->      }
->  }
+> .box1{
+> width: 100px;
+> .abc{
+>   height: 100px;
+>   @at-root{
+>       .def{
+>           color: red;
+>       }
+>   }
+> }
 > }
 > }
 > ```
@@ -370,19 +370,18 @@ $color1:blue!default;
 >
 > ```css
 > @media only screen and (max-width: 768px) {
->   .box1 {
->     width: 100px;
->   }
->   .box1 .abc {
->     height: 100px;
->   }
->   .def {
->     color: red;
->   }
+> .box1 {
+>  width: 100px;
+> }
+> .box1 .abc {
+>  height: 100px;
+> }
+> .def {
+>  color: red;
+> }
 > }
 > 
+> ```
 
-
-
-
+## 10、数组与对象
 

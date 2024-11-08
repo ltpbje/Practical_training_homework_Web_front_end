@@ -1,0 +1,9 @@
+$baseFontSize:16px!default;
+
+@function pxToRem($px){
+     @return calc($px / $baseFontSize * 1rem)
+}
+
+.boxa{
+    width: pxToRem(100px);
+}
