@@ -25,6 +25,7 @@ handle 方法，当事件被触发时调用。
 
             // 注册监听器
             on(event, listener) {
+                // 如果事件对象中没有该事件，则创建一个空数组
                 if (!this.events[event]) {
                     this.events[event] = [];
                 }

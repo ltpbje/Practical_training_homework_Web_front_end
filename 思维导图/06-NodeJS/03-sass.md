@@ -385,3 +385,179 @@ $color1:blue!default;
 
 ## 10、数组与对象
 
+```scss
+$a:red,yellow,blue;
+
+$b:(red,yellow,blue);
+
+$themeColor:(
+    primary:lightgreen,
+    danger:red,
+    warning:orange,
+    success:green
+);
+
+@each $key,$value in $themeColor{
+    .bg-#{$key}{
+        background-color: $value;
+    }
+}  
+
+
+.box1{
+    width: 100px;
+    color: map-get( $themeColor,success);
+}
+```
+
+编译之后
+
+```scss
+.bg-primary {
+  background-color: lightgreen;
+}
+
+.bg-danger {
+  background-color: red;
+}
+
+.bg-warning {
+  background-color: orange;
+}
+
+.bg-success {
+  background-color: green;
+}
+
+.box1 {
+  width: 100px;
+  color: green;
+}
+
+```
+
+> 注意：
+>
+> 在sass中支持set与map集合，而我们上面定义的数组就是一个set集合，上面第一的对象就是一个map集合
+
+## 11、循环
+
+在sass中使用@for来 开始循环
+循环语法
+```scss
+// @for $i from start to end {
+
+// }
+// //start表示开始，end表示结束
+// @for $i from start through end {
+
+// }
+// //through包含end，to不包含end
+
+
+
+@for $i from 1 through 5 {
+    .div#{$i}{
+        background-image: url('./img/#{$i}.png');
+    }
+}
+```
+
+现在我们想生成以下结果
+
+```scss
+.div1{
+    background-image:url("./img/1.png");
+}
+.div2{
+    background-image:url("./img/2.png");
+}
+.div3{
+background-image:url("./img/3.png");
+}
+.div4{
+    background-image:url("./img/4.png");
+}
+.div5{
+    background-image:url("./img/5.png");
+}
+```
+
+scss代码：
+
+```scss
+@for $i from 1 through 5 {
+    .div#{$i}{
+        background-image: url('./img/#{$i}.png');
+    }
+}
+```
+
+> 注意两个点：
+>
+> 1、through和to的区别
+>
+> 2、如果要将变量做插入需要使用 #{ } 来完成
+
+## 12、条件判断
+
+sass实现判断两种方式
+
+1、三目运算
+
+2、@if
+
+```scss
+$w:100px;
+.box1{
+    color:  red;
+    @if $w >200px{
+        background-color: blue;
+    }
+
+    @else{
+        background-color: green;
+    }
+}
+
+$index1:4;
+.box{
+    width: 120px;
+    @if $index1 ==1{
+        background-color: red;
+    }
+    @else if $index1 == 2{
+        background-color: blue;
+    }@else{
+        background-color: green;
+    }
+}
+
+$a:2;
+.div1{
+    color: red;
+    background-color: if($a ==1,rgb(255,255,0),blue);
+}
+
+
+```
+
+使用if()来实现判断，这种判断方式类似三目运算
+
+## 13、函数
+
+sass中的函数基本上就与JS中的函数一样，它使用@function来定义，还是可以@return设置返回值
+
+```scss
+$baseFontSize:16px!default;
+
+@function pxToRem($px){
+     @return calc($px / $baseFontSize * 1rem)
+}
+
+.boxa{
+    width: pxToRem(100px);
+}
+```
+
+> 这里我们使用 / 作为运算符使用，在scss中使用运算符两边一定要留空格
