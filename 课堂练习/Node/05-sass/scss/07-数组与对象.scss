@@ -1,0 +1,22 @@
+$a:red,yellow,blue;
+
+$b:(red,yellow,blue);
+
+$themeColor:(
+    primary:lightgreen,
+    danger:red,
+    warning:orange,
+    success:green
+);
+
+@each $key,$value in $themeColor{
+    .bg-#{$key}{
+        background-color: $value;
+    }
+}  
+
+
+.box1{
+    width: 100px;
+    color: map-get( $themeColor,success);
+}

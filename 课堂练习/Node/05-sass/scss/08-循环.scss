@@ -1,0 +1,16 @@
+// @for $i from start to end {
+
+// }
+// //start表示开始，end表示结束
+// @for $i from start through end {
+
+// }
+// //through包含end，to不包含end
+
+
+
+@for $i from 1 through 5 {
+    .div#{$i}{
+        background-image: url('./img/#{$i}.png');
+    }
+}

@@ -1,0 +1,20 @@
+.bg-primary {
+  background-color: lightgreen;
+}
+
+.bg-danger {
+  background-color: red;
+}
+
+.bg-warning {
+  background-color: orange;
+}
+
+.bg-success {
+  background-color: green;
+}
+
+.box1 {
+  width: 100px;
+  color: green;
+}
