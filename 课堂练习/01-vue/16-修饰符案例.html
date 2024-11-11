@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <!-- 在输入框里面输入内容以后，回车，把输入的内容添加到一个列表中 -->
+        <input type="text" v-model.trim="txt" @keydown>
+        <hr>
+        <ul>
+            <!-- 当我们双击某一个列表项的时候，把该项删除 -->
+            <li v-for="(item,index) in stuList" :key="index">{{item}}---{{index}}</li>
+        </ul>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    txt: '',
+                    stuList: new Set(['张三', '李四'])
+                };
+            },
+            // 接管页面的事件方法
+            methods: {
+                aaa() {
+                    console.log('我是aaa方法');
+                },
+                bbb(event) {
+                    console.log('我是bbb方法');
+                    console.log(event);
+                    // event.stopPropagation();
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

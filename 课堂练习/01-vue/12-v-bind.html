@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <a v-bind:href="y">{{x}}</a>
+        <!-- 简写形式 -->
+        <a :href="y">{{x}}</a>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    x: '百度一下',
+                    y: 'https://www.baidu.com/'
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
