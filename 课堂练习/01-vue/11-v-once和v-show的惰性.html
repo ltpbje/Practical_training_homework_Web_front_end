@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <button @click="flag=true">按钮</button>
+        <input type="text" v-model="userName">
+        <h2 v-show="flag">{{userName}}</h2>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    userName: "张三",
+                    flag: false
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

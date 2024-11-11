@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <h2>列表渲染</h2>
+        <h3 v-for="(item,index) in stuList" :key="index">{{item}}---{{index}}</h3>
+        <hr>
+        <h3 v-for="(item,index) in Array.from(teachers)">{{item}}</h3>
+        <hr>
+        <h3 v-for="(item,index) in obj">{{item}}-{{index}}</h3>
+        <hr>
+
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    stuList: ["张三", "李四", '王五', "赵六"],
+                    teachers: new Set(['哈哈', '呵呵', '嘻嘻']),
+                    obj: {
+                        0: 'abc',
+                        1: '123',
+                        2: 'def'
+                    },
+                    obj2: {
+                        userName: '小白',
+                        sex: '女'
+                    }
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

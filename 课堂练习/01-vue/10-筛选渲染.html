@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <h2>列表渲染</h2>
+        <ul>
+            <!-- <template v-for="(item,index) in stuList">
+                <li v-if="index%2==0">{{item}}---{{index}}</li>
+            </template> -->
+            <li v-for="(item,index) in stuList" v-if="index%2==0">{{item}}---{{index}}</li>
+        </ul>
+
+        <hr>
+        <h2 v-for="(item,index) in 4">{{item}}---{{index}}</h2>
+        <!-- item从1开始，index从0开始 -->
+        <hr>
+        <h2 v-for="({userName,age},index) in stuObj"></h2>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    stuList: ["张三", "李四", '王五', "赵六"],
+                    stuObj: [
+                        {
+                            userName: "张三",
+                            age: 20
+                        },
+                        {
+                            userName: "李四",
+                            age: 30
+                        }
+                    ]
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
