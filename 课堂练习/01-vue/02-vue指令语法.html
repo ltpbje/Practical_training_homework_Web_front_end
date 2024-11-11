@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02-vue指令语法</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <!-- <h2 v-text="str1"></h2>
+        <h2 v-text="userName"></h2>
+        <h2 v-html="str1"></h2> -->
+
+        <!-- v-model -->
+        <h2>{{userName}} </h2>
+        <input type="text" v-model="userName">
+        <br>
+        <input type="range" v-model="age">
+        <h2> {{age}}</h2>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    userName: '张三',
+                    age: 20,
+                    num1: 18,
+                    str1: "<input type='text' placeholder = '请输入账号'> "
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
