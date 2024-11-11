@@ -10,13 +10,14 @@
 <body>
     <!--id为app的元素就是vue的管理区域-->
     <div id="app">
-        <h2 v-show="true">今天是双11</h2>
-        <h2 v-show="false">东西都很便宜</h2>
-        <h2 v-show="1>2">我昨天买了一个平板</h2>
-        <h2 v-show="'0'">比平时便宜800块</h2>
-        <h2>纠结好久是买新的还是二手的</h2>
-        <h2>因为二手的比新的还要便宜800</h2>
-        <!-- 大家要记得可以为false的6个值是什么 -->
+        <input type="range" v-model="age">{{age}}
+        <h2 v-show="age<18">你的年龄没有达到18岁，所以你不能进入网吧</h2>
+        <hr>
+        <input type="text" v-model="userName" placeholder="请输入用户名">
+        <span v-show="userName.length ==0">用户名不能为空</span>
+        <hr>
+        <input type="text" v-model="money">
+        <span v-show="!/^\d+(\.\d+)*$/.test(money)">必须是数字</span>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
@@ -25,7 +26,9 @@
             data() {
                 //data这里return返回的对象里面就是页面接管区域的数据来源
                 return {
-                    userName: '张三'
+                    userName: '张三',
+                    age: 18,
+                    money: 0
                 };
             },
         }).mount('#app');

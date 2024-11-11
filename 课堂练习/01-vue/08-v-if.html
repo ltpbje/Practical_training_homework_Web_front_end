@@ -10,22 +10,27 @@
 <body>
     <!--id为app的元素就是vue的管理区域-->
     <div id="app">
-        <h2 v-show="true">今天是双11</h2>
-        <h2 v-show="false">东西都很便宜</h2>
-        <h2 v-show="1>2">我昨天买了一个平板</h2>
-        <h2 v-show="'0'">比平时便宜800块</h2>
-        <h2>纠结好久是买新的还是二手的</h2>
-        <h2>因为二手的比新的还要便宜800</h2>
-        <!-- 大家要记得可以为false的6个值是什么 -->
+        <h2 v-if="age>=18">你是大人</h2>
+        <h2 v-else>你是小孩</h2>
+        <hr>
+        <input type="text" v-model="score">
+        <h2 v-if="score>=90">优秀</h2>
+        <h2 v-else-if="score>=80">良好</h2>
+        <h2 v-else-if='score>=70'> 中等</h2>
+        <h2 v-else-if='score>=60'>及格</h2>
+        <h2 v-else>不及格</h2>
     </div>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./js/vue3.global.js"></script>
     <script>
         Vue.createApp({
             //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
             data() {
                 //data这里return返回的对象里面就是页面接管区域的数据来源
                 return {
-                    userName: '张三'
+                    userName: '张三',
+                    age: 18,
+                    money: 0,
+                    score: 98
                 };
             },
         }).mount('#app');
