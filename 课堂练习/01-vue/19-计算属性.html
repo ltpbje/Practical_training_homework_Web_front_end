@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <!-- 阻止bbb事件冒泡 -->
+
+        <h2>男生数：{{boyCount}}</h2>
+        <h2>女生数：{{girlCount}}</h2>
+
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    username: '张三',
+                    stuList: [
+                        {
+                            stuName: '小白',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小红',
+                            sex: '男'
+                        },
+                        {
+                            stuName: '小蓝',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小紫',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小黑',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小绿',
+                            sex: '男'
+                        },
+                    ]
+
+                };
+            },
+            // 接管页面的事件方法
+            methods: {
+                aaa() {
+                    console.log('我是aaa方法');
+                },
+                bbb(event) {
+                    console.log('我是bbb方法');
+                    console.log(event);
+                    // event.stopPropagation();
+                }
+            },
+            computed: {
+                boyCount() {
+                    let count = this.stuList.filter(item =>
+                        item.sex == '男'
+                    ).length;
+                    return count;
+                },
+                girlCount() {
+                    let count = this.stuList.filter(item =>
+                        item.sex == '女'
+                    ).length;
+                    return count;
+                },
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

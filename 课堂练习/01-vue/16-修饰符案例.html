@@ -11,11 +11,11 @@
     <!--id为app的元素就是vue的管理区域-->
     <div id="app">
         <!-- 在输入框里面输入内容以后，回车，把输入的内容添加到一个列表中 -->
-        <input type="text" v-model.trim="txt" @keydown>
+        <input type="text" v-model.trim="txt" @keyup.enter="stuList.add(txt)">
         <hr>
         <ul>
             <!-- 当我们双击某一个列表项的时候，把该项删除 -->
-            <li v-for="(item,index) in stuList" :key="index">{{item}}---{{index}}</li>
+            <li v-for="(item,index) in stuList" :key="index" @dblclick="stuList.delete(item)">{{item}}---{{index}}</li>
         </ul>
     </div>
     <script src="./js/vue3.global.js"></script>

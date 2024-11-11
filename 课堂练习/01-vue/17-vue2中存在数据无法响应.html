@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2>{{userInfo.userName}}</h2>
+        <h2>{{userInfo.sex}}</h2>
+        <button @click="aaa">添加对象属性</button>
+        <button @click="bbb">添加对象属性1</button>
+
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                userInfo: {
+                    userName: '张三'
+                }
+            },
+            methods: {
+                aaa() {
+                    //第一种方式
+                    this.userInfo.sex = '男';
+                    //强制更新，强制重新渲染页面，这个非常消耗性能
+                    this.$forceUpdate();
+                },
+                bbb() {
+                    //第二种方式
+                    // 使用Vue的$set方法，将userInfo对象的sex属性设置为'男'
+                    //vue2  访问器属性
+                    this.$set(this.userInfo, 'sex', '男');
+                    //可以解决新增属性不能响应的问题
+                    // this.$delete();
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
