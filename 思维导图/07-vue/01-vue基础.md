@@ -753,3 +753,565 @@ v-once是单次绑定，它只会在第一次的时候做数据渲染，渲染�
 ### 4.10、v-bind
 
 之前我们学习的所有指令都是让页面上面显示内容，但是如果要对一个html属性进行绑定动态的值，需要使用到 v-bind:属性名 这种方式来完成
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <a v-bind:href="y">{{x}}</a>
+        <!-- 简写形式 -->
+        <a :href="y">{{x}}</a>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    x: '百度一下',
+                    y: 'https://www.baidu.com/'
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+因为属性绑定这种操作后期会经常使用，所以vue提供了一种简写的方法
+
+```html
+<a :href="y">{{x}}</a>
+```
+
+## 5、vue的事件及事件对象
+
+vue是数据驱动页面的框架，所以它不仅仅可以接管页面的数据，还可以接管页面的事件
+
+### 5.1、vue绑定事件的方式
+
+```html
+<button v-on:click="">按钮</button>
+```
+
+> 上面的代码中，我们可以看到 v-on:事件名 这就是vue的事件绑定
+
+因为事件的绑定时一个非常常用的操作，所以vue也提供了简写方式
+
+```html
+<button @click="">按钮</button>
+```
+
+> 简写方式就是 @事件名
+> 
+
+### 5.2、以方法的形式接管事件
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <!-- 这里的事件方法是没有加小括号的，因为它不需要传递实参  -->
+        <button @click="sayHello">按钮</button>
+        <button @click="abc(12)">按钮2</button>
+        <button @click="aaa">按钮3变成王五</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    username: '张三',
+                    x: '百度一下',
+                    y: 'https://www.baidu.com/'
+                };
+            },
+            // 接管页面的事件方法
+            methods: {
+                aaa() {
+                    this.username = '王五';
+                },
+                sayHello() {
+                    console.log('大家好');
+                },
+                abc(age) {
+                    console.log(`今年${age}岁`);
+
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 1、data负责接管页面的数据，methods负责接管页面上面的方法
+>
+> 2、v-on:事件名 可以赋值一个函数名，这个函数可以有小括号，也可以没有，如果你需要传递实参就条件小括号，不需要则可以省略
+> 
+
+### 5.3、以行内的方式接管事件
+
+> 这种写法非常简单，它直接把代码写再事件的属性名里面
+
+```html
+ <button @click="username='李四'">按钮3变成李四</button>
+```
+
+> 代码分析：
+>
+> 如果行内的事件要操作vue自身的data里面的数据，不要加this【在vue的托管区域内部是严禁出现this】
+> 
+
+### 5.4、vue的方法访问vue的数据
+
+> 这里我们先做原理上的简单了解
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <!-- 这里的事件方法是没有加小括号的，因为它不需要传递实参  -->
+        <button @click="sayHello">按钮</button>
+        <button @click="abc(12)">按钮2</button>
+
+        <button @click="username='李四'">按钮3变成李四</button>
+        <h2>{{username}}</h2>
+        <button @click="aaa">按钮3变成王五</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    username: '张三',
+                    x: '百度一下',
+                    y: 'https://www.baidu.com/'
+                };
+            },
+            // 接管页面的事件方法
+            methods: {
+                aaa() {
+                    //如果在事件方法里面，想拿到自己的data里面的数据，可以直接通过自己的对象来完成
+                    //完整写法
+
+                    console.log(this.$data.username);
+                    //通过代理来获取自己对象data中的数据
+                    console.log(this.username);
+                    //当面试官问你，为什么this.userName可以渠道this.$data.userName的值
+                    //因为this指向的vue实例对象是一个proxy代理对象，这个代理对象内部的handler代理方法进行了处理
+                    this.username = '王五';
+                },
+                sayHello() {
+                    console.log('大家好');
+                },
+                abc(age) {
+                    console.log(`今年${age}岁`);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+### 5.5、vue的事件修饰符
+
+> 修饰符：vue中的修饰符主要是用来修饰事件的，让事件有一个更具体的触发条件
+
+这里我们通过事件对象制作一个阻止事件传播的例子
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="box" @click="aaa">
+            <!-- 阻止bbb事件冒泡 -->
+            <button @click.stop="bbb($event)">按钮</button>
+        </div>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    username: '张三',
+                    x: '百度一下',
+                    y: 'https://www.baidu.com/'
+                };
+            },
+            // 接管页面的事件方法
+            methods: {
+                aaa() {
+                    console.log('我是aaa方法');
+                },
+                bbb(event) {
+                    console.log('我是bbb方法');
+                    console.log(event);
+                    // event.stopPropagation();
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 上面我们使用事件对象中的 stopPropagation() 来阻止了事件的传播
+
+但是在vue中要实现阻止事件传播就非常简单
+
+```html
+ <div class="box" @click="aaa">
+        <!-- 阻止bbb事件冒泡 -->
+        <button @click.stop="bbb($event)">按钮</button>
+</div>
+```
+
+上面的 @click.stop 就是使用了vue的事件修饰符，stop的修饰符就是阻止事件冒泡，与之相似的修饰符非常多，列举一下
+
+**事件修饰符**
+
+- stop
+- prevent
+- self
+- capture
+- once
+- passive
+
+**按键修饰符**
+
+vue为一些常用的按钮提供了别名：
+
+- enter
+- tab
+- delete (捕获delete和backspace两个案件)
+- esc
+- space
+- up
+- down
+- left
+- right
+
+举例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <!-- 在输入框里面输入内容以后，回车，把输入的内容添加到一个列表中 -->
+        <input type="text" v-model.trim="txt" @keyup.enter="stuList.add(txt)">
+        <hr>
+        <ul>
+            <!-- 当我们双击某一个列表项的时候，把该项删除 -->
+            <li v-for="(item,index) in stuList" :key="index" @dblclick="stuList.delete(item)">{{item}}---{{index}}</li>
+        </ul>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    txt: '',
+                    stuList: new Set(['张三', '李四'])
+                };
+            },
+            // 接管页面的事件方法
+            methods: {
+                aaa() {
+                    console.log('我是aaa方法');
+                },
+                bbb(event) {
+                    console.log('我是bbb方法');
+                    console.log(event);
+                    // event.stopPropagation();
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+## 6、关于数据无法实现相应的问题
+
+**在vue2中**，会存在一个问题，通过方法执行新增的数据无法实现响应，为了解决这个问题，vue2推出了$set方法来实现
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2>{{userInfo.userName}}</h2>
+        <h2>{{userInfo.sex}}</h2>
+        <button @click="aaa">添加对象属性</button>
+        <button @click="bbb">添加对象属性1</button>
+
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                userInfo: {
+                    userName: '张三'
+                }
+            },
+            methods: {
+                aaa() {
+                    //第一种方式
+                    this.userInfo.sex = '男';
+                    //强制更新，强制重新渲染页面，这个非常消耗性能
+                    this.$forceUpdate();
+                },
+                bbb() {
+                    //第二种方式
+                    // 使用Vue的$set方法，将userInfo对象的sex属性设置为'男'
+                    //vue2  访问器属性
+                    this.$set(this.userInfo, 'sex', '男');
+                    //可以解决新增属性不能响应的问题
+                    // this.$delete();
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> **注意：上面的代码实现是基于vue2的版本框架与vue3无关**
+>
+> 在上面的代码中，我们可以看到，在最开始渲染的时候，userInfo这个对象里面并没有sex属性，但是后面我们主动追加了这个属性，结果，页面并没有正常显示这个属性，因为vue2对于新增的属性并没有实现响应
+>
+> 如果要结果这个问题可以使用下面2个方法
+>
+> 1、this.$forceUpdate() 强制更新vue状态，但是会非常消耗浏览器性能
+>
+> 2、this.$set(）来扩展新属性，这个扩展出来的新属性就是响应式的
+>
+> #### 同理还有一个$delete用来在删除data中的属性时实现响应式
+>
+> ```html
+> <!DOCTYPE html>
+> <html lang="en">
+> 
+> <head>
+> <meta charset="UTF-8">
+> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+> <title>Document</title>
+> </head>
+> 
+> <body>
+> <div id="app">
+>   <h2 v-show="!userInfo.flag">{{userInfo.userName}}</h2>
+>   <h2>{{userInfo.sex}}</h2>
+>   <button @click="aaa">删除对象属性</button>
+>   <button @click="bbb">删除对象属性1</button>
+> 
+> </div>
+> <script src="./js/vue2.js"></script>
+> <script>
+>   var app = new Vue({
+>       el: '#app',
+>       data: {
+>           userInfo: {
+>               userName: '张三',
+>               flag: true
+>           }
+>       },
+>       methods: {
+>           aaa() {
+>               delete this.userInfo.flag;
+>               this.$forceUpdate();
+>           },
+>           bbb() {
+>               //第二种方式
+>               // 使用Vue的$set方法，将userInfo对象的sex属性设置为'男'
+>               //vue2  访问器属性
+>               this.$delete(this.userInfo, 'flag');
+>               //可以解决新增属性不能响应的问题
+>               // this.$delete();
+>           }
+>       },
+>   })
+> </script>
+> </body>
+> 
+> </html>
+> ```
+> ### 注意：
+>
+> 针对$set和$delete新增和删除实现响应式的情况，主要出现在vue2当中，在
+>
+> **vue3中该问题已经被解决，通过字面量对象的新增和删除操作就可以直接实现** **响应式的结果**
+
+## 7、vue的计算属性
+
+之前我们讲过，vue是数据驱动页面，它的数据主要来源data这个选项，那么，这里我们做一个扩展，在接管区域内的数据不一定只来源于data，还可以是其他地方
+
+计算属性是需要计算以后才会得到的，比如
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <!-- 阻止bbb事件冒泡 -->
+
+        <h2>男生数：{{boyCount}}</h2>
+        <h2>女生数：{{girlCount}}</h2>
+
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    username: '张三',
+                    stuList: [
+                        {
+                            stuName: '小白',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小红',
+                            sex: '男'
+                        },
+                        {
+                            stuName: '小蓝',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小紫',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小黑',
+                            sex: '女'
+                        },
+                        {
+                            stuName: '小绿',
+                            sex: '男'
+                        },
+                    ]
+
+                };
+            },
+            // 接管页面的事件方法
+            methods: {
+                aaa() {
+                    console.log('我是aaa方法');
+                },
+                bbb(event) {
+                    console.log('我是bbb方法');
+                    console.log(event);
+                    // event.stopPropagation();
+                }
+            },
+            computed: {
+                boyCount() {
+                    let count = this.stuList.filter(item =>
+                        item.sex == '男'
+                    ).length;
+                    return count;
+                },
+                girlCount() {
+                    let count = this.stuList.filter(item =>
+                        item.sex == '女'
+                    ).length;
+                    return count;
+                },
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 在上面的代码，我们现在想得到男或女一共多少人，在上面代码中提供的数据里面是没有直接表示的，所以，如果想实现这个需求，就必须要将data中的属性进行计算之后才能得到结果，那么这个计算过程的实现，在vue中可以通过计算属性来实现
