@@ -84,11 +84,12 @@
     </table>
   </div>
 
-
   <script>
     const input = document.querySelector('.form-control');
     const add_btn = document.querySelector('.add_btn');
-
+    // 表格
+    let table = document.querySelector('tbody');
+    // 添加操作
     add_btn.addEventListener('click', function () {
       let inputValue = input.value;
       // console.log(inputValue);
@@ -96,7 +97,6 @@
       const trItem = document.createElement('tr');
       // 每行元素
       let rowList = document.querySelectorAll('tbody tr');
-      console.log(rowList.length);
 
       // console.log(trItem);
       // 每行的 html模板
@@ -115,11 +115,77 @@
           </td>
         </tr>`;
       trItem.innerHTML = htmlStr;
-      console.log(trItem);
 
+      // console.log(trItem);
+      table.append(trItem);
       // 清空输入框
       input.value = '';
-    })
+
+      // console.log(1, delBtnList);
+    });
+
+    // 绑定删除事件函数
+    function bindDel() {
+      // console.log('页面改变了');
+      // 获取 所有删除按钮列表
+      const delBtnList = document.querySelectorAll('tbody tr td:last-child');
+      // 获取 所有列表行
+      const rowList = document.querySelectorAll('tbody tr');
+      console.log(rowList);
+
+
+      for (let i = 0; i < delBtnList.length; i++) {
+        // console.log(1, delBtnList[i]);
+
+        // 检查是否已经绑定了点击事件
+        const existingListener = delBtnList[i]._onclickHandler;
+
+        // 只给没有标识的元素添加点击 删除事件
+        if (!delBtnList[i].getAttribute(`data-bound-click`)) {
+          delBtnList[i].addEventListener('click', function () {
+            // 显示一个对话框，用户可以选择“确定”或“取消”。
+            const result = confirm('是否删除该条数据');
+            if (result) {
+              // 用户确认删除
+              // 移除该行元素
+              rowList[i].remove();
+              {
+                // 获取 所有列表行
+                const rowList = document.querySelectorAll('tbody tr');
+                // // 为每行重新编号
+                for (let i = 0; i < rowList.length; i++) {
+                  // console.log(rowList[i].querySelector('td:first-child'));
+                  rowList[i].querySelector('td:first-child').innerText = i + 1;
+                }
+              }
+            } else {
+              // 用户取消删除
+            }
+          });
+          // 用自定义属性data-bound-click 为删除按钮添加 已经绑上点击事件的标识
+          delBtnList[i].setAttribute(`data-bound-click`, true);
+        }
+      }
+    }
+    bindDel();
+    // 选择需要观察变动的节点
+    const targetNode = document.querySelector(".table");
+    // 观察器的配置（需要观察什么变动）
+    const config = { attributes: true, childList: true, subtree: true };
+    // 当观察到变动时执行的回调函数
+    const callback = function (mutationsList, observer) {
+      // 给按钮绑定删除事件
+      bindDel();
+    };
+
+    // 创建一个观察器实例并传入回调函数
+    const observer = new MutationObserver(callback);
+
+    // 以上述配置开始观察目标节点
+    observer.observe(targetNode, config);
+
+
+
   </script>
 </body>
 

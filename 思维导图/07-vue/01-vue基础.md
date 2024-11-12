@@ -2245,3 +2245,255 @@ Vue.filter("过滤器名称",function(参数){
 > 注意：
 >
 > 两种情况其实都是针对ref同名的情况下出现的，但是，如果是自己手写的ref同名，只会获取到最后一个，而通过v-for渲染出来的同名，会全部获取到并作为一个数组表示
+
+# vue组件化开发
+
+现在有一个问题，如下：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div class="box">
+        <h2>我是标题1</h2>
+        <p>我是内容1</p>
+    </div>
+    <div id="app">
+
+    </div>
+
+    <template id="user-info">
+        <div class="box">
+            <h2>我是标题1</h2>
+            <p>我是内容1</p>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+
+        }).mount('#app') 
+    </script>
+</body>
+
+</html>
+```
+
+当我们在html中需要重复的生成某些东西的时会，会造成大量的代码冗余现在我们要想办法，怎么去简化上面的代码，换句话就是提高代码利用率
+
+## 1、虚拟DOM概念
+
+能够简化代码最好的办法就是封装，封装这个概念我们其实一致在践行，比如JS的封装依靠的就是function函数，如果是css的封装我们可以使用到公共样式，但是好像并没有针对HTML的封装
+
+为了实现一种HTML的封装方式，所以我们提出一个叫做 virtual DOM的概念，我们可以把要封装的HTML代码当成一个整体的DOM元素来看待
+
+```html
+<div id="app">
+    <user-info></user-info>
+    <user-info></user-info>
+    <user-info></user-info>
+</div>
+<template id="user-info">
+    <div class="box">
+        <h2>我是标题1</h2>
+        <p>我是内容1</p>
+    </div>
+</template>
+```
+
+现在我们把需要封装的html代码通过template标签封装一个整体，然后将它转换程一个虚拟标签 `<user-info></user-info>` ，最后我们去使用这个标签即可【以上代码是一种思路体现，如果执行浏览器控制台会告诉我们user-info不是一个元素】
+那么针对这个问题，我们可以把user-info制作成一个DOM元素，然后在html调用虚拟DOM
+目前能够实现虚拟DOM的框架如下：
+
+1、vue
+
+2、react
+
+3、angular
+在这三个框架中虚拟DOM都被叫做组件
+
+
+
+## 2、全局组件
+
+vue3的全局组件和vue2的全局组件方式不太一样，组件也叫component，组件本身可以看做是一个小型的vue实例对象（小型应用实例对象）
+
+注册全局组件：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa></aaa>
+        <bbb></bbb>
+    </div>
+    <template id="temp1">
+        <div class="box">
+            <h2>我是box标题1</h2>
+            <p>我是box内容1</p>
+        </div>
+    </template>
+    <template id="temp2">
+        <h1>我是最大的标题</h1>
+        <aaa></aaa>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+
+        });
+        // 注册全局组件
+        app.component('aaa', {
+            template: '#temp1'
+        });
+        app.component('bbb', {
+            template: '#temp2'
+        });
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 注意事项：
+>
+> 在注册全局组件的时候，一定要在挂载之前注册
+>
+> 全局组件的注册语法格式如下
+>
+> ```js
+> app.component("组件名",组件配置对象)
+> ```
+>
+> ### **关于组件的命名**
+>
+> 当组件被注册成功会有对应的虚拟标签名可以使用，为了区别常规的html标签
+>
+> 名，虚拟标签名在取名的时，可以采用大驼峰写法
+
+因为我们现在注册是全局组件，所以可以全局调用，如上面的：
+
+## 3、局部组件
+
+局部组件与全局组件在功能上是一样的，只是使用范围有限制而已
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <!-- <user-info></user-info> -->
+        <btn-box></btn-box>
+        <!-- <input-box></input-box> -->
+    </div>
+    <template id="temp1">
+        <div class="box">
+            <h2>我是一个盒子</h2>
+            <p>马上下班了，很开心</p>
+        </div>
+    </template>
+    <template id="temp2">
+        <user-info></user-info>
+        <div class="btn">
+            <button>登录</button>
+        </div>
+    </template>
+    <template id="temp3">
+        <div class="input">
+            <input type="text">
+        </div>
+        <user-info></user-info>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let UserInfo = {
+            template: '#temp1'
+        };
+        let BtnBox = {
+            template: "#temp2",
+            components: {
+                UserInfo
+            }
+        };
+        let InputBox = {
+            template: "#temp3",
+        };
+        const app = Vue.createApp({
+            //这里注册局部变量
+            components: {
+                UserInfo,
+                BtnBox,
+                InputBox
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 局部组件本质上就是一个对象，只是这个对象要注册到某一个组件的内容才可以使用，同时在optionsAPI语法下注册的组件，其组件名在转换成虚拟标签的时候，要改写法
+>
+> 举例：
+>
+> 组件名叫做UserInfo，虚拟标签名就为 user-info
+
+以上的注册虽然是局部组件，但是并没有体现出来局部组件的局部
+
+
+
+> 代码分析：
+>
+> 以上代码中，我们创建了3个组件，分别是UserInfo，BtnBox，InputBox，其中UserInfo作为BtnBox的局部组件被注册到BtnBox中并且进行了调用，同时在InputBox我们虽然也调用了UserInfo，但是我们并没有把UserInfo注册成InputBox的局部组件，所以在挂载区域中分别调用btn-box和input-box之后，我们可以看到，在input-box中并没有user-info的标签结构被渲染出来
+>
+> **注意：**
+>
+> **组件一定要先注册再使用**
