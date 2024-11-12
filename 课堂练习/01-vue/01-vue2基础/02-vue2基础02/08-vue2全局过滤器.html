@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2 v-for="(item,index) in list">
+            {{item | formatDateTime}}
+        </h2>
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+        //编写一个过滤器
+        Vue.filter("formatDateTime", function (d) {
+            let _d = new Date(d);
+            let year = _d.getFullYear();
+            let month = _d.getMonth() + 1;
+            let day = _d.getDate();
+            let hour = _d.getHours();
+            let second = _d.getSeconds();
+            let minute = _d.getMinutes();
+            // return `${year}.${month}.${day} - ${hour}:${minute}:${second}`;
+            return [year, month, day].join('-') + ' ' + [hour, minute, second].join(':');
+        });
+        var app = new Vue({
+            el: '#app',
+            data: {
+
+                list: [
+                    new Date(),
+                    12567385127835,
+                    '2021.09.09 12:12:12'
+                ]
+
+            },
+            filters: {
+
+            },
+            methods: {
+                aaa() {
+                    delete this.userInfo.flag;
+                    this.$forceUpdate();
+                },
+                bbb() {
+                    //第二种方式
+                    // 使用Vue的$set方法，将userInfo对象的sex属性设置为'男'
+                    //vue2  访问器属性
+                    this.$delete(this.userInfo, 'flag');
+                    //可以解决新增属性不能响应的问题
+                    // this.$delete();
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

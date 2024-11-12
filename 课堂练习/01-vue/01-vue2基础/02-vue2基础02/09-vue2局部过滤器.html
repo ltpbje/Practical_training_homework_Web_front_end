@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="box1">{{content1 | txt}}</div>
+        <div class="box2">{{content2 | txt}}</div>
+        <div class="box3" v-html="txt(content2,30)"></div>
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                content1: '东风汽车旗下高端智慧新能源品牌，东风岚图的最新力作——岚图知音，以及其他10家车企的整车下线将标志2024年中国新能源汽车1000万辆正式达成。同时，在活动现场，多家民族汽车品牌也将集中亮相，共同奏响2024年中国新能源汽车1000万辆达成的荣耀交响曲。',
+                content2: '过去十年，中国新能源汽车产业建立了领先优势，引领全球汽车工业转型潮流。而今，在中国新能源汽车即将达成年度1000万辆的里程碑。'
+
+            },
+            filters: {
+                // 编写一个局部过滤器
+                txt(str, maxLength = 20) {
+                    if (str.length > maxLength) {
+                        return str.substr(0, maxLength) + '...';
+                    } else {
+                        return str;
+                    }
+                }
+            },
+            methods: {
+                // 编写一个局部过滤器
+                txt(str, maxLength = 20) {
+                    if (str.length > maxLength) {
+                        return str.substr(0, maxLength) + `... <a href='#'>更多</a>`;
+                    } else {
+                        return str;
+                    }
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
