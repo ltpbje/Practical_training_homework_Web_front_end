@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2 ref="abc">张三</h2>
+        <h3 ref="abc">张三</h3>
+        <button @click="aaa">anniu</button>
+        <ul>
+            <li v-for="(item,index) in list" ref="aaa">{{item}}</li>
+        </ul>
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                list: ['a', 'b', 'c', 'd']
+            },
+
+            methods: {
+                aaa() {
+                    // console.log(this.$refs.abc);
+                    console.log(this.$refs.aaa);
+
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

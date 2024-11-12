@@ -1988,3 +1988,260 @@ vue为一些常用的按钮提供了别名：
 </html>
 ```
 
+## 12、vue过滤器
+
+> vue3已经废弃，但是在vue2中还是会被经常用到
+
+在vue2中，过滤器就是数据格式化工具，或者数据需要二次处理的时候会作用到它
+
+### 12.1、全局过滤器
+
+故名思意就是可以在全局使用的，它的语法格式如下
+
+```js
+Vue.filter("过滤器名称",function(参数){
+    //这里的第一个参数就是要格式化处理的数据
+    //过滤器函数必须要有一个返回值
+})
+```
+
+在使用过滤器的时候如下
+
+```html
+<div>{{content | 过滤器}}</div>
+```
+
+举例：时间数据格式化处理
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2 v-for="(item,index) in list">
+            {{item | formatDateTime}}
+        </h2>
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+        //编写一个过滤器
+        Vue.filter("formatDateTime", function (d) {
+            let _d = new Date(d);
+            let year = _d.getFullYear();
+            let month = _d.getMonth() + 1;
+            let day = _d.getDate();
+            let hour = _d.getHours();
+            let second = _d.getSeconds();
+            let minute = _d.getMinutes();
+            // return `${year}.${month}.${day} - ${hour}:${minute}:${second}`;
+            return [year, month, day].join('-') + ' ' + [hour, minute, second].join(':');
+        });
+        var app = new Vue({
+            el: '#app',
+            data: {
+
+                list: [
+                    new Date(),
+                    12567385127835,
+                    '2021.09.09 12:12:12'
+                ]
+
+            },
+            filters: {
+
+            },
+            methods: {
+                aaa() {
+                    delete this.userInfo.flag;
+                    this.$forceUpdate();
+                },
+                bbb() {
+                    //第二种方式
+                    // 使用Vue的$set方法，将userInfo对象的sex属性设置为'男'
+                    //vue2  访问器属性
+                    this.$delete(this.userInfo, 'flag');
+                    //可以解决新增属性不能响应的问题
+                    // this.$delete();
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+### 12.2、局部过滤器
+
+现在我们制作一个用于文本长度大于规定长度时，把多余部分替换成省略号的局部过滤器
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="box1">{{content1 | txt}}</div>
+        <div class="box2">{{content2 | txt}}</div>
+        <div class="box3" v-html="txt(content2,30)"></div>
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                content1: '东风汽车旗下高端智慧新能源品牌，东风岚图的最新力作——岚图知音，以及其他10家车企的整车下线将标志2024年中国新能源汽车1000万辆正式达成。同时，在活动现场，多家民族汽车品牌也将集中亮相，共同奏响2024年中国新能源汽车1000万辆达成的荣耀交响曲。',
+                content2: '过去十年，中国新能源汽车产业建立了领先优势，引领全球汽车工业转型潮流。而今，在中国新能源汽车即将达成年度1000万辆的里程碑。'
+
+            },
+            filters: {
+                // 编写一个局部过滤器
+                txt(str, maxLength = 20) {
+                    if (str.length > maxLength) {
+                        return str.substr(0, maxLength) + '...';
+                    } else {
+                        return str;
+                    }
+                }
+            },
+            methods: {
+                // 编写一个局部过滤器
+                txt(str, maxLength = 20) {
+                    if (str.length > maxLength) {
+                        return str.substr(0, maxLength) + `... <a href='#'>更多</a>`;
+                    } else {
+                        return str;
+                    }
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+**思考：vue3为什么会废弃过滤器？**
+
+例子
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="box1">{{content1 | txt}}</div>
+        <div class="box2">{{content2 | txt}}</div>
+        <div class="box3" v-html="txt(content2,30)"></div>
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                content1: '东风汽车旗下高端智慧新能源品牌，东风岚图的最新力作——岚图知音，以及其他10家车企的整车下线将标志2024年中国新能源汽车1000万辆正式达成。同时，在活动现场，多家民族汽车品牌也将集中亮相，共同奏响2024年中国新能源汽车1000万辆达成的荣耀交响曲。',
+                content2: '过去十年，中国新能源汽车产业建立了领先优势，引领全球汽车工业转型潮流。而今，在中国新能源汽车即将达成年度1000万辆的里程碑。'
+
+            },
+            methods: {
+                // 编写方法  来代替 一个局部过滤器
+                txt(str, maxLength = 20) {
+                    if (str.length > maxLength) {
+                        return str.substr(0, maxLength) + `... <a href='#'>更多</a>`;
+                    } else {
+                        return str;
+                    }
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+## 13、vue的DOM操作
+
+在vue框架下面，我们是不推荐做DOM操作的，但是不代表vue不能进行DOM操
+
+作，它也是完全可以的
+
+1、最原始的方式就是原生JS中提供的DOM技术，比如document.querySelector().......
+
+2、可以利用事件对象当中的currentTarget事件绑定者和target事件触发者来获取到一个DOM对象，这个东西有个缺点，只能找到自己或者以自己为中心的元素
+
+3、vue提供了一个ref属性用来获取DOM，这个是vue推荐方式
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2 ref="abc">张三</h2>
+        <h3 ref="abc">张三</h3>
+        <button @click="aaa">anniu</button>
+        <ul>
+            <li v-for="(item,index) in list" ref="aaa">{{item}}</li>
+        </ul>
+    </div>
+    <script src="./js/vue2.js"></script>
+    <script>
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                list: ['a', 'b', 'c', 'd']
+            },
+
+            methods: {
+                aaa() {
+                    // console.log(this.$refs.abc);
+                    console.log(this.$refs.aaa);
+
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
+```
+
+**ref在使用时需要注意的点：**
+**1、当出现同名的ref时**
+	当在vue的挂载区域内出现多个同名的ref的时候，通过$refs调出来的是最后一个
+**2、当通过v-for渲染出来的标签也带有ref的时候**
+	这种通过列表渲染产生的同名ref，在获取时会作为一个数组到，每一个数组元素就对一个ref标记的标签
+
+> 注意：
+>
+> 两种情况其实都是针对ref同名的情况下出现的，但是，如果是自己手写的ref同名，只会获取到最后一个，而通过v-for渲染出来的同名，会全部获取到并作为一个数组表示

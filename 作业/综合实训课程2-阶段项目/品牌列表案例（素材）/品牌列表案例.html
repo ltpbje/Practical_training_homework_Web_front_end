@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>品牌列表案例</title>
+  <link rel="stylesheet" href="./lib/bootstrap.css">
+  <link rel="stylesheet" href="./css/brandlist.css">
+  <script src="./lib/dayjs.min.js"></script>
+</head>
+
+<body>
+
+  <div id="app">
+    <!-- 卡片区域 -->
+    <div class="card">
+      <div class="card-header">
+        添加品牌
+      </div>
+      <div class="card-body">
+        <!-- 添加品牌的表单区域 -->
+        <!-- form 表单元素有 submit 事件 -->
+        <form>
+          <div class="form-row align-items-center">
+            <div class="col-auto">
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">品牌名称</div>
+                </div>
+                <input type="text" class="form-control" placeholder="请输入品牌名称">
+              </div>
+            </div>
+            <div class="col-auto">
+              <button type="button" class="add_btn btn btn-primary mb-2">添加</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 表格区域 -->
+    <table class="table table-bordered table-hover table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">品牌名称</th>
+          <th scope="col">状态</th>
+          <th scope="col">创建时间</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>奥迪</td>
+          <td>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="cb1" checked="checked">
+              <label class="custom-control-label" for="cb1">已启用</label>
+            </div>
+          </td>
+          <td>2022-01-11 08:30:00</td>
+          <td>
+            <a href="javascript:;">删除</a>
+          </td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>奔驰</td>
+          <td>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="cb2">
+              <label class="custom-control-label" for="cb2">已禁用</label>
+            </div>
+          </td>
+          <td>2022-01-11 08:30:00</td>
+          <td>
+            <a href="javascript:;">删除</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <script>
+    const input = document.querySelector('.form-control');
+    const add_btn = document.querySelector('.add_btn');
+
+    add_btn.addEventListener('click', function () {
+      let inputValue = input.value;
+      // console.log(inputValue);
+      // 创建一个tr元素
+      const trItem = document.createElement('tr');
+      // 每行元素
+      let rowList = document.querySelectorAll('tbody tr');
+      console.log(rowList.length);
+
+      // console.log(trItem);
+      // 每行的 html模板
+      let htmlStr = `<tr>
+          <td>${rowList.length + 1}</td>
+          <td>${inputValue}</td>
+          <td>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="cb1" checked="checked">
+              <label class="custom-control-label" for="cb1">已启用</label>
+            </div>
+          </td>
+          <td>${dayjs().format('YYYY-MM-DD HH:mm:ss')}</td>
+          <td>
+            <a href="javascript:;">删除</a>
+          </td>
+        </tr>`;
+      trItem.innerHTML = htmlStr;
+      console.log(trItem);
+
+      // 清空输入框
+      input.value = '';
+    })
+  </script>
+</body>
+
+</html>
