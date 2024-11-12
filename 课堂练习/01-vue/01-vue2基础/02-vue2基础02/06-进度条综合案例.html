@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .progress {
+            width: 400px;
+            height: 30px;
+            border: 1px solid #ccc;
+            background-image: linear-gradient(to right, red, red);
+            display: flex;
+            background-repeat: no-repeat;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+        }
+
+        span.active {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="progress" :style="{backgroundSize:`${precentage}% 100%`}">
+            <span :class="{active:precentage>55}">{{precentage}}%</span>
+        </div>
+        <hr>
+        <button @click="precentage--" :disabled="precentage<=0">-</button>
+        <button @click="precentage++" :disabled="precentage>=100">+</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管 了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    precentage: 50
+                };
+            },
+            watch: {
+                precentage(newValue, oldValue) {
+                    if (newValue > 100) {
+                        this.precentage = 100;
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

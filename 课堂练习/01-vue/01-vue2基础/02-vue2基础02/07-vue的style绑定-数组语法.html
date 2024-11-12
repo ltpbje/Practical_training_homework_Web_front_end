@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="box" :style="[1< 2 ? obj1:null,obj2]">
+            33333</div>
+        <button @click="change">修改样式</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管 了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    obj1: {
+                        backgroundColor: 'red',
+                        borderRadius: '50%'
+                    },
+                    obj2: {
+
+                    }
+                };
+            },
+            methods: {
+                change() {
+                    this.obj1.width = '200px';
+                    this.obj1.height = '200px';
+                    this.obj2.transform = 'rotateZ(45deg)';
+                }
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

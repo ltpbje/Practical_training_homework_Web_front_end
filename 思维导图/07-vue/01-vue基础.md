@@ -1315,3 +1315,676 @@ vue为一些常用的按钮提供了别名：
 > 代码分析：
 >
 > 在上面的代码，我们现在想得到男或女一共多少人，在上面代码中提供的数据里面是没有直接表示的，所以，如果想实现这个需求，就必须要将data中的属性进行计算之后才能得到结果，那么这个计算过程的实现，在vue中可以通过计算属性来实现
+
+
+
+## 8、vue监听器（数据监听）
+
+### 8.1、普通监听
+
+普通监听主要应用在原始数据类型的监听
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <h2>{{userName}}</h2>
+        <button @click="userName ='李四'">按钮</button>
+
+        <hr>
+        <h2>{{userInfo.userAge}}</h2>
+        <button @click="userInfo.userAge = 30">按钮</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    userName: '张三',
+                    userInfo: {
+                        userAge: 20
+                    }
+                };
+            },
+            watch: {
+                // 你要监听谁，这里的就写一个同名的函数
+                userName(newValue, oldValue) {
+                    //该方法会接收两个实参，分别是newValue修改之后的值，oldValue修改之前的值
+                    console.log(newValue, oldValue);
+                },
+                //  深度监听
+                userInfo: {
+                    deep: true,
+                    //当数据发生变化之后的后续操作由handler方法来接管
+                    handler(newValue) {
+                        console.log(newValue);
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 监听器就是在watch选项下的一个函数，如果要监听某一个数据，就写这个数据同名的函数即可，当这个数据发生变化的时候会自动调用这个函数，同时这个函数会有两个参数，第一个参数代表变化之后的值，第二个参数表示变化之前的值
+
+### 8.2、深度监听
+
+在监听器里面，默认情况下，它只能监听原始数据类型，对于数据集合（对象）是监听不到它的变化的，如果想实现对对象的而监听，应该使用深度监听
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <h2>{{userName}}</h2>
+        <button @click="userName ='李四'">按钮</button>
+
+        <hr>
+        <h2>{{userInfo.userAge}}</h2>
+        <button @click="userInfo.userAge = 30">按钮</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    userName: '张三',
+                    userInfo: {
+                        userAge: 20
+                    }
+                };
+            },
+            watch: {
+                //  深度监听
+                userInfo: {
+                    deep: true,
+                    //当数据发生变化之后的后续操作由handler方法来接管
+                    handler(newValue) {
+                        console.log(newValue);
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 上面的userInfo就是实现了深度监听，深度监听不仅仅是一个单独的函数了，它是一个对象，这个对象上面有一个deep属性，使用设置是否处于深度监听的状态，还有一个handler方法是监听到变化之后的后续处理函数
+
+## 9、购物车综合案例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .page-title {
+            text-align: center;
+        }
+
+        .table1 {
+            width: 1200px;
+            margin: 0 auto;
+            border: 1px solid #000;
+            border-collapse: collapse;
+        }
+
+        .table1 :is(td, th) {
+            /* 设置表格单元格和表头单元格的边框为1像素的实线，颜色为黑色 */
+            border: 1px dotted #000;
+            height: 35px;
+            padding: 5px;
+        }
+
+        .total-info {
+            width: 1200px;
+            font-weight: bold;
+            font-size: 22px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <h2 class="page-title">购物车列表</h2>
+        <table class="table1">
+            <tr>
+                <th>序号</th>
+                <th>商品名称</th>
+                <th>价格</th>
+                <th>数量</th>
+                <th>价格</th>
+            </tr>
+            <tr v-for="(item,index) in goodsList" :key="index">
+                <td>{{index+1}}</td>
+                <td>{{item.goodsName}}</td>
+                <td>{{item.price}}</td>
+                <td>
+                    <button @click="item.count--" :disabled="item.count<=0">-</button>
+                    {{item.count}}
+                    <button @click="item.count++" :disabled="item.count>=99">+</button>
+
+                </td>
+                <td>{{item.price *item.count}}</td>
+            </tr>
+
+
+        </table>
+        <div class="total-info">商品总数:{{totalInfo.totalCount}}件,商品总额:{{totalInfo.totalMoney}}</div>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    goodsList: [
+                        {
+                            goodsName: 'iphone 15',
+                            price: 5000,
+                            count: 1
+                        },
+                        {
+                            goodsName: '充电宝',
+                            price: 130,
+                            count: 3
+                        },
+                        {
+                            goodsName: '笔记本电脑',
+                            price: 7000,
+                            count: 2
+                        },
+                        {
+                            goodsName: '数据线',
+                            price: 30,
+                            count: 5
+                        },
+                    ]
+                };
+            },
+            computed: {
+                totalInfo() {
+                    // 一次性得到totalCount和totalMoney
+                    let totalCount = 0;
+                    let totalMoney = 0;
+                    this.goodsList.forEach(({ price, count }) => {
+                        totalCount += count;
+                        totalMoney += count * price;
+                    });
+                    return {
+                        totalCount,
+                        totalMoney
+                    };
+                }
+            },
+            watch: {
+
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+## 10、vue样式的class绑定
+
+为什么需要样式绑定？
+
+在以前的DOM开发里面，如果我们要动态的切换页面元素的样式，需要动态的去设置classList或者style，这样操作很麻烦，举例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .ul1 li {
+            list-style: 40px;
+            border: 1px solid #000;
+        }
+
+        /* -- 选择器，选择类名为ul1的元素下的li元素，且li元素具有active类  */
+        .ul1 li.active {
+            background-color: red;
+            font-weight: bold;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #000;
+        }
+
+        .box.active {
+            background-color: greenyellow;
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul class="ul1">
+        <li>第1项</li>
+        <li>第2项</li>
+        <li>第3项</li>
+    </ul>
+    <script>
+        let ul1 = document.querySelector('.ul1');
+        ul1.addEventListener('click', function (event) {
+            if (event.target.matches('li')) {
+                let activeElement = document.querySelector('.ul1>li.active');
+                if (activeElement) {
+                    activeElement.classList.remove('active');
+                }
+                event.target.classList.add('active');
+            }
+        })
+
+    </script>
+    <!-- 原生写法  ----------------end----------------- -->
+</body>
+
+</html>
+```
+
+> 代码分析：
+上面的代码就是当我们点击某一项li的时候，会给它添加一个样式，其他的样式则移除，这种效果在原始的DOM操作下会非常麻烦，因为每次操作都要去查找DOM元素，所以它的开发效率是很低下的
+现在的vue开发中，因为不再需要纯粹的依赖于DOM操作，所以可以使用vue里面的数据驱动页面的思路来可完成
+**如果想改变页面，则应该是改变数据，vue的数据是双向绑定的数据，数据改变页面改变，页面改变数据改变**
+
+### 10.1、对象语法
+
+它的语法格式如下
+
+```html
+<div :class="{类名:布尔值,类名:布尔值}"></div>
+```
+
+如果布尔的结果为true，则当前样式生效，反之
+
+```html
+<div class="box" :class="{active:true}"></div>
+```
+
+上面的代码里面，因为active的样式后面的值是一个true，那么，我们就可以认为这个样式生效了
+
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .ul1 li {
+            list-style: 40px;
+            border: 1px solid #000;
+        }
+
+        /* -- 选择器，选择类名为ul1的元素下的li元素，且li元素具有active类  */
+        .ul1 li.active {
+            background-color: red;
+            font-weight: bold;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #000;
+        }
+
+        .box.active {
+            background-color: greenyellow;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="box" :class="{active:flag}" @click="flag=!flag">
+            这是一个盒子
+        </div>
+
+        <ul class="ul1">
+            <li v-for="(item,index) in list" :key="index" :class="{active:currentIndex == index}"
+                @click="currentIndex=index">{{item}}</li>
+
+        </ul>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    flag: false,
+                    list: ['第1项', '第2项', '第3项'],
+                    currentIndex: -1
+                };
+            },
+            watch: {
+                // 你要监听谁，这里的就写一个同名的函数
+                userName(newValue, oldValue) {
+                    //该方法会接收两个实参，分别是newValue修改之后的值，oldValue修改之前的值
+                    console.log(newValue, oldValue);
+                },
+                //  深度监听
+                userInfo: {
+                    deep: true,
+                    //当数据发生变化之后的后续操作由handler方法来接管
+                    handler(newValue) {
+                        console.log(newValue);
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+在上面的代码中，我们可以看到active的样式是否生效主要看后面的flag变化，这个数据值默认是false，然后我们在当前元素的上面添加了click事件，并设置了 flag = !flag ，这样flag的值就会在true / false 之间来回切换，那么就实现了active样式的切换
+
+现在我们在来通过vue来上面原生操作DOM的例子 上面便是例子
+
+### 10.2、数组语法
+
+它的语法格式如下：
+
+```html
+<div :Class="[条件1?'类名1':'类名2',条件2?'类名3':'类名4']"></div>
+```
+
+数组语法每一个数组元素就是一个判断条件，根据判断结果来决定给哪个类名
+
+```html
+<div :Class="[条件1?'active':null]"></div>
+```
+
+举例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .active {
+            background-color: pink;
+        }
+
+        .unactive {
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="box" :class="[age>18 ?'active':'unactive']">
+            <button @click="age++">按钮</button>
+        </div>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    age: 17
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+> 上面的代码中，我们使用 :`class="[age>18?'active':'unactive']" `去完成了动态样式的切换
+> 
+
+## 11、vue样式的style绑定
+
+有了class的动态绑定之后，为什么还需要style绑定，**因为style属性直接操作样式，不需要单独去写一个类，有时候会比较方便**
+
+### 11.1、对象语法
+
+```html
+<div :style="{属性名:数据值,属性名:数据值}"></div>
+```
+
+举例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="box" :style="{backgroundColor:color}">
+            <button @click="color='black'">黑色</button>
+            <button @click="color='red'">红色</button>
+            <button @click="color='blue'">蓝色</button>
+        </div>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管 了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    color: 'white'
+                };
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+综合案例：手动进度条
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .progress {
+            width: 400px;
+            height: 30px;
+            border: 1px solid #ccc;
+            background-image: linear-gradient(to right, red, red);
+            display: flex;
+            background-repeat: no-repeat;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+        }
+
+        span.active {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="progress" :style="{backgroundSize:`${precentage}% 100%`}">
+            <span :class="{active:precentage>55}">{{precentage}}%</span>
+        </div>
+        <hr>
+        <button @click="precentage--" :disabled="precentage<=0">-</button>
+        <button @click="precentage++" :disabled="precentage>=100">+</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管 了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    precentage: 50
+                };
+            },
+            watch: {
+                precentage(newValue, oldValue) {
+                    if (newValue > 100) {
+                        this.precentage = 100;
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+### 11.2、数组语法
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <div class="box" :style="[1< 2 ? obj1:null,obj2]">
+            33333</div>
+        <button @click="change">修改样式</button>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管 了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    obj1: {
+                        backgroundColor: 'red',
+                        borderRadius: '50%'
+                    },
+                    obj2: {
+
+                    }
+                };
+            },
+            methods: {
+                change() {
+                    this.obj1.width = '200px';
+                    this.obj1.height = '200px';
+                    this.obj2.transform = 'rotateZ(45deg)';
+                }
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
