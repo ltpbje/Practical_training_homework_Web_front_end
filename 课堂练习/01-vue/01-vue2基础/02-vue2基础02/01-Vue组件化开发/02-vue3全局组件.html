@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa></aaa>
+        <bbb></bbb>
+    </div>
+    <template id="temp1">
+        <div class="box">
+            <h2>我是box标题1</h2>
+            <p>我是box内容1</p>
+        </div>
+    </template>
+    <template id="temp2">
+        <h1>我是最大的标题</h1>
+        <aaa></aaa>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+
+        });
+        // 注册全局组件
+        app.component('aaa', {
+            template: '#temp1'
+        });
+        app.component('bbb', {
+            template: '#temp2'
+        });
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
