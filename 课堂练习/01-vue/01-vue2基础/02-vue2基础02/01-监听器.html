@@ -36,8 +36,10 @@
                     //该方法会接收两个实参，分别是newValue修改之后的值，oldValue修改之前的值
                     console.log(newValue, oldValue);
                 },
+                //  深度监听
                 userInfo: {
                     deep: true,
+                    //当数据发生变化之后的后续操作由handler方法来接管
                     handler(newValue) {
                         console.log(newValue);
                     }
