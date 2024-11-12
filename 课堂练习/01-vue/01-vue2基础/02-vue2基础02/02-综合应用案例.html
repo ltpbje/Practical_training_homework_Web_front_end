@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .page-title {
+            text-align: center;
+        }
+
+        .table1 {
+            width: 1200px;
+            margin: 0 auto;
+            border: 1px solid #000;
+            border-collapse: collapse;
+        }
+
+        .table1 :is(td, th) {
+            /* 设置表格单元格和表头单元格的边框为1像素的实线，颜色为黑色 */
+            border: 1px dotted #000;
+            height: 35px;
+            padding: 5px;
+        }
+
+        .total-info {
+            width: 1200px;
+            font-weight: bold;
+            font-size: 22px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!--id为app的元素就是vue的管理区域-->
+    <div id="app">
+        <h2 class="page-title">购物车列表</h2>
+        <table class="table1">
+            <tr>
+                <th>序号</th>
+                <th>商品名称</th>
+                <th>价格</th>
+                <th>数量</th>
+                <th>价格</th>
+            </tr>
+            <tr v-for="(item,index) in goodsList" :key="index">
+                <td>{{index+1}}</td>
+                <td>{{item.goodsName}}</td>
+                <td>{{item.price}}</td>
+                <td>
+                    <button @click="item.count--" :disabled="item.count<=0">-</button>
+                    {{item.count}}
+                    <button @click="item.count++" :disabled="item.count>=99">+</button>
+
+                </td>
+                <td>{{item.price *item.count}}</td>
+            </tr>
+
+
+        </table>
+        <div class="total-info">商品总数:{{totalInfo.totalCount}}件,商品总额:{{totalInfo.totalMoney}}</div>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        Vue.createApp({
+            //  vue接管了#app的区域 在该区域内所有的操作都由vue来执行
+            data() {
+                //data这里return返回的对象里面就是页面接管区域的数据来源
+                return {
+                    goodsList: [
+                        {
+                            goodsName: 'iphone 15',
+                            price: 5000,
+                            count: 1
+                        },
+                        {
+                            goodsName: '充电宝',
+                            price: 130,
+                            count: 3
+                        },
+                        {
+                            goodsName: '笔记本电脑',
+                            price: 7000,
+                            count: 2
+                        },
+                        {
+                            goodsName: '数据线',
+                            price: 30,
+                            count: 5
+                        },
+                    ]
+                };
+            },
+            computed: {
+                totalInfo() {
+                    // 一次性得到totalCount和totalMoney
+                    let totalCount = 0;
+                    let totalMoney = 0;
+                    this.goodsList.forEach(({ price, count }) => {
+                        totalCount += count;
+                        totalMoney += count * price;
+                    });
+                    return {
+                        totalCount,
+                        totalMoney
+                    };
+                }
+            },
+            watch: {
+
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>
