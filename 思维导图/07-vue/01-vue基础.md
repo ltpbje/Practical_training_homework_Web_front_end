@@ -2295,7 +2295,7 @@ Vue.filter("过滤器名称",function(参数){
 
 当我们在html中需要重复的生成某些东西的时会，会造成大量的代码冗余现在我们要想办法，怎么去简化上面的代码，换句话就是提高代码利用率
 
-## 1、虚拟DOM概念
+## 1、虚拟DOM概念 
 
 能够简化代码最好的办法就是封装，封装这个概念我们其实一致在践行，比如JS的封装依靠的就是function函数，如果是css的封装我们可以使用到公共样式，但是好像并没有针对HTML的封装
 
@@ -2848,3 +2848,199 @@ methods: {
 数据流的单向性就注定了只能外边改变，里面再改变，而不能里面改变，外边再改变，当我们尝试这么去做会报错的
 
 ## 7、破坏数据流的单向性
+
+### 7.1、利用对象的堆栈原理
+vue中进行组件传递的值的时候，可以使用const锁栈不锁堆的原理，当值接收到之后，不可以再去改动栈里面的内容，但是可以改变堆里面的内容
+同时我们还知道，对象再传递的时候传递的是堆的内存地址（浅拷贝） 
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <h1>组件外面 -----{{userInfo.nickName}}</h1>
+        <button @click="nickName='炎拳'">按钮</button>
+        <aaa :user-info="userInfo"></aaa>
+    </div>
+
+    <!-- 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据 -->
+    <template id="temp1">
+        <div class="box">
+            <h2>大家好,我叫{{userInfo.nickName}}</h2>
+            <button @click="changeUserInfo">内部按钮</button>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                };
+            },
+            methods: {
+                changeUserInfo() {
+                    this.userInfo.nickName = '电锯人';
+                }
+            },
+            // 数组语法
+            props: ["userInfo"]
+            // 对象语法
+            // props: {
+            //     userInfo : {
+            //         nickName
+            //     },
+
+            // }
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userInfo: {
+                        nickName: '大哥哥'
+                    }
+                };
+            },
+            methods: {
+
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 再上面的代码中，我们本传递到aaa中的是一个原始数据类型，但是现在我们把它改成了一个userInfo的对象，它是一个引用数据类型，对象在传递的时候是地址传递（浅拷贝），同时去修改userInfo的时候，就可以修改userInfo内部的东西
+> 
+
+### 7.2、利用自定义事件
+
+vue官方推荐使用自定义事件来解决数据流单向的问题
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <h2>我的名字叫做:{{userName}}</h2>
+        <aaa :my-name="userName" @abc="changeMyName"></aaa>
+    </div>
+
+    <!-- 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据 -->
+    <template id="temp1">
+        <div class="box">
+            <h2>我的名字叫做{{myName}}</h2>
+            <button @click="changeMyName">内部修改名字的按钮</button>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                    userName: '张三',
+                    newName: '帕瓦'
+                };
+            },
+            methods: {
+                // 这里使用$emit方法，该方法会创建并触发一个自定义事件
+                changeMyName() {
+                    this.$emit('abc', this.newName);
+                }
+            },
+            // 数组语法
+            props: ['myName'],
+            // 对象语法
+            // props: {
+            //     userInfo : {
+            //         nickName
+            //     },
+
+            // }
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 在上面的代码中，我们在子组件aaa中声明了一个changeMyName的方法，该方法会触发一个自定义事件abc，然后，我们在父组件中调用该子组件并且监听abc事件
+>
+> 当子组件aaa中的changeMyName方法被执行后，就会触发abc事件，同时父组件中会监听到abc事件的触发从而执行了父组件中的changeMyName的方法
+>
+> 而父组件中的changeMyName方法是修改父组件自己的userName的数据值，而userName的数据值又通过aaa组件的自定义属性传递给了aaa组件内部，所以当userName的值被修改的时候传递给子组件的值也会被修改
+>
+> 把上面一系列逻辑总结到一起：
+>
+> 在子组件中触发了自定义事件abc，然后abc执行了父组件的changeMyName方法，该方法修改了父组件的userName，所以传递给子组件的uerName的值也一并修改，最终形成了一个通过子组件触发父组件方法来修改父组件数据的这么一个流程
+
+同时，如果组件的内部要触发自定义事件，还可以将子组件内部的数据一并传递给外部
+
+```js
+this.$emit("abc",参数2)
+```
+
+这里参数2就是传递给外部组件的数据
+
+同时，在父组件中被自定义事件触发的方法可以接受到emit传递的数据，从而实现了子组件向父组件传递数据的操作
+
+完整代码如上面的代码块

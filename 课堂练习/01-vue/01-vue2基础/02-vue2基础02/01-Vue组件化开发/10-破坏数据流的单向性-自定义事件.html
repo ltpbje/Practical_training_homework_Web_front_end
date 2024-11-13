@@ -33,13 +33,14 @@
             template: '#temp1',
             data() {
                 return {
-                    userName: '张三'
+                    userName: '张三',
+                    newName: '帕瓦'
                 };
             },
             methods: {
                 // 这里使用$emit方法，该方法会创建并触发一个自定义事件
                 changeMyName() {
-                    this.$emit('abc', '帕瓦');
+                    this.$emit('abc', this.newName);
                 }
             },
             // 数组语法
