@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <!-- 用动态属性绑定的方式，将自定义属性做成动态属性，就可以携带数据类型传入 -->
+        <aaa msg="haha" sex="怪兽" nick-name="大哥哥" :flag="false"></aaa>
+    </div>
+
+    <!-- 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据 -->
+    <template id="temp1">
+        <div class="box">
+            <h2>大家好,我叫{{nickName}}</h2>
+            <h2>{{msg}}---{{sex}}</h2>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                };
+            },
+            // 数组语法
+            // props: ["msg", "sex"]
+            // 对象语法
+            props: {
+                msg: {
+                    type: String,
+                    <!-- 是否必填 -->
+                    required: true
+                },
+                sex: {
+                    type: String,
+                    default: '男'
+                },
+                nickName: {
+                    type: String,
+
+                },
+                flag: {
+                    type: Boolean,
+                }
+            }
+        };
+        const app = Vue.createApp({
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
