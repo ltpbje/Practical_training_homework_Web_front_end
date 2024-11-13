@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa>
+            <template #default>
+                <input type="text">
+            </template>
+            <template v-slot:footer>
+                <button>按钮</button>
+            </template>
+
+        </aaa>
+    </div>
+    <template id="temp1">
+        <!-- 默认插槽 -->
+        <slot></slot>
+        <h2>大家好</h2>
+        <h2>我是一个组件</h2>
+        <!-- 具名插槽 -->
+        <slot name="footer"></slot>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>

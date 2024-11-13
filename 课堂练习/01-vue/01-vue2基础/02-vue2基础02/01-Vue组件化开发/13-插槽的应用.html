@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .title-bar {
+            display: flex;
+            padding: 0 20px;
+            height: 60px;
+            background-color: skyblue;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: aliceblue;
+        }
+
+        .left-back {
+            position: absolute;
+            left: 20px;
+        }
+
+        .right-menu {
+            position: absolute;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <title-bar>
+            微信
+            <template #right>
+                搜索
+            </template>
+        </title-bar>
+        <!--  -->
+        <title-bar :show-back="true">
+            朋友圈
+            <template #right>
+                发朋友圈
+            </template>
+        </title-bar>
+
+    </div>
+    <template id="temp1">
+        <div class="title-bar">
+            <div class="left-back" v-show="showBack">返回</div>
+            <slot></slot>
+            <div class="right-menu">
+                <slot name="right"></slot>
+            </div>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+
+        });
+        app.component('title-bar', {
+            template: '#temp1',
+            props: {
+                showBack: {
+                    type: Boolean,
+                    default: false
+                }
+            }
+        });
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
