@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <h1>组件外面 -----{{userInfo.nickName}}</h1>
+        <button @click="nickName='炎拳'">按钮</button>
+        <aaa :user-info="userInfo"></aaa>
+    </div>
+
+    <!-- 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据 -->
+    <template id="temp1">
+        <div class="box">
+            <h2>大家好,我叫{{userInfo.nickName}}</h2>
+            <button @click="changeUserInfo">内部按钮</button>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                };
+            },
+            methods: {
+                changeUserInfo() {
+                    this.userInfo.nickName = '电锯人';
+                }
+            },
+            // 数组语法
+            props: ["userInfo"]
+            // 对象语法
+            // props: {
+            //     userInfo : {
+            //         nickName
+            //     },
+
+            // }
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userInfo: {
+                        nickName: '大哥哥'
+                    }
+                };
+            },
+            methods: {
+
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
