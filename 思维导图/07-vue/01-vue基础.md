@@ -3044,3 +3044,422 @@ this.$emit("abc",参数2)
 同时，在父组件中被自定义事件触发的方法可以接受到emit传递的数据，从而实现了子组件向父组件传递数据的操作
 
 完整代码如上面的代码块
+
+## 8、组件的插槽
+
+当我们在封装组件的时候，我们会发现有一些情况下90%的标签结构都是一样，而小部分地方的标签结构不一样，这种情况下了我们就可以把小部分不同的地方空出来，放入一个插槽，后期通过插槽插入不同的标签结构即可
+
+### 8.1、普通插槽（默认插槽）
+
+举例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa>
+            <input type="text">
+        </aaa>
+    </div>
+    <template id="temp1">
+        <slot></slot>
+        <h2>大家好</h2>
+        <h2>我是一个组件</h2>
+        <slot></slot>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 插槽的制作依靠**一个slot标签来完成**，在template中写入slot标签，表示该slot所处的位置，会作为一个插槽空出来，然后，我们可以通过在虚拟标签的中间插入内容，从而将插入的内容插入到slot插槽所在的位置
+> 
+
+### 8.2、具名插槽
+
+故名思意就是具有名字的插槽，插槽在默认情况是不写的名字（默认名字就是“默认”），但是也可以指定名字，然后我们就可以通过名字来指定哪个内容插入到哪个插槽
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa>
+            <template #default>
+                <input type="text">
+            </template>
+            <template v-slot:footer>
+                <button>按钮</button>
+            </template>
+
+        </aaa>
+    </div>
+    <template id="temp1">
+        <!-- 默认插槽 -->
+        <slot></slot>
+        <h2>大家好</h2>
+        <h2>我是一个组件</h2>
+        <!-- 具名插槽 -->
+        <slot name="footer"></slot>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> 具名插槽通过给slot标签的name属性设置值来取名字
+>
+> 如果这个插槽没有名字默认就有一个叫做default的名字，也叫默认插槽
+>
+> 如果想向一个具名插槽插入内容，应该使用 <template v-slot:插槽名>来插入
+>
+> v-slot是vue2.6.1之后更新的语法
+
+
+
+现在在vue3中又有新的插槽语法：
+
+```html
+<template #default>
+    <input type="text" >
+</template>
+<template #footer>
+    <button>按钮</button>
+</template>
+```
+
+在新语法中，我们把` v-slot:插槽名` 改成了 `#插槽名`
+
+现在我们了解插槽之后，我们来尝试做一个简单封装案例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .title-bar {
+            display: flex;
+            padding: 0 20px;
+            height: 60px;
+            background-color: skyblue;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: aliceblue;
+        }
+
+        .left-back {
+            position: absolute;
+            left: 20px;
+        }
+
+        .right-menu {
+            position: absolute;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <title-bar>
+            微信
+            <template #right>
+                搜索
+            </template>
+        </title-bar>
+        <!--  -->
+        <title-bar :show-back="true">
+            朋友圈
+            <template #right>
+                发朋友圈
+            </template>
+        </title-bar>
+
+    </div>
+    <template id="temp1">
+        <div class="title-bar">
+            <div class="left-back" v-show="showBack">返回</div>
+            <slot></slot>
+            <div class="right-menu">
+                <slot name="right"></slot>
+            </div>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+
+        });
+        app.component('title-bar', {
+            template: '#temp1',
+            props: {
+                showBack: {
+                    type: Boolean,
+                    default: false
+                }
+            }
+        });
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+> 代码分析：
+>
+> ### 以上代码，我们自己封装了一个title-bar全局组件，然后通过不同地方的调用来插入不同的内容从而实现了html的复用
+
+## 9、插槽的默认值
+
+**插槽可以设置默认的内容**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa>
+            <!-- <template #default>
+                <input type="text">
+            </template> -->
+            <template v-slot:footer>
+                <button>按钮</button>
+            </template>
+
+        </aaa>
+    </div>
+    <template id="temp1">
+        <!-- 默认插槽 -->
+        <slot>
+            <button>我是默认值</button>
+        </slot>
+        <h2>大家好</h2>
+        <h2>我是一个组件</h2>
+        <!-- 具名插槽 -->
+        <slot name="footer"></slot>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+## 10、插槽作用域
+
+**作用域插槽就是在插槽中调用组件内部的数据**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa>
+            <template #default="scope">
+                <h3>我是插入的内容---{{scope.age}}---{{scope.abc}}</h3>
+            </template>
+        </aaa>
+    </div>
+    <template id="temp1">
+        <h2>我是一个组件</h2>
+        <slot abc="123" :age="age"></slot>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                    userName: '张三',
+                    age: 18
+                };
+            },
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    userName: '张三'
+                };
+            },
+            methods: {
+                changeMyName(data) {
+                    this.userName = data;
+                    // this.userName = '早川秋';
+                }
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+同时，我们也可以采用ES6解构取值的方式直接从scope中获取需要渲染的数据
+
+```html
+<template #footer="{age,abc}">
+    <h3>我是插入的内容 --- {{age}} --- {{abc}}</h3>
+</template>
+```
+
