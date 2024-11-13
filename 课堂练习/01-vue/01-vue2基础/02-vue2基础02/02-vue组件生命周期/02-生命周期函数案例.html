@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="app">
+        <ul>
+            <li v-for="(item,index) in dataArr">
+                <span> {{item.food_name}}</span>
+                <img :src=" 'http://www.softeem.xin:9544' +item.food_img" alt="">
+            </li>
+        </ul>
+    </div>
+
+
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script>
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    msg: 'hello',
+                    age: 10,
+                    dataArr: []
+                };
+            },
+            beforeCreate() {
+                // console.error('vue在创建之前的时候----- beforeCreate');
+                // // 在下一个 DOM 更新循环结束之后执行延迟回调
+                // this.$nextTick(() => {
+                //     // 打印 this.msg 的值
+                //     console.log(this.msg);
+                // });
+
+            },
+            mounted() {
+                this.getData();
+            },
+            methods: {
+                async getData() {
+                    try {
+                        let result = await axios.get("http://www.softeem.xin:9544/foodInfo/getListByPage?pageIndex=1");
+                        console.log(result.data.data.listData);
+                        this.dataArr = result.data.data.listData;
+                        console.log(this.dataArr);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            },
+            //这里注册局部变量
+            components: {
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>

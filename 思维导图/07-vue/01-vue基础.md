@@ -3463,3 +3463,123 @@ this.$emit("abc",参数2)
 </template>
 ```
 
+# vue组件的生命周期
+
+生命周期就是指组件从创建到销毁的过程，所有的vue组件都有自己的生命周期，该
+
+周期会经历4个阶段，8个过程
+
+4个阶段-8个过程：
+
+创建阶段：创建前、创建后
+
+挂载阶段：挂载前、挂载后
+
+更新阶段：更新前、更新后
+
+销毁阶段：销毁前、销毁后
+
+## 1、生命周期与钩子函数
+
+vue在每个生命周期的时候都会执行相应的一些代码，并且这些代码我们希望当到了对应阶段就自动执行，那么，这些代码我们就需要写在钩子函数当中，因为这些钩子函数会在组件对应的生命周期中自动执行，那么写在钩子函数中的代码也会跟着一起被执行掉
+
+1、beforeCreate() 在创建vue之前
+
+2、created（）组件创建好之后
+
+3、beforeMount() 在vue组件接管页面之前
+
+4、mounted() vue接管页面之后
+
+5、beforeUpdate() vue组件在内部更新之前
+
+6、updated() vue足迹爱你内部更新之后
+
+7、beforeUnmount() 组件被销毁之前，在vue2中叫做beforeDestory()
+
+8、unmount() 组件销毁之后，在vue2中叫做Destoryed()
+
+> 注意：
+>
+> 以上是optionsAPI中的作为钩子函数时使用得到函数名，在compisitonAPI名字前面会加上一个on
+
+## 2、跨生命周期的调用
+
+vue在不同的生命周期可以做不同的操作
+
+|       | beforeCreate | created | beforeMount | mounted |
+| ----- | ------------ | ------- | ----------- | ------- |
+| data  | false        | true    | true        | true    |
+| $refs | false        | false   | false       | true    |
+
+总体来说，只有2个原则，如果要操作vue内部的东西，一定要在创建之后，如果要操作页面的东西，一定要在挂载（接管页面）之后
+
+思考：有没有可能在beforeCreate里面就调用data里面的数据
+
+如果想违背生命周期的调用原则，则需要使用一种特殊方式（跨生命周期调用）
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="app">
+
+    </div>
+
+
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script>
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    msg: 'hello',
+                    age: 10
+                };
+            },
+            beforeCreate() {
+                // console.error('vue在创建之前的时候----- beforeCreate');
+                // // 在下一个 DOM 更新循环结束之后执行延迟回调
+                // this.$nextTick(() => {
+                //     // 打印 this.msg 的值
+                //     console.log(this.msg);
+                // });
+
+            },
+            mounted() {
+                this.getData();
+            },
+            methods: {
+                async getData() {
+                    try {
+                        let result = await axios.get("http://www.softeem.xin:9544/foodInfo/getListByPage?pageIndex=1");
+                        console.log(result.data.data.listData);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            },
+            //这里注册局部变量
+            components: {
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+跨生命周期的调用主要是靠 **$nextTick 方法**，它可以让里面的回调函数在合适的时候执行
