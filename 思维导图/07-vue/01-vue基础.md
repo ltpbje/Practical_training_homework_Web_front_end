@@ -2497,3 +2497,354 @@ vue3的全局组件和vue2的全局组件方式不太一样，组件也叫compon
 > **注意：**
 >
 > **组件一定要先注册再使用**
+> 
+
+## 4、组件中的数据
+
+组件本身就是一个小型的vue，所以它的内部的原理与我们之前所学习的东西是一样的，它的内部也会有data，也会有methods，也会有watch等等
+
+针对组件内部的数据来源：
+
+1、组件自身的数据data
+
+2、外部传入的数据
+
+3、组件自身的computed
+
+4、全局数据
+
+### 4.1、组件自身的数据
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <aaa msg="haha"></aaa>
+    </div>
+
+    <!-- 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据 -->
+    <template id="temp1">
+        <div class="box">
+            <h2>大家好,我叫{{nickName}}</h2>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                    nickName: '张三'
+                };
+            },
+            props: {
+
+            }
+        };
+        const app = Vue.createApp({
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+>  代码分析：
+>
+> 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据
+> 
+
+### 4.2、组件接收的外部数据
+
+其实在大多数的开发场景下，我们可以看到，组件的布局是相同的，但是数据是不一样的
+
+这种情况下，我们一般都利用父组件将数据通过列表渲染的方式传递给子组件来完成
+
+组件是可以接受外部传递进入的数据，数据在传递的时候需要使用到**自定义属性传递**
+
+```html
+<aaa msg="haha"></aaa>
+```
+
+如果我们采用上面的方式来完成，这个时候我们就可以看到组件上有一个msg自定义属性，这个属性的值是“haha” ，在组件内部就可以实现值的接收
+
+在接收过程中分为数组语法和对象语法两种：
+
+**1、数组语法**
+
+```js
+let aaa = {
+    template:"#temp1",
+    props:["msg","sex"]
+}
+```
+
+**2、对象语法**
+
+```js
+let aaa = {
+	template:"#temp1",
+	props:{
+        msg:{
+            type:String,
+            required:true
+        },
+        sex:
+            {
+                type:String,
+                default:"女"	
+            }
+   	}
+}
+```
+
+在使用对象语法接受的时候，我们可以使用一些描述信息，比如**type去制定接受的数据类型**，default指定默认值，比如required指定这个值必须传递进来
+
+> **关于外部传入数据的注意事项**
+>
+> 1、关于自定义属性名的设置问题
+>
+> 当在子组件中设置的props的接收数据的属性名是一个驼峰写法的时候，在作为自定义属性写的时候需要转义，比如：nickName -----> nick-name
+>
+> 2、关于传递的值的数据类型的问题
+>
+> 在正常情况下传入组件内部的数据值都是字符串类型的，如果想携带数据类型将值传入，需要在传入的时候使用动态属性绑定的方式传入，比如
+>
+> ```html
+> <aaa flag="false"></aaa>
+> <!-- 上面情况下传入的并不是布尔的false，而是字符串的false -->
+> ```
+>
+> 正确携带数据类型传入的方式如下：
+>
+> ```html
+> <aaa :flag="false"></aaa>
+> <!-- 使用动态属性绑定的方式，将自定义属性做成动态属性，就可以携带数据类型
+> 传入 -->
+> ```
+>
+
+### 4.3、全局数据
+
+全局数据可以解决跨组件调用的问题，比如父级组件传递给孙子组件，比如，兄弟之间相互传递数据，面对这种情况，我们可以使用全局数据完成，目前的全局数据的解决方案有以下几种：
+
+1、vuex
+
+2、pinia
+
+3、vue3自带provide和inject方法
+
+## 5、组件的事件与方法
+
+组件本身就是一个小型的vue，所以它的内部一定会有数据和事件，那么有事件就必然也会有方法，所以我们来看下组件内的事件与方法
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <h2>aaa组件的外部</h2>
+        <button @click="m1">外面按钮</button>
+        <aaa msg="haha" sex="怪兽" ref="aaa"></aaa>
+    </div>
+
+    <!-- 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据 -->
+    <template id="temp1">
+        <div class="box">
+            <h2>大家好,我叫{{nickName}}</h2>
+            <h2>{{msg}}---{{sex}}</h2>
+            <button @click="sayHello">按钮</button>
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                    nickName: '张三'
+                };
+            },
+            methods: {
+                sayHello() {
+                    console.log('大家好，我叫' + this.nickName);
+
+                }
+            },
+            // 数组语法
+            // props: ["msg", "sex"]
+            // 对象语法
+            props: {
+                msg: {
+                    type: String,
+                    <!-- 是否必填 -->
+                    required: true
+                },
+                sex: {
+                    type: String,
+                    default: '男'
+                }
+            }
+        };
+        const app = Vue.createApp({
+            methods: {
+                m1() {
+                    // 在这里我们想调用aaa组件内部的sayHello方法
+                    this.$refs.aaa.sayHello();
+                }
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+上面的代码中，我们可以看到，组件内部的事件可以在组件内部处理方法的执行
+
+### 5.1、父组件调用子组件的方法
+
+当父组件需要调用 子组件的方法时候，我们可以通过 $refs 来找到这个组件，只要找到这个组件就可以调用这个子组件内部的方法
+
+```html
+<aaa nick-name="大哥哥" ref="aaa"></aaa>
+```
+
+最后在使用的时候，直接通过 `this.$refs.aaa.方法名()`; 就可以调用子组件里面的方法
+
+```js
+methods: {
+    m1() {
+        // 在这里我们想调用aaa组件内部的sayHello方法
+        this.$refs.aaa.sayHello();
+    }
+},
+```
+
+## 6、数据流的单向性
+
+数据流的单向性指的是数据只能从外部流向内部，**外部改变了，内部也改变**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .box {
+        width: 300px;
+        border: 2px solid #000;
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <div id="app">
+        <h1>组件外面 -----{{nickName}}</h1>
+        <button @click="nickName='炎拳'">按钮</button>
+        <aaa :nick-name="nickName"></aaa>
+    </div>
+
+    <!-- 所谓组件自身的数据，可以简单理解就是组件内部data中本身就存在的数据 -->
+    <template id="temp1">
+        <div class="box">
+            <h2>大家好,我叫{{nickName}}</h2>
+
+        </div>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        let aaa = {
+            template: '#temp1',
+            data() {
+                return {
+                };
+            },
+            methods: {
+                sayHello() {
+                    console.log('大家好，我叫' + this.nickName);
+
+                }
+            },
+            // 数组语法
+            // props: ["msg", "sex"]
+            // 对象语法
+            props: {
+                nickName: {
+                    type: String,
+                },
+
+            }
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    nickName: '大哥哥'
+                };
+            },
+            methods: {
+
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+当我们点击了按钮之后，我们发现外部的数据变了，内部的数据也变化了，这是因为数据是有流行性的，由外向内进行传递，**这个过程不可逆**
+
+数据流的单向性就注定了只能外边改变，里面再改变，而不能里面改变，外边再改变，当我们尝试这么去做会报错的
+
+## 7、破坏数据流的单向性
