@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .fade-enter-from {
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .fade-enter-to {
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .fade-leave-from {
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .fade-enter-active {
+            transition: all 1s linear;
+        }
+
+        /* 离开的过程 */
+        .fade-leave-active {
+            transition: all 1s linear;
+        }
+
+        img {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <transition-group name="fade">
+            <img v-for="(item,index) in imgList" :src="item" v-show="currentIndex==index" :key="index"></img>
+        </transition-group>
+        <button @click="currentIndex--">前</button>
+        <button @click="currentIndex++">后</button>
+    </div>
+
+
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/vue-router4.global.js"></script>
+    <script>
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    currentIndex: 0,
+                    imgList: [
+                        "./img/item1.jpg",
+                        "./img/item2.jpg",
+                        "./img/item3.jpg",
+                    ]
+                };
+            },
+            watch: {
+                currentIndex(newValue, oldValue) {
+                    if (newValue > 2) {
+                        this.currentIndex = 0;
+                    } else if (newValue < 0) {
+                        this.currentIndex = 2;
+                    }
+                }
+            }
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
