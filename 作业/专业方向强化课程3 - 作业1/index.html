@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 1300px;
+            margin: 0 auto;
+            /* border: 1px solid #000; */
+
+        }
+
+        .list_box .row {
+            height: 140px;
+            background-color: #FFFFFF;
+            /* border: 1px solid #000; */
+            /* width: 900px; */
+            display: flex;
+            padding: 0 20px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list_box .row img {
+            width: 213px;
+            height: 122px;
+        }
+
+        .control_box {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .control_box button {
+            background-color: #0076FD;
+            border: none;
+            border-radius: 5px;
+            margin: 0 5px;
+            height: 30px;
+            color: whitesmoke;
+        }
+
+        .row div {
+            width: 325px;
+        }
+
+        .row div:last-child {
+            width: 50px;
+        }
+
+        .row:nth-child(2n) {
+            background-color: #F2F2F2;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="box">
+            <!-- 列表盒子 -->
+            <div class="list_box">
+                <div class="row" v-for="(item,index) in dataList" :key="index">
+                    <div class="index">{{item.id}}</div>
+                    <div class="title">{{item.title}}</div>
+                    <div class="picture">
+                        <img :src="item.url" alt="">
+                    </div>
+                    <div class="type">{{item.type}}</div>
+                </div>
+
+            </div>
+            <!-- 换页盒子 -->
+            <div class="control_box">
+                <button @click="prevPage">上一页</button>
+                <button @click="nextPage">下一页</button>
+
+            </div>
+        </div>
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    // 数据列表
+                    dataList: [],
+                    // 当前页码
+                    currentPage: 0
+                };
+            },
+            beforeCreate() {
+                // console.error('vue在创建之前的时候----- beforeCreate');
+                // // 在下一个 DOM 更新循环结束之后执行延迟回调
+                // this.$nextTick(() => {
+                //     // 打印 this.msg 的值
+                //     console.log(this.msg);
+                // });
+
+
+            },
+            created() {
+                // 获取数据
+                this.getData();
+            },
+            mounted() {
+                // this.getData();
+            },
+            methods: {
+                // 获取数据
+                getData() {
+                    try {
+                        // let result = await axios.get("http://www.softeem.xin:9544/foodInfo/getListByPage?pageIndex=1");
+
+                        // 创建 XMLHttpRequest 对象
+                        var xhr = new XMLHttpRequest();
+
+                        // 设置请求的类型和URL
+                        xhr.open('GET', `https://api.apiopen.top/api/getImages?page=${this.currentPage}&count=10`, true);
+
+                        // 设置请求完成后的回调函数
+                        xhr.onload = () => {
+                            if (xhr.status === 200) {
+                                // 请求成功，处理响应数据
+                                var response = JSON.parse(xhr.responseText);
+                                if (response.code === 200) {
+                                    // console.log(response.result.list);
+
+                                    this.dataList = response.result.list;
+                                    // console.log(this.dataList);
+                                } else {
+
+                                }
+                            } else {
+                                // 请求失败，处理错误
+
+                            }
+                        };
+
+                        // 发送请求
+                        xhr.send();
+                        // console.log(result.data.data.listData);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                },
+                prevPage() {
+                    if (this.currentPage >= 1) {
+                        this.currentPage--;
+                        this.getData();
+
+                    } else {
+                        return;
+                    }
+                },
+                nextPage() {
+                    this.currentPage++;
+                    this.getData();
+                }
+            },
+
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>

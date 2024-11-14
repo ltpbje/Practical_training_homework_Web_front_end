@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="app">
+        <button @click="flag = !flag">切换</button>
+        <aaa v-if="flag"></aaa>
+    </div>
+    <template id="temp1">
+        <h2>这是一个组件</h2>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script>
+
+        let aaa = {
+            template: '#temp1',
+            created() {
+                console.log("我是组件，我被created");
+            }
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    flag: true
+                };
+            },
+
+            beforeCreate() {
+                // console.error('vue在创建之前的时候----- beforeCreate');
+                // // 在下一个 DOM 更新循环结束之后执行延迟回调
+                // this.$nextTick(() => {
+                //     // 打印 this.msg 的值
+                //     console.log(this.msg);
+                // });
+
+            },
+
+            methods: {
+
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
