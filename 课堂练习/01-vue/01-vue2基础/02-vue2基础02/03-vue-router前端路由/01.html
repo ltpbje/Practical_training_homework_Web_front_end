@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #login,
+    #register {
+        display: none;
+        height: 3000px;
+    }
+
+    #login {
+        background-color: lightgreen;
+    }
+
+    #register {
+        background-color: lightcoral;
+    }
+
+    #login:target,
+    #register:target {
+        display: block;
+    }
+</style>
+
+<body>
+
+    <div id="login">
+        <h2>我是一个登录页面</h2>
+        <a href="#box">点我</a>
+    </div>
+    <div id="register">
+        <h2>我是一个注册页面</h2>
+    </div>
+    <div id="box">
+        我是box
+    </div>
+
+
+
+</body>
+
+</html>
