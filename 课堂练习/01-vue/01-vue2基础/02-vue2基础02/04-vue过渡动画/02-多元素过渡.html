@@ -48,7 +48,11 @@
 
 <body>
     <div id="app">
+        <!-- 使用transition-group组件添加淡入淡出动画效果 -->
         <transition-group name="fade">
+            <!-- 遍历imgList数组，为每个图片元素添加一个transition-group的子元素 -->
+            <!-- 通过v-show指令，只有当currentIndex与index相等时才显示对应的图片 -->
+            <!-- 通过:key为每个元素指定唯一的键值，以便Vue能够追踪每个元素的身份 -->
             <img v-for="(item,index) in imgList" :src="item" v-show="currentIndex==index" :key="index"></img>
         </transition-group>
         <button @click="currentIndex--">前</button>
