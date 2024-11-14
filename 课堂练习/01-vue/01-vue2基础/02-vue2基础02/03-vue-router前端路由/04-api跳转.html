@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .login {
+            background-color: lightgreen;
+        }
+
+        .register {
+            background-color: lightcoral;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 这个组件可以理解成是一个动态组件  具体渲染哪个组件由路由对象来决定-->
+        <router-view></router-view>
+    </div>
+    <template id="temp1">
+        <h2 class="login">我是一个登录页面</h2>
+        <button @click="goTo">跳转注册</button>
+    </template>
+    <template id="temp2">
+        <h2 class="register">我是一个注册页面</h2>
+        <button @click="backTo">返回</button>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/vue-router4.global.js"></script>
+    <script>
+        let Login = {
+            template: '#temp1',
+            methods: {
+                goTo() {
+                    this.$router.push({
+                        name: 'register',
+                    });
+                }
+            },
+        };
+        let Register = {
+            template: '#temp2',
+            methods: {
+                backTo() {
+                    this.$router.back();
+                }
+            }
+        };
+        // 创建路由对象
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
+            routes: [
+                {
+                    path: '/',
+                    // 重定向
+                    redirect: {
+                        name: 'login'
+                    }
+                },
+                {
+                    path: '/login',
+                    component: Login,
+                    name: 'login'
+                },
+                {
+                    path: '/register',
+                    component: Register,
+                    name: 'register'
+                }
+            ]
+        });
+        const app = Vue.createApp({
+            components: {
+                Login,
+                Register
+            },
+            methods: {
+
+            },
+        });
+        //加载路由模块
+        app.use(router);
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
