@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        ul,
+        ol {
+            list-style: none;
+
+        }
+
+        #app {
+            width: 100vw;
+            height: 100vh;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-bar {
+            height: 60px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #f5f5f5;
+            border-top: 1px solid #ccc;
+        }
+
+        .selected {
+            color: red;
+            font-weight: bold;
+        }
+
+        .content-box {
+            flex: 1;
+        }
+
+        .page-box {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="content-box">
+            <router-view></router-view>
+        </div>
+        <ul class="tab-bar">
+            <router-link custom :to="{name:'ChooseFood'}" #default="{navigate,isActive}">
+                <li @click="navigate" :class="{selected:isActive}">点餐</li>
+            </router-link>
+            <router-link custom :to="{name:'Order'}" #default="{navigate,isActive}">
+                <li @click="navigate" :class="{selected:isActive}">订单</li>
+            </router-link>
+
+            <router-link custom :to="{name:'CateGory'}" #default="{navigate,isActive}">
+                <li @click="navigate" :class="{selected:isActive}">分类</li>
+            </router-link>
+            <router-link custom :to="{name:'My'}" #default="{navigate,isActive}">
+                <li @click="navigate" :class="{selected:isActive}">我的</li>
+
+            </router-link>
+        </ul>
+    </div>
+    <template id="temp1">
+        <div class="page-box" style="background-color: green;">
+            <h2>这是订餐页面</h2>
+        </div>
+    </template>
+    <template id="temp2">
+        <div class="page-box" style="background-color: lightblue;">
+            <h2>这是订单页面</h2>
+        </div>
+    </template>
+    <template id="temp3">
+        <div class="page-box" style="background-color: gold;">
+            <h2>这是分类页面</h2>
+        </div>
+    </template>
+    <template id="temp4">
+        <div class="page-box" style="background-color: orangered;">
+            <h2>这是我的页面</h2>
+        </div>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/vue-router4.global.js"></script>
+    <script>
+        let ChooseFood = {
+            template: '#temp1',
+        };
+        let Order = {
+            template: '#temp2',
+
+        };
+        let CateGory = {
+            template: '#temp3',
+
+        };
+        let My = {
+            template: '#temp4',
+
+        };
+        // 创建路由对象
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
+            routes: [
+                {
+                    path: '/',
+                    redirect: {
+                        name: 'ChooseFood'
+                    }
+                },
+                {
+                    path: '/chooseFood',
+                    component: ChooseFood,
+                    name: 'ChooseFood'
+                },
+                {
+                    path: '/order',
+                    component: Order,
+                    name: 'Order'
+                },
+                {
+                    path: '/category',
+                    component: CateGory,
+                    name: 'CateGory'
+                },
+                {
+                    path: '/my',
+                    component: My,
+                    name: 'My'
+                },
+            ]
+        });
+        const app = Vue.createApp({
+            components: {
+                ChooseFood,
+                Order,
+                CateGory,
+                My
+            },
+            methods: {
+
+            },
+        });
+        //加载路由模块
+        app.use(router);
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>

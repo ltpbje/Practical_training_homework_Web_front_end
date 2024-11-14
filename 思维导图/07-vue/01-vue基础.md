@@ -3586,3 +3586,105 @@ vue在不同的生命周期可以做不同的操作
 
 ## 3、v-if及v-show的区别
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="app">
+        <button @click="flag = !flag">切换</button>
+        <aaa v-show="flag"></aaa>
+    </div>
+    <template id="temp1">
+        <h2>这是一个组件</h2>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <script>
+
+        let aaa = {
+            template: '#temp1',
+            created() {
+                console.log("我是组件，我被created");
+            }
+        };
+        const app = Vue.createApp({
+            data() {
+                return {
+                    flag: true
+                };
+            },
+
+            beforeCreate() {
+                // console.error('vue在创建之前的时候----- beforeCreate');
+                // // 在下一个 DOM 更新循环结束之后执行延迟回调
+                // this.$nextTick(() => {
+                //     // 打印 this.msg 的值
+                //     console.log(this.msg);
+                // });
+
+            },
+
+            methods: {
+
+            },
+            //这里注册局部变量
+            components: {
+                aaa
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
+```
+
+
+
+**v-show不会销毁组件**
+
+当我们通过v-show把元素隐藏起来的时候，再取显示的时候，我们发现这个时候它并没有从新执行生命周期函数，说明这个组件没有被销毁
+
+现在我们再通过v-if的方式来试下
+
+```html
+  <button @click="flag = !flag">切换</button>
+   <aaa v-if="flag"></aaa>
+```
+
+**v-if会销毁组件**
+
+当v-if的条件不成立的时候，让组件消失，这个时候的组件是被真正销毁了的，如果条件再次成立，这个组件又会被从新创建出来
+
+## 4、keep-alive
+
+当一个组件被keep-alive嵌套之后，这个组件永远不会被销毁
+
+```html
+ <button @click="flag = !flag">切换</button>
+<keep-alive>
+    <aaa v-if="flag"></aaa>
+</keep-alive>
+```
+
+> 代码分析：
+>
+> 被keep-alive嵌套的组件永远不会被销毁，除非它的父级组件被销毁
+>
+> 当一个组件不会被销毁之后，拿就缺少了销毁阶段的2个生命周期函数，但是与之对应会多两个生命周期函数
+>
+> 1、activated 被激活的时候【被显示】
+>
+> 2、deactivated 未被激活的时候【被隐藏】
