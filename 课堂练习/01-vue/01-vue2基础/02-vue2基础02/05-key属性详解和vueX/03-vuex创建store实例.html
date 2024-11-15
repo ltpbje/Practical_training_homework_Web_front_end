@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .aaa-enter-from {
+            transform: translateY(-150%);
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .aaa-enter-to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .aaa-leave-from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .aaa-leave-to {
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .aaa-enter-active {
+            transition: all .5s linear;
+        }
+
+        /* 离开的过程 */
+        .aaa-leave-active {
+            transition: all .5s linear;
+        }
+
+        .list-box {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .list-box>li {
+            width: 40px;
+            height: 40px;
+            background-color: lightblue;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <aaa></aaa>
+        <bbb></bbb>
+    </div>
+    <template id="temp1">
+        <h2>我是a组件---{{$store.state.nickName}}</h2>
+        <button @click="changeNickName">修改状态</button>
+    </template>
+    <template id="temp2">
+        <h2>我是b组件---{{$store.state.nickName}}</h2>
+    </template>
+
+    <script src="./js/vue3.global.js"></script>
+    <script src="./js/vuex.global.js"></script>
+    <!-- <script src="./js/vue-router4.global.js"></script> -->
+    <script>
+        const store = Vuex.createStore({
+            // 全局状态
+            state: {
+                nickName: 'zhangsan'
+            },
+            // 所有状态都需要通过mutations进行修改
+            mutations: {
+                setNickName(state, nickName) {
+                    state.nickName = nickName;
+                }
+            },
+            // acitons里面也都是方法，这些方法用于提交修改任务
+            //acitons会其内部的方法的第一个参数注入一个context
+            // 我们可以从里面解构出来一个commit用来提交任务
+            actions: {
+                setNickName({ commit }, nickName) {
+                    commit('setNickName', nickName);
+                }
+            },
+            //getters类似于vue中的computed计算属性
+            getters: {
+                money() {
+                    return Math.random() * 1000;
+                }
+            }
+        });
+        const app = Vue.createApp({
+            data() {
+                return {
+
+                };
+            },
+            methods: {
+
+            },
+        });
+        app.component('aaa', {
+            template: '#temp1',
+            data() {
+                return {
+                    nickName: this.$store.state.nickName
+                };
+            },
+            methods: {
+                changeNickName() {
+                    this.$store.commit('setNickName', 'lisi');
+                    // this.nickName = this.$store.state.nickName;
+                }
+            },
+        });
+        app.component('bbb', {
+            template: '#temp2',
+            data() {
+                return {
+                    nickName: this.$store.state.nickName
+                };
+            },
+        });
+        app.use(store);
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
