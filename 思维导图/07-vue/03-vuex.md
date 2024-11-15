@@ -26,4 +26,177 @@
 
 ## 3、创建store
 
-每一个 Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的状态 (state)
+- 每一个 Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的**状态 (state)**
+
+- ```html
+  <!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+  </head>
+  
+  <body>
+      <div id="app">
+       
+      </div>
+      
+      <script src="./js/vue3.global.js"></script>
+      <script src="./js/vuex.global.js"></script>
+      <!-- <script src="./js/vue-router4.global.js"></script> -->
+      <script>
+         const store = Vuex.createStore({
+          
+         })
+         const app = Vue.createApp({
+             
+         })
+         app.use(store);
+         app.mount("#app")
+      </script>
+  
+  </body>
+  
+
+## 4、vuex的内部原理
+### 4.1、state状态
+
+- 我们可以把state就认为成vue里面的data，用于储存全局的状态（数据），也就是相当于一个全局变量，但是于全局变量不同的是全局状态的数据都是响应式的
+- ```js
+    state:{
+        nickName:"zhangsan"
+    }
+	```
+
+- 当我们在state里面定义了一个变量之后，这样在所有的组件种就可以通过`this.$store.state.nickName `调用nickName的值
+
+- > 注意：
+  >
+  > 使用state调用全局状态的时候不能赋值，如果要修改需要遵循vuex的内部逻辑
+
+### 4.2、mutations转换
+
+- 这里的选项内写的就是改变state里面的数据的方法
+
+```js
+//所有状态都需要通过mutations进行修改
+mutations:{
+    setNickName(state,nickName){
+        state.nickName = nickName;
+    }
+}
+```
+
+> - 说明：
+>
+>   - 在mutations当中的方法都可以接收到至少两个参数
+>
+>     -  参数1：全局状态state
+>
+>     -  参数2：actions中传递过来的参数
+
+### 4.3、actions行动
+
+- Action 类似于 mutation，不同在于：
+
+  - Action 提交的是 mutation，而不是直接变更状态。
+
+  - Action 可以包含任意异步操作。
+
+- 乍一眼看上去感觉多此一举，我们直接分发 mutation 岂不更方便？实际上并非如此，还记得 **mutation 必须同步执行**这个限制么？Action 就不受约束！我们可以在 action 内部执行**异步**操作：
+
+```js
+//acitons里面也都是方法，这些方法用于提交修改任务
+//acitons会其内部的方法的第一个参数注入一个context，我们可以从里面解构出来一
+个commit用来提交任务
+actions:{
+    setNickName({commit},nickName){
+        commit("setNickName",nickName)
+    }
+}
+```
+
+> - 说明：
+>
+>  - 这里actions中的方法主要用来提交修改任务，
+>
+>  - 其中第一个参数接收一个context，在context当中有一个commit用来执行提交任务，所以我们一般直接解构取出来直接使用，
+>
+>   - 第二个参数，是当组件中调用actions中的方法时传递给acitons用来修改的数据值
+
+- 当我们完成上面的操作之后，我们就可以在组件中通过dispatch方法来完成全局状态的改变
+
+- ```js
+  this.$store.dispatch("setNickName","lisi")
+  ```
+
+  ## 5、vuex总结
+  
+   - ```html
+        <!DOCTYPE html>
+        <html lang="en">
+        
+        <head>
+            <script>
+                const store = Vuex.createStore({
+                    // 全局状态
+                    state: {
+                        nickName: 'zhangsan'
+                    },
+                    // 所有状态都需要通过mutations进行修改
+                    mutations: {
+                        setNickName(state, nickName) {
+                            state.nickName = nickName;
+                        }
+                    },
+                    // acitons里面也都是方法，这些方法可以用于提交修改任务
+                    //acitons会其内部的方法的第一个参数注入一个context
+                    // 我们可以从里面解构出来一个commit用来提交任务
+                    actions: {
+                        setNickName({ commit }, nickName) {
+                            commit('setNickName', nickName);
+                        }
+                    },
+                    //getters类似于vue中的computed计算属性
+                    getters: {
+                        money() {
+                            return Math.random() * 1000;
+                        }
+                    }
+                });
+                const app = Vue.createApp({
+                    data() {
+                        return {
+        
+                        };
+                    },
+                    methods: {
+        
+                    },
+                });
+                app.component('aaa', {
+                    template: '#temp1',
+                    data() {
+                        return {
+                            nickName: this.$store.state.nickName
+                        };
+                    },
+                    methods: {
+                        changeNickName() {
+                            this.$store.commit('setNickName', 'lisi');
+                            // this.nickName = this.$store.state.nickName;
+                        }
+                    },
+                });
+        
+                app.use(store);
+                app.mount('#app');
+            </script>
+        
+        </body>
+        
+        </html>
+        ```
+
