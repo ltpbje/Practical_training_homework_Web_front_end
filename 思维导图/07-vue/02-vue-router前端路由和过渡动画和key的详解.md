@@ -884,3 +884,241 @@ created() {
 </html>
 ```
 
+# vue框架中的key详解
+
+- 在列表渲染中，我们都是需要携带一个key属性进行设置的，key属性的值我们需要使用一个不重复的数据作为值来使用
+- 因为key这个属性的主要作用就是用来记录列表渲染中每一个列表项的渲染状态，一般来说我们可以最直接直观在列表渲染中接触到的唯一值就是索引，所以很多时候我们会直接使用索引作为key的值来使用
+- 但是这是有前提的，就是当列表渲染所使用的数据没有出现增减的情况下，一旦出现增减就有可能出问题
+
+## 1、不推荐使用index作为key值
+
+> - 如果执行的是静态渲染，使用index作为key值无可厚非，如果执行的是动态渲染，则index千万不要作为key的值，否则vue内部的渲染机制会出现错误
+
+- ```html
+  <ul>
+      <li v-for="(item,index) in stuList" :key="index">学
+      号：{{item.sid}} -- 姓名：{{item.sname}}</li>
+  </ul>
+  ```
+
+  这就是一个静态渲染，因为数组stuList中的数据后面不会发生变化存在的问题
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .fade-enter-from {
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .fade-enter-to {
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .fade-leave-from {
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .fade-enter-active {
+            transition: all 1s linear;
+        }
+
+        /* 离开的过程 */
+        .fade-leave-active {
+            transition: all 1s linear;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        学号: <input type="text" v-model="sid">
+        姓名: <input type="text" v-model="sname">
+        <button @click="addData">添加</button>
+        <ul>
+            <li v-for="(item,index) in stuList" :key="item.sid">
+                <input type="checkbox">
+                {{item.sname}}----{{item.sid}}
+            </li>
+        </ul>
+    </div>
+
+
+    <script src="./js/vue3.global.js"></script>
+    <!-- <script src="./js/vue-router4.global.js"></script> -->
+    <script>
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    stuList: [
+                        { sid: 's001', sname: '张三' },
+                        { sid: 's002', sname: '李四' },
+                        { sid: 's003', sname: '王五' },
+                    ],
+                    sod: '',
+                    sname: ''
+                };
+            },
+            methods: {
+                addData() {
+                    this.stuList.unshift({ sid: this.sid, sname: this.sname });
+                    this.sid = '';
+                    this.sname = '';
+                }
+            },
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
+```
+
+> - 代码分析：
+> - 当我们随便勾选一个选项之后，再添加新数据，这个时候会发现，勾选错位了，因为，这里我们再记录渲染状态的时候使用的index，而索引这个东西，它是不跟数据的，当我们再数组的前面添加新元素的之后，之前的老元素的所有索引都会向后移动，与之对应的索引也会发生改变，从而导致了状态记录错误的情况
+
+解决方案：
+
+- 一般来说列表渲染中的数据都是数据库相应回的数据，**而在数据库中我们一般都创建一个id自增列，并且进行唯一和非空的约束，那么这个id值就非常适合用来做key的值，因为它不错位**
+
+- 如果碰到没有id字段的数据，也可以在响应的数据找一些唯一的数据，作为key值也是可以的，只要保证这个值唯一且不是索引
+
+## 2、案例
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .aaa-enter-from {
+            transform: translateY(-150%);
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .aaa-enter-to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .aaa-leave-from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .aaa-leave-to {
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .aaa-enter-active {
+            transition: all .5s linear;
+        }
+
+        /* 离开的过程 */
+        .aaa-leave-active {
+            transition: all .5s linear;
+        }
+
+        .list-box {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .list-box>li {
+            width: 40px;
+            height: 40px;
+            background-color: lightblue;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <button @click="add">+</button>
+        <button @click="sub">-</button>
+        <hr>
+        <transition-group tag="ul" class="list-box" name="aaa">
+            <li v-for="(item,index) in numList" :key="item">{{item}}</li>
+        </transition-group>
+    </div>
+
+
+    <script src="./js/vue3.global.js"></script>
+    <!-- <script src="./js/vue-router4.global.js"></script> -->
+    <script>
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    numList: [
+                        0, 1, 2, 3
+                    ],
+                    sod: '',
+                    sname: ''
+                };
+            },
+            methods: {
+                add() {
+                    this.numList.push(this.numList.length);
+                },
+                sub() {
+                    let index = parseInt(Math.random() * this.numList.length);
+                    this.numList.splice(index, 1);
+                    console.log(index);
+
+                },
+            },
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
+```
+

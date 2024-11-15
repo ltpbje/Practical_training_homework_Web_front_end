@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .fade-enter-from {
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .fade-enter-to {
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .fade-leave-from {
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .fade-enter-active {
+            transition: all 1s linear;
+        }
+
+        /* 离开的过程 */
+        .fade-leave-active {
+            transition: all 1s linear;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        学号: <input type="text" v-model="sid">
+        姓名: <input type="text" v-model="sname">
+        <button @click="addData">添加</button>
+        <ul>
+            <li v-for="(item,index) in stuList" :key="item.sid">
+                <input type="checkbox">
+                {{item.sname}}----{{item.sid}}
+            </li>
+        </ul>
+    </div>
+
+
+    <script src="./js/vue3.global.js"></script>
+    <!-- <script src="./js/vue-router4.global.js"></script> -->
+    <script>
+
+        const app = Vue.createApp({
+            data() {
+                return {
+                    stuList: [
+                        { sid: 's001', sname: '张三' },
+                        { sid: 's002', sname: '李四' },
+                        { sid: 's003', sname: '王五' },
+                    ],
+                    sod: '',
+                    sname: ''
+                };
+            },
+            methods: {
+                addData() {
+                    this.stuList.unshift({ sid: this.sid, sname: this.sname });
+                    this.sid = '';
+                    this.sname = '';
+                }
+            },
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
