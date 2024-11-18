@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .aaa-enter-from {
+            transform: translateY(-150%);
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .aaa-enter-to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .aaa-leave-from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .aaa-leave-to {
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .aaa-enter-active {
+            transition: all .5s linear;
+        }
+
+        /* 离开的过程 */
+        .aaa-leave-active {
+            transition: all .5s linear;
+        }
+
+        .list-box {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .list-box>li {
+            width: 40px;
+            height: 40px;
+            background-color: lightblue;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h2>{{msg}}</h2>
+        <button @click="sayHello">按钮</button>
+    </div>
+    <template id="temp1">
+        <h2>我是a组件---{{$store.state.nickName}}</h2>
+        <h2>我是money --{{money}}</h2>
+        <button @click="changeNickName">修改状态</button>
+    </template>
+    <template id="temp2">
+        <h2>我是b组件---{{$store.state.nickName}}</h2>
+    </template>
+    <script src="./js/vue3.global.js"></script>
+    <!-- 定义一个模块 -->
+    <script type="module">
+        const app = Vue.createApp({
+            setup(props) {
+                const msg = 'hello';
+                const sayHello = () => {
+                    alert('hello');
+                };
+                return {
+                    msg,
+                    sayHello
+                };
+            }
+        });
+        // app.component('aaa', {
+        //     template: '#temp1',
+        //     data() {
+        //         return {
+        //             nickName: this.$store.state.nickName
+        //         };
+        //     },
+        //     methods: {
+        //         // 将Vuex中的setNickName方法映射到当前组件中
+        //         ...Vuex.mapActions(["setNickName"]),
+        //         changeNickName() {
+        //             // this.$store.commit('setNickName', 'lisi');
+        //             this.setNickName('lisi');
+        //             // this.nickName = this.$store.state.nickName;
+        //         }
+        //     },
+        //     // 对象语法
+        //     // computed: {
+        //     //     ...Vuex.mapState({
+        //     //         nickName: state => state.nickName
+        //     //     })
+        //     // }
+        //     // 对象语法
+        //     computed: {
+        //         ...Vuex.mapState(['nickName']),
+        //         // 将 store 中的 getter 映射到局部计算属性
+        //         ...Vuex.mapGetters(['money'])
+
+        //     }
+        // });
+        // app.component('bbb', {
+        //     template: '#temp2',
+        //     data() {
+        //         return {
+        //             nickName: this.$store.state.nickName
+        //         };
+        //     },
+        // });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>

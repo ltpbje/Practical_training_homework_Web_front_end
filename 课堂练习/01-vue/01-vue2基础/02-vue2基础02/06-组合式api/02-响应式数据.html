@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .aaa-enter-from {
+            transform: translateY(-150%);
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .aaa-enter-to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .aaa-leave-from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .aaa-leave-to {
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .aaa-enter-active {
+            transition: all .5s linear;
+        }
+
+        /* 离开的过程 */
+        .aaa-leave-active {
+            transition: all .5s linear;
+        }
+
+        .list-box {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .list-box>li {
+            width: 40px;
+            height: 40px;
+            background-color: lightblue;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h2>{{msg}}</h2>
+        <button @click="msg='world'">按钮1</button>
+        <button @click="changeMsg">通过方法修改</button>
+        <hr>
+        <h3>{{userInfo.userName}} --- {{userInfo.age}}</h3>
+        <button @click="changeUserInfo">通过方法修改</button>
+
+    </div>
+    <script src="./js/vue3.global.js"></script>
+    <!-- 定义一个模块 -->
+    <script type="module">
+        const app = Vue.createApp({
+            setup(props) {
+                // 这是因为vue3的setup当中所有的数据默认都不会与页面形成响应式
+                // msg
+                const msg = Vue.ref('hello');
+                const changeMsg = () => {
+                    msg.value = 'hahahahh';
+                };
+                // userInfo
+                const userInfo = Vue.ref({
+                    userName: '张三',
+                    age: 18
+                });
+                const changeUserInfo = () => {
+                    console.log(userInfo);
+
+                    userInfo.value = {
+                        userName: '李四',
+                        age: 20
+                    };
+                };
+                return {
+                    msg,
+                    changeMsg,
+                    userInfo,
+                    changeUserInfo
+                };
+            }
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>

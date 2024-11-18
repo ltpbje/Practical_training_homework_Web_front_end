@@ -2,23 +2,23 @@
 
 ## 1、什么是全局状态
 
-在说这个问题 之前，我们先弄清楚一个点，为什么需要全局状态？
+- 在说这个问题 之前，我们先弄清楚一个点，为什么需要全局状态？
 
-之前学习vue的适合，我们知道如果想实现组件之间的传值，我们有以下几种
+- 之前学习vue的适合，我们知道如果想实现组件之间的传值，我们有以下几种
 
-1、props父组件向子组件传递
+  - 1、props父组件向子组件传递
 
-2、emit自定义事件，可以子向父传递
+  - 2、emit自定义事件，可以子向父传递
 
-3、provide / inject 实现跨组件传值，这种传值也只能基于父子关系【vue3版本支持，这种发方案要遵循数据流的单向性，所以子组件不能向父组件注入数据】
+  - 3、provide / inject 实现跨组件传值，这种传值也只能基于父子关系【vue3版本支持，这种发方案要遵循数据流的单向性，所以子组件不能向父组件注入数据】
 
-上面三种数据传递方式，各有各的特点，props使用简单的父子组件传值，emit只是适用于父子关系，provide / inject虽然可以实现跨级的传递，但是并不能实现兄弟之间的传递
+- 上面三种数据传递方式，各有各的特点，props使用简单的父子组件传值，emit只是适用于父子关系，provide / inject虽然可以实现跨级的传递，但是并不能实现兄弟之间的传递
 
-对于这种复杂的数据共享问题，vue的内部提供了全局状态管理作为解决方案
+- 对于这种复杂的数据共享问题，vue的内部提供了全局状态管理作为解决方案
 
 ## 2、vue的全局状态管理工具
 
-根据上面的需求，我们现在需要一个全局的区域取储存我们的数据，这个区域怎么建立，怎么操作？在vue全家桶下，要实现这个方案有很多种办法，目前比较主流的就2个
+- 根据上面的需求，我们现在需要一个全局的区域取储存我们的数据，这个区域怎么建立，怎么操作？在vue全家桶下，要实现这个方案有很多种办法，目前比较主流的就2个
 
 1、vuex
 
@@ -132,71 +132,136 @@ actions:{
   this.$store.dispatch("setNickName","lisi")
   ```
 
-  ## 5、vuex总结
-  
-   - ```html
-        <!DOCTYPE html>
-        <html lang="en">
-        
-        <head>
-            <script>
-                const store = Vuex.createStore({
-                    // 全局状态
-                    state: {
-                        nickName: 'zhangsan'
-                    },
-                    // 所有状态都需要通过mutations进行修改
-                    mutations: {
-                        setNickName(state, nickName) {
-                            state.nickName = nickName;
-                        }
-                    },
-                    // acitons里面也都是方法，这些方法可以用于提交修改任务
-                    //acitons会其内部的方法的第一个参数注入一个context
-                    // 我们可以从里面解构出来一个commit用来提交任务
-                    actions: {
-                        setNickName({ commit }, nickName) {
-                            commit('setNickName', nickName);
-                        }
-                    },
-                    //getters类似于vue中的computed计算属性
-                    getters: {
-                        money() {
-                            return Math.random() * 1000;
-                        }
-                    }
-                });
-                const app = Vue.createApp({
-                    data() {
-                        return {
-        
-                        };
-                    },
-                    methods: {
-        
-                    },
-                });
-                app.component('aaa', {
-                    template: '#temp1',
-                    data() {
-                        return {
-                            nickName: this.$store.state.nickName
-                        };
-                    },
-                    methods: {
-                        changeNickName() {
-                            this.$store.commit('setNickName', 'lisi');
-                            // this.nickName = this.$store.state.nickName;
-                        }
-                    },
-                });
-        
-                app.use(store);
-                app.mount('#app');
-            </script>
-        
-        </body>
-        
-        </html>
+
+## 5、vuex总结
+
+ - ```html
+      <!DOCTYPE html>
+      <html lang="en">
+      
+      <head>
+          <script>
+              const store = Vuex.createStore({
+                  // 全局状态
+                  state: {
+                      nickName: 'zhangsan'
+                  },
+                  // 所有状态都需要通过mutations进行修改
+                  mutations: {
+                      setNickName(state, nickName) {
+                          state.nickName = nickName;
+                      }
+                  },
+                  // acitons里面也都是方法，这些方法可以用于提交修改任务
+                  //acitons会其内部的方法的第一个参数注入一个context
+                  // 我们可以从里面解构出来一个commit用来提交任务
+                  actions: {
+                      setNickName({ commit }, nickName) {
+                          commit('setNickName', nickName);
+                      }
+                  },
+                  //getters类似于vue中的computed计算属性
+                  getters: {
+                      money() {
+                          return Math.random() * 1000;
+                      }
+                  }
+              });
+              const app = Vue.createApp({
+                  data() {
+                      return {
+      
+                      };
+                  },
+                  methods: {
+      
+                  },
+              });
+              app.component('aaa', {
+                  template: '#temp1',
+                  data() {
+                      return {
+                          nickName: this.$store.state.nickName
+                      };
+                  },
+                  methods: {
+                      changeNickName() {
+                          this.$store.commit('setNickName', 'lisi');
+                          // this.nickName = this.$store.state.nickName;
+                      }
+                  },
+              });
+      
+              app.use(store);
+              app.mount('#app');
+          </script>
+      
+      </body>
+      
+      </html>
+      ```
+
+> - 总结：
+>- 关于vuex中的配置项的理解
+> 
+>  - state用于存放全局状态（全局变量）
+> - mutations用于存放全局方法，里面的方法可以调用全局状态
+>  - actions用于存放可以调用mutations方法的方法，其中的方法可以在组件中被调用，同时也可以传入组件中的数据
+> -  getters 类似于optionsAPI当中的computed作用
+>
+> - 整体业务逻辑可以理解成，在组件中调用actions的方法同时也可以把组件中的内部数据作为actions方法的参数传入，actions的方法调用mutations的方法，同时可以把组件传入的数据再传递给mutations的方法中，最后mutations的方法可以调用state中的数据进行操作
+
+## 6、vuex快速操作
+
+- 在vuex里面，如果要获取一个状态的数据需要通过 `$store.state.变量名` ，如果要操作一个方法，需要使用 `$store.dispatch方法`，不管哪一种用起来比较麻烦
+
+- vuex提供了快速操作方法
+
+### 6.1、mapState
+
+- 用于将state的值快速的绑定到computed
+
+- **对象语法**
+
+    - ```js
+        computed:{
+            ...Vuex.mapState({
+                nickName:state => state.nickName
+            })
+        }
         ```
 
+- **数组语法**
+
+  - ```js
+    computed:{
+        ...Vuex.mapState(["nickName"])
+    }
+    ```
+
+### 6.2、mapGetters
+
+- 作用在于快速的把getters里面的值绑定到computed
+
+- ```js
+  computed:{
+      ...Vuex.mapGetters(["money"])
+  }
+  ```
+
+    > - mapGetters这个地方使用的是数组语法，对象语法貌似不能用
+
+### 6.3、mapActions
+
+- 作用在于把vuex中的actions映射到methods当中直接使用
+
+- ```js
+  methods: {
+      ...Vuex.mapActions(["setNickName"]),
+      changeNickName(){
+          this.setNickName("李四");
+      }
+  }
+  ```
+
+  
