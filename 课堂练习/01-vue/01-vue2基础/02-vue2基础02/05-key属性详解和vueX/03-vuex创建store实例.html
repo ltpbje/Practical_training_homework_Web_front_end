@@ -73,6 +73,7 @@
     </div>
     <template id="temp1">
         <h2>我是a组件---{{$store.state.nickName}}</h2>
+        <h2>我是money --{{money}}</h2>
         <button @click="changeNickName">修改状态</button>
     </template>
     <template id="temp2">
@@ -106,8 +107,9 @@
             getters: {
                 money() {
                     return Math.random() * 1000;
-                }
-            }
+                },
+            },
+
         });
         const app = Vue.createApp({
             data() {
@@ -127,11 +129,27 @@
                 };
             },
             methods: {
+                // 将Vuex中的setNickName方法映射到当前组件中
+                ...Vuex.mapActions(["setNickName"]),
                 changeNickName() {
-                    this.$store.commit('setNickName', 'lisi');
+                    // this.$store.commit('setNickName', 'lisi');
+                    this.setNickName('lisi');
                     // this.nickName = this.$store.state.nickName;
                 }
             },
+            // 对象语法
+            // computed: {
+            //     ...Vuex.mapState({
+            //         nickName: state => state.nickName
+            //     })
+            // }
+            // 对象语法
+            computed: {
+                ...Vuex.mapState(['nickName']),
+                // 将 store 中的 getter 映射到局部计算属性
+                ...Vuex.mapGetters(['money'])
+
+            }
         });
         app.component('bbb', {
             template: '#temp2',
