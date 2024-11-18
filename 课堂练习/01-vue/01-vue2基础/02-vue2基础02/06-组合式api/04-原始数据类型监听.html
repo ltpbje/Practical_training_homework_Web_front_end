@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .aaa-enter-from {
+            transform: translateY(-150%);
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .aaa-enter-to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .aaa-leave-from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .aaa-leave-to {
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .aaa-enter-active {
+            transition: all .5s linear;
+        }
+
+        /* 离开的过程 */
+        .aaa-leave-active {
+            transition: all .5s linear;
+        }
+
+        .list-box {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .list-box>li {
+            width: 40px;
+            height: 40px;
+            background-color: lightblue;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h2 @click="userName = '李四'">{{userName}}</h2>
+    </div>
+
+    <!-- 定义一个模块 -->
+    <script type="module">
+        import { createApp, ref, watch } from './js/vue.esm-browser.js';
+        const app = createApp({
+            setup(props) {
+                const userName = ref('张三');
+                // 普通监听
+                // 参数1：需要监听的数据;
+                // 参数2：监听到变化之后需要执行的回调函数，该函数可以接收修改之后和修改之前的数据值;
+                watch(userName, (newValue, oldValue) => {
+                    console.log(newValue, oldValue);
+
+                });
+
+                return {
+                    userName
+                };
+            }
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>

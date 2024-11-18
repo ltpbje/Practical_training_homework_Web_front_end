@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            background-color: red;
+        }
+
+        /* 现在我们希望盒子实现淡入淡出的效果* */
+        /* 进入之前 */
+        .aaa-enter-from {
+            transform: translateY(-150%);
+            opacity: 0;
+        }
+
+        /* 进入之后*/
+        .aaa-enter-to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之前 */
+        .aaa-leave-from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 离开之后*/
+        .aaa-leave-to {
+            transform: translateY(150%);
+            opacity: 0;
+        }
+
+        /* 进入的过程 */
+        .aaa-enter-active {
+            transition: all .5s linear;
+        }
+
+        /* 离开的过程 */
+        .aaa-leave-active {
+            transition: all .5s linear;
+        }
+
+        .list-box {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .list-box>li {
+            width: 40px;
+            height: 40px;
+            background-color: lightblue;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+        <h2>reactive响应</h2>
+        <ul>
+            <li v-for="item in foodList">
+                {{item.foodName}}--{{item.price}}
+                <button @click="item.count--">-</button>
+                {{item.count}}
+                <button @click="item.count++">+</button>
+
+            </li>
+        </ul>
+        <h3>总价--{{totalMoney}}</h3>
+        <button @click="changePrice">修改价格</button>
+    </div>
+
+    <!-- 定义一个模块 -->
+    <script type="module">
+        import { createApp, ref, reactive, computed } from './js/vue.esm-browser.js';
+        const app = createApp({
+            setup(props) {
+
+                //------------------------------------
+                // reactive响应
+                const foodList = reactive([
+                    { foodName: "白菜炒豆腐", price: 5, count: 1 },
+                    { foodName: "番茄炒蛋", price: 4, count: 1 },
+                    { foodName: "青椒肉丝", price: 8, count: 1 },
+                ]);
+                const changePrice = () => {
+                    foodList[0].price = 6;
+                };
+                // 计算属性
+                const totalMoney = computed(() => {
+                    let sum = 0;
+                    foodList.forEach(item => {
+                        sum += item.price * item.count;
+                    });
+                    return sum;
+                });
+                return {
+                    foodList,
+                    changePrice,
+                    totalMoney
+                };
+            }
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
