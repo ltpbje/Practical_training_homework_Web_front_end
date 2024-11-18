@@ -1,7 +1,9 @@
 <template>
-  <router-view>
+  <page-view>
+    <router-view>
 
-  </router-view>
+    </router-view>
+  </page-view>
 </template>
 
 <style lang="scss">
