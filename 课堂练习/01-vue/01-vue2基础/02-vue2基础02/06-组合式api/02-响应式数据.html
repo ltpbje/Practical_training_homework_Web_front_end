@@ -75,20 +75,35 @@
         <h3>{{userInfo.userName}} --- {{userInfo.age}}</h3>
         <button @click="changeUserInfo">通过方法修改</button>
 
+        <hr>
+        <h2>reactive响应</h2>
+        <ul>
+            <li v-for="item in foodList">
+                {{item.foodName}}--{{item.price}}
+                <button @click="item.count--">-</button>
+                {{item.count}}
+                <button @click="item.count++">+</button>
+
+            </li>
+        </ul>
+        <button @click="changePrice">修改价格</button>
     </div>
-    <script src="./js/vue3.global.js"></script>
+
     <!-- 定义一个模块 -->
     <script type="module">
-        const app = Vue.createApp({
+        import { createApp, ref, reactive } from './js/vue.esm-browser.js';
+        const app = createApp({
             setup(props) {
                 // 这是因为vue3的setup当中所有的数据默认都不会与页面形成响应式
+
+                // ref
                 // msg
-                const msg = Vue.ref('hello');
+                const msg = ref('hello');
                 const changeMsg = () => {
                     msg.value = 'hahahahh';
                 };
                 // userInfo
-                const userInfo = Vue.ref({
+                const userInfo = ref({
                     userName: '张三',
                     age: 18
                 });
@@ -100,11 +115,23 @@
                         age: 20
                     };
                 };
+                //------------------------------------
+                // reactive响应
+                const foodList = reactive([
+                    { foodName: "白菜炒豆腐", price: 5, count: 1 },
+                    { foodName: "番茄炒蛋", price: 4, count: 1 },
+                    { foodName: "青椒肉丝", price: 8, count: 1 },
+                ]);
+                const changePrice = () => {
+                    foodList[0].price = 6;
+                };
                 return {
                     msg,
                     changeMsg,
                     userInfo,
-                    changeUserInfo
+                    changeUserInfo,
+                    foodList,
+                    changePrice
                 };
             }
         });
