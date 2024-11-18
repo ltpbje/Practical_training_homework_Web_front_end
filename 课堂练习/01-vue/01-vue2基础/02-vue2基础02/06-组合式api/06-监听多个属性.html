@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <div id="app">
+        <h2 @click="userInfo.userName=100">{{userInfo.userName}}</h2>
+        <h2 @click="userInfo.age=100">{{userInfo.age}}</h2>
+        <h2 @click="hobby = '打游戏'">{{hobby}}</h2>
+    </div>
+
+    <!-- 定义一个模块 -->
+    <script type="module">
+        import { createApp, ref, watch, reactive } from './js/vue.esm-browser.js';
+        const app = createApp({
+            setup(props) {
+
+                const userInfo = reactive({
+                    userName: '张十三',
+                    age: 18
+                });
+                const hobby = ref('睡觉');
+                // watch(() => userInfo.age, (newValue, oldValue) => {
+                //     console.log('age变了');
+
+                //     console.log(newValue, oldValue);
+                // });
+                // watch(hobby, (newValue, oldValue) => {
+                //     console.log('hobby变了');
+
+                // });
+                watch([() => userInfo.age, hobby], () => {
+
+                });
+                return {
+                    userInfo,
+                    hobby
+
+                };
+            }
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>

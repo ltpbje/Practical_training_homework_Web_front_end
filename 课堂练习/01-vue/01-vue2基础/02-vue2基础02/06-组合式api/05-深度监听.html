@@ -77,14 +77,21 @@
         import { createApp, ref, watch, reactive } from './js/vue.esm-browser.js';
         const app = createApp({
             setup(props) {
+
                 const userInfo = reactive({
                     userName: '张三',
                     age: 18
                 });
                 // 深度监听
                 // 组合式API会自动根据你监听的数据类型来决定是否进行深度监听 仅能获取到新值
-                watch(userInfo, (newValue) => {
-                    console.log(newValue);
+                // watch(userInfo, (newValue) => {
+                //     console.log(newValue);
+                // });
+
+                // 如果想只监听对象中的某一个属性，需要把这个属性作为第一个参数传入
+                // 如果想只监听对象中的某一个属性，需要把这个属性作为第一个参数传入，这个属性需要做成返回值returr
+                watch(() => userInfo.userName, (newValue, oldValue) => {
+                    console.log(newValue, oldValue);
                 });
 
                 return {
