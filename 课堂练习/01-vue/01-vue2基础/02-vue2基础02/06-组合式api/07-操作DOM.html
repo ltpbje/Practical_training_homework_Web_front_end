@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <div id="app">
+        <h2 ref="tit">我爱</h2>
+        <button @click="abc">按钮</button>
+    </div>
+
+    <!-- 定义一个模块 -->
+    <script type="module">
+        import { createApp, ref, watch, reactive } from './js/vue.esm-browser.js';
+        const app = createApp({
+            setup() {
+                const tit = ref(null);
+                const abc = () => {
+                    tit.value.innerText = 'hahahahahhahh';
+                    console.dir(tit.value);
+                };
+                return {
+                    abc,
+                    tit
+                };
+            }
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>

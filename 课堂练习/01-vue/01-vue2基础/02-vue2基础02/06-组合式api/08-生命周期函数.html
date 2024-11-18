@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <div id="app">
+
+    </div>
+
+    <!-- 定义一个模块 -->
+    <script type="module">
+        import { createApp, ref, watch, reactive, onBeforeMount, onMounted } from './js/vue.esm-browser.js';
+        const app = createApp({
+            setup() {
+                onBeforeMount(() => {
+                    console.log('挂载之前');
+
+                });
+                onMounted(() => {
+                    console.log('挂载之后');
+
+                });
+                return {
+
+                };
+            }
+        });
+        app.mount('#app');
+    </script>
+
+</body>
+
+</html>
