@@ -5,6 +5,7 @@ import ToRefs from './components/ToRefs.vue';
 import { ref, onMounted } from 'vue';
 import Computed from './components/Computed.vue';
 import WatchEffect from './components/WatchEffect.vue';
+import FangShouDou from './components/FangShouDou.vue';
 const msg = ref('parent value');
 const getChild = e => {
   console.log(e);
@@ -24,6 +25,7 @@ onMounted(() => {
   <ToRefs></ToRefs>
   <Computed></Computed>
   <WatchEffect></WatchEffect>
+  <FangShouDou></FangShouDou>
 </template>
 
 <style scoped>
