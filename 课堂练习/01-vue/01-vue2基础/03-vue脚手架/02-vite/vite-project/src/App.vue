@@ -4,6 +4,7 @@ import Expose from './components/Expose.vue';
 import ToRefs from './components/ToRefs.vue';
 import { ref, onMounted } from 'vue';
 import Computed from './components/Computed.vue';
+import WatchEffect from './components/WatchEffect.vue';
 const msg = ref('parent value');
 const getChild = e => {
   console.log(e);
@@ -22,6 +23,7 @@ onMounted(() => {
   <Expose ref="child"></Expose>
   <ToRefs></ToRefs>
   <Computed></Computed>
+  <WatchEffect></WatchEffect>
 </template>
 
 <style scoped>
