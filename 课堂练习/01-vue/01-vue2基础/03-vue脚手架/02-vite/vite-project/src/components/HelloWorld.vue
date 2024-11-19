@@ -1,43 +1,24 @@
 <script setup>
-import { ref } from 'vue'
+// setup语法糖简化语法
+import { ref } from 'vue';
+const msg = ref('hello');
+// 定义一个名为getChild的事件
+const emits = defineEmits(['getChild']);
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'title'
+  }
+});
 
-defineProps({
-  msg: String,
-})
-
-const count = ref(0)
+const toEmits = () => {
+  emits('getChild', 'child value');
+};
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
-
-  <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
-  </div>
-
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Learn more about IDE Support for Vue in the
-    <a
-      href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support"
-      target="_blank"
-      >Vue Docs Scaling up Guide</a
-    >.
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
+  <h2>{{ title }}</h2>
+  <button @click="toEmits">按钮</button>
 </template>
 
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>
+<style scoped></style>

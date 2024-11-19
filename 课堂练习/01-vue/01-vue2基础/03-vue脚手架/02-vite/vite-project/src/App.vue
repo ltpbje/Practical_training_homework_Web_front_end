@@ -1,17 +1,27 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue';
+import Expose from './components/Expose.vue';
+import ToRefs from './components/ToRefs.vue';
+import { ref, onMounted } from 'vue';
+import Computed from './components/Computed.vue';
+const msg = ref('parent value');
+const getChild = e => {
+  console.log(e);
+};
+let child = ref(null);
+onMounted(() => {
+  console.log(child.value.msg1);
+  console.log(child.value.num);
+
+});
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+
+  <HelloWorld :title="msg" @getChild="getChild" />
+  <Expose ref="child"></Expose>
+  <ToRefs></ToRefs>
+  <Computed></Computed>
 </template>
 
 <style scoped>
