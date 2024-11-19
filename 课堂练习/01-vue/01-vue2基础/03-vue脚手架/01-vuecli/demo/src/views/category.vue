@@ -1,5 +1,10 @@
 <template>
-    <title-bar :showBack="true">分类</title-bar>
+    <title-bar :show-back="true">
+        分类
+        <template #right-menu>
+            <span class="iconfont icon-my right-menu"></span>
+        </template>
+    </title-bar>
 
 </template>
 

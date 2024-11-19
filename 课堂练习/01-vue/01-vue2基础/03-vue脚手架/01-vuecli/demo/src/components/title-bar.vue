@@ -5,6 +5,10 @@
                 < </span>
         </div>
         <slot></slot>
+        <div class="right-menu">
+            <slot name="right-menu"></slot>
+
+        </div>
     </div>
 </template>
 
@@ -32,6 +36,11 @@ export default {
         display: flex;
         align-items: center;
         font-size: .20rem;
+    }
+
+    .right-menu {
+        position: absolute;
+        right: .1rem;
     }
 }
 </style>
