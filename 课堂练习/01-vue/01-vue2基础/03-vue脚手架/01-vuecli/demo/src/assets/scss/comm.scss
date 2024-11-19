@@ -1,0 +1,47 @@
+//封装弹性盒子样式
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+
+
+.flex-column{
+     display: flex;
+    flex-direction: column;
+}
+
+.j-c{
+    justify-content: center;
+}
+
+.a-c{
+    align-items: center;
+}
+
+.j-s-a{
+    justify-content: space-around;
+}
+.j-s-b{
+    justify-content: space-between;
+}
+.j-s-e{
+    justify-content: space-evenly;
+}
+.flex-1{
+    flex: 1;
+    overflow: auto;
+}
+
+$primaryColor:#008de1 !default;
+$secondColor:#ff4500 !default;
+$colorMap:(primary:$primaryColor,second:$secondColor);
+
+@each $key,$value in $colorMap {
+    .bg-#{$key}{
+        background-color: $value;
+    }
+    .text-#{$key}{
+        color: $value;
+    }
+}
