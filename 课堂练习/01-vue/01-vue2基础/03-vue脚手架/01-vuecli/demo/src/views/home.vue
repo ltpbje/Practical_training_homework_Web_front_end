@@ -21,6 +21,8 @@
             </router-link>
             <router-link custom :to="{ name: 'my' }" v-slot="{ navigate, isActive }">
                 <li @click="navigate" :class="{ 'text-primary': isActive }">
+                    <!-- 点击时调用navigate方法 -->
+                    <!-- 根据isActive的值，动态添加class -->
                     <span class="iconfont icon-my"></span>我的
                 </li>
             </router-link>
@@ -30,20 +32,10 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import { RouterLink } from "vue-router";
 export default {
     name: 'home',
-    data() {
-        return {
-            userName: '张三'
-        };
-    },
-    methods: {
-        changeName() {
-            this.userName = 'lisi';
-        }
-    },
+
 };
 </script>
 

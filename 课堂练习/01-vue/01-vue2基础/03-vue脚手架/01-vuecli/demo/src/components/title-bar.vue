@@ -1,8 +1,8 @@
 <template>
     <div class="title-bar bg-primary flex-row a-c j-c">
         <div class="left-back" v-show="showBack">
-            <span>
-                < </span>
+            <span class="iconfont icon-prev">
+            </span>
         </div>
         <slot></slot>
         <div class="right-menu">
