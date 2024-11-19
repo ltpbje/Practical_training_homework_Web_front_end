@@ -4,16 +4,34 @@
             <router-view></router-view>
         </div>
         <ul class="tab-bar flex-row j-s-a a-c">
-            <li>点餐</li>
-            <li>订单</li>
-            <li>分类</li>
-            <li>我的</li>
+            <router-link custom :to="{ name: 'chooseFood' }" v-slot="{ navigate, isActive }">
+                <li @click="navigate" :class="{ 'text-primary': isActive }">
+                    <span class="iconfont icon-canju"></span>点餐
+                </li>
+            </router-link>
+            <router-link custom :to="{ name: 'order' }" v-slot="{ navigate, isActive }">
+                <li @click="navigate" :class="{ 'text-primary': isActive }">
+                    <span class="iconfont icon-dingdan"></span>订单
+                </li>
+            </router-link>
+            <router-link custom :to="{ name: 'category' }" v-slot="{ navigate, isActive }">
+                <li @click="navigate" :class="{ 'text-primary': isActive }">
+                    <span class="iconfont icon-fenlei"></span>分类
+                </li>
+            </router-link>
+            <router-link custom :to="{ name: 'my' }" v-slot="{ navigate, isActive }">
+                <li @click="navigate" :class="{ 'text-primary': isActive }">
+                    <span class="iconfont icon-my"></span>我的
+                </li>
+            </router-link>
+
         </ul>
     </page-view>
 </template>
 
 <script>
 import { ref } from "vue";
+import { RouterLink } from "vue-router";
 export default {
     name: 'home',
     data() {
@@ -37,6 +55,14 @@ export default {
 
     li {
         font-size: .14rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .iconfont {
+            margin-bottom: .03rem;
+            font-size: .2rem;
+        }
     }
 }
 </style>

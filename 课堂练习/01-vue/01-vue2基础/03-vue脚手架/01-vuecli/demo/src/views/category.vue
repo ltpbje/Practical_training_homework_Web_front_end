@@ -1,11 +1,12 @@
 <template>
-    <h2>我是foodDetail</h2>
+    <div>
+        <h2>category</h2>
+    </div>
 </template>
 
 <script>
 export default {
-    name: 'foodDetail'
-
+    name: 'category'
 };
 </script>
 
