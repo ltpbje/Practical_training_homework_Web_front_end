@@ -1,7 +1,6 @@
 <template>
-    <div>
-        my
-    </div>
+    <title-bar>我的</title-bar>
+
 </template>
 
 <script>

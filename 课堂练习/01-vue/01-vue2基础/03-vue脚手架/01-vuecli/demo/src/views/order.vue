@@ -1,7 +1,5 @@
 <template>
-    <div>
-        order
-    </div>
+    <title-bar>订单</title-bar>
 </template>
 
 <script>

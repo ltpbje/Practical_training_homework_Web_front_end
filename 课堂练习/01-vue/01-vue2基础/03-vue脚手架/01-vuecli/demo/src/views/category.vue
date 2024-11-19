@@ -1,7 +1,6 @@
 <template>
-    <div>
-        <h2>category</h2>
-    </div>
+    <title-bar :showBack="true">分类</title-bar>
+
 </template>
 
 <script>
