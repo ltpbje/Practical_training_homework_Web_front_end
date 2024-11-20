@@ -20,6 +20,7 @@ watchEffect((onInvaildate) => {
     // 打印keyword的值
     // console.log("keywordChange", keyword.value);
 }, {
+    // 定义一个flush属性，其值为post
     flush: 'post'
 }); 
 </script>
