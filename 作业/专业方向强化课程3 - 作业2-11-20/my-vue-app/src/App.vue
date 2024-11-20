@@ -8,9 +8,9 @@ const sendData = () => {
     isCompleted: false
   };
   todoListData.push(item);
+  inpVal.value = '';
 };
-// 已完成状态
-const isCompleted = ref(true);
+
 </script>
 
 <template>
