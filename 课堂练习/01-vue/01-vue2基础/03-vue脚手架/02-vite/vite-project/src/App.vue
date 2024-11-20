@@ -1,34 +1,28 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue';
-import Expose from './components/Expose.vue';
-import ToRefs from './components/ToRefs.vue';
-import { ref, onMounted } from 'vue';
-import Computed from './components/Computed.vue';
-import WatchEffect from './components/WatchEffect.vue';
-import FangShouDou from './components/FangShouDou.vue';
-import Watch from './components/Watch.vue';
-const msg = ref('parent value');
-const getChild = e => {
-  console.log(e);
-};
-let child = ref(null);
-onMounted(() => {
-  console.log(child.value.msg1);
-  console.log(child.value.num);
-
-});
+import { ref, onMounted, provide } from 'vue';
+import Inject from './components/Inject.vue';
+const articleList = ref([
+  { id: 1, title: 'vue3学习', author: '张三' },
+  {
+    id: 2, title: '组合式API', author: 'lisi'
+  },
+  { id: 3, title: 'router', author: 'wangwu' },
+]);
+// 向子组件提供名为list的属性，值为articleList
+provide('list', articleList);
 </script>
 
 <template>
 
-  <HelloWorld :title="msg" @getChild="getChild" />
+  <!-- <HelloWorld :title="msg" @getChild="getChild" />
   <Expose ref="child"></Expose>
   <ToRefs></ToRefs>
   <Computed></Computed>
   <WatchEffect></WatchEffect>
-  <FangShouDou></FangShouDou>
-  <hr>
-  <Watch></Watch>
+  <FangShouDou></FangShouDou> -->
+  <!-- <hr>
+  <Watch></Watch> -->
+  <Inject></Inject>
 </template>
 
 <style scoped>
