@@ -1,6 +1,6 @@
 <script setup>
 import PageView from './PageView.vue';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 const formData = reactive({
     zh: '',
     password: ''
@@ -22,11 +22,28 @@ const rules = reactive({
     ]
 });
 
+//获取整个form作为DoM对象，需要作为实参传入给发送按钮的点击方法
+const ruleFormRef = ref();
+//发送表单信息的方法
+const submitForm = (formEl) => {
+    //验证是否由form表单传入，如果没有直接return打断函数的后续执行
+    if (!formEl) return;
+    // form表单域中有一个validate方法用来验证整个表单中的数据是否通过校验，并且传入一个回调
+    // 其中回调接收的第一个参数传入当前表单域中的所有表单数据是否通过校验，第二个参数传入的是没有通过验证的表单项数据
+    formEl.validate((isValid, invalidFields) => {
+        if (isValid) {
+            console.log('登录成功');
+        } else {
+            console.log('登录失败', invalidFields);
+            return false;
+        }
+    });
+};
 </script>
 <template>
     <PageView class="flex-row j-c a-c">
         <div class="login">
-            <el-form :model="formData" label-width="80px" :rules="rules" status-icon>
+            <el-form ref="ruleFormRef" :model="formData" label-width="80px" :rules="rules" status-icon>
                 <el-form-item label="用户名" prop="zh">
                     <el-input v-model="formData.zh" />
                 </el-form-item>
@@ -34,7 +51,7 @@ const rules = reactive({
                     <el-input type="password" v-model="formData.password" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary">登录</el-button>
+                    <el-button type="primary" @click="submitForm(ruleFormRef)">登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
