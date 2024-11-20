@@ -1,8 +1,11 @@
 <script setup>
+import PageView from './views/PageView.vue';
 </script>
 
 <template>
-  <router-view />
+  <PageView>
+    <router-view />
+  </PageView>
 </template>
 
 <style scoped></style>
