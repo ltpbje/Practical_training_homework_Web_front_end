@@ -2,6 +2,8 @@
 import PageView from './PageView.vue';
 import { reactive, ref } from 'vue';
 import Api from '../api';
+import { userLoginInfo } from '../store/login';
+const store = userLoginInfo();
 const formData = reactive({
     zh: '',
     password: ''
@@ -40,10 +42,16 @@ const submitForm = (formEl) => {
     if (!formEl) return;
     // form表单域中有一个validate方法用来验证整个表单中的数据是否通过校验，并且传入一个回调
     // 其中回调接收的第一个参数传入当前表单域中的所有表单数据是否通过校验，第二个参数传入的是没有通过验证的表单项数据
-    formEl.validate((isValid, invalidFields) => {
+    formEl.validate(async (isValid, invalidFields) => {
         if (isValid) {
             console.log('登录成功');
-            Api.adminInfo.checkLogin(formData);
+            let results = await Api.adminInfo.checkLogin(formData);
+            console.log(results);
+
+            //将登录成功之后返回的登录信息和token保存到store当中
+            store.userInfo = results.data.loginUserInfo;
+            store.userToken = results.data.token;
+
         } else {
             console.log('登录失败', invalidFields);
             return false;
