@@ -4,7 +4,7 @@ import './style.css';
 import router from './router';
 import { createPinia } from 'pinia';
 import piniaPersist from 'pinia-plugin-persist';
-
+import 'element-plus/dist/index.css';
 const app = createApp(App);
 const pinia = createPinia();
 pinia.use(piniaPersist);

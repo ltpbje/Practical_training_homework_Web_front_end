@@ -3,6 +3,7 @@ import PageView from './PageView.vue';
 import { reactive, ref } from 'vue';
 import Api from '../api';
 import { userLoginInfo } from '../store/login';
+import { ElLoading, ElMessage } from 'element-plus';
 
 // 定义一个名为store的常量，其值为调用userLoginInfo()函数的返回值
 const store = userLoginInfo();
@@ -49,6 +50,8 @@ const rules = reactive({
 
 //获取整个form作为DoM对象，需要作为实参传入给发送按钮的点击方法
 const ruleFormRef = ref();
+const loading = ref(false);
+
 //发送表单信息的方法
 const submitForm = (formEl) => {
     //验证是否由form表单传入，如果没有直接return打断函数的后续执行
@@ -57,14 +60,39 @@ const submitForm = (formEl) => {
     // 其中回调接收的第一个参数传入当前表单域中的所有表单数据是否通过校验，第二个参数传入的是没有通过验证的表单项数据
     formEl.validate(async (isValid, invalidFields) => {
         if (isValid) {
+            const loading = ElLoading.service({
+                lock: true,
+                text: '加载中',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             console.log('登录成功');
+
             let results = await Api.adminInfo.checkLogin(formData);
+
             console.log(results);
 
-            //将登录成功之后返回的登录信息和token保存到store当中
-            store.userInfo = results.data.loginUserInfo;
-            store.userToken = results.data.token;
+            // loading.value = false;
+            loading.close();
+            if (results.status === 'success') {
+                //将登录成功之后返回的登录信息和token保存到store当中
+                store.userInfo = results.data.loginUserInfo;
+                store.userToken = results.data.token;
 
+                ElMessage({
+                    message: results.msg,
+                    type: 'success',
+                });
+            } else if (results.status === 'fail') {
+                ElMessage({
+                    message: results.message,
+                    type: 'error',
+                });
+            } else {
+                ElMessage({
+                    message: '超时了',
+                    type: 'error',
+                });
+            }
         } else {
             console.log('登录失败', invalidFields);
             return false;
@@ -74,7 +102,7 @@ const submitForm = (formEl) => {
 </script>
 <template>
     <PageView class="flex-row j-c a-c">
-        <button @click="changeState">demo</button>
+        <!-- <button @click="changeState">demo</button> -->
         <div class="login">
             <el-form ref="ruleFormRef" :model="formData" label-width="80px" :rules="rules" status-icon>
                 <el-form-item label="用户名" prop="zh">

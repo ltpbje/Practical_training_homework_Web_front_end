@@ -1,4 +1,5 @@
-# elementPlus搭建后台管理系统demo
+- # elementPlus搭建后台管理系统demo
+
 
 - 技术栈：
   - vue3.5+elementPlus+pinia+Echart+vite
@@ -638,4 +639,118 @@
 
 - 默认情况下，*action 订阅器*会被绑定到添加它们的组件上(如果 store 在组件的 `setup()` 内)。这意味着，当该组件被卸载时，它们将被自动删除。如果你想在组件卸载后依旧保留它们，请将 `true` 作为第二个参数传递给 *action 订阅器*，以便将其从当前组件中分离：
 
-​	
+## 6 、loading动画与消息弹窗
+
+- elementPlus提供了一套feeback反馈组件,我们使用其中的loading加载和message消息提示来完成制作
+
+### 6.1 loading加载
+
+- Element Plus 提供了两种调用 Loading 的方法：指令和服务。
+
+- 对于自定义指令 v-loading ，只需要绑定 boolean 值即可。
+
+- ```js
+  const loading = ref(false)
+  ```
+
+- ```html
+  <el-button type="primary"@click="submitForm(ruleFormRef)" v-loading="loading">登录</el-button>
+  ```
+
+  
+
+- 然后我们通过给v-loading赋值准备好的Boolean值 , 通过事件触发修改 loading 值来完成loading动画的显示隐藏
+
+- 但是这些指令方式 , 没有办法实现很多的自定义操作
+
+- 服务方式
+
+  - ```js
+    import { ElLoading } from 'element-plus';
+    const submitForm = (formEl) => {
+        if (!formEl) return;
+        formEl.validate(async (isValid, invalidFields) => {
+            if (isValid) {
+                const loading = ElLoading.service({
+                    lock: true,
+                    text: '加载中......',
+                    background: 'rgba(0,0,0,0.7)'
+                });
+                let results = await
+                    Api.adminInfo.checkLogin(formData);
+                //将登录成功之后返回的登录信息和token保存到store当中
+                store.userInfo = results.data.loginUserInfo;
+                store.token = results.data.token;
+                loading.close();
+            } else {
+                console.log(invalidFields);
+                return false;
+            }
+        });
+    };
+    ```
+
+### 6.2 message消息
+
+- 单独引入
+
+- ```js
+  import { ElMessage } from 'element-plus'
+  ```
+
+  
+
+- ElMessage提供了4种状态来显示 成功 失败 消息 错误的操作反馈 , 两种方式调用不同的状态
+
+- 通过配置项来决定类型
+
+  - ```js
+    ElMessage({
+        message: 'Congrats, this is a success message.',
+        type: 'success',
+    })
+    ```
+
+  - 通过方法来决定类型
+
+  - ```js
+    ElMessage.error('Oops, this is a error message.')
+    ```
+
+  - 具体到应用上面显示登录失败和成功的消息
+
+  - ```js
+    const submitForm = (formEl) => {
+        if (!formEl) return;
+        formEl.validate(async (isValid, invalidFields) => {
+            if (isValid) {
+                const loading = ElLoading.service({
+                    lock: true,
+                    text: '加载中......',
+                    background: 'rgba(0,0,0,0.7)'
+                });
+                let results = await
+                    Api.adminInfo.checkLogin(formData);
+                loading.close();
+                //将登录成功之后返回的登录信息和token保存到store当中
+                if (results.status == "success") {
+                    ElMessage.success(results.msg);
+                    store.userInfo = results.data.loginUserInfo;
+                    store.token = results.data.token;
+                } else if (results.status == "fail") {
+                    ElMessage({
+                        message: results.msg,
+                        type: "error"
+                    });
+                } else {
+                    ElMessage.error('响应超时');
+                }
+            } else {
+                console.log(invalidFields);
+                return false;
+            }
+        });
+    };
+    ```
+
+    
