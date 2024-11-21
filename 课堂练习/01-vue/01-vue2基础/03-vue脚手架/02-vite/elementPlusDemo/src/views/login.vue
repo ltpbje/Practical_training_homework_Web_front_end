@@ -5,11 +5,20 @@ const formData = reactive({
     zh: '',
     password: ''
 });
+const checkName = (rule, value, callback) => {
+    if (!value) {
+        return callback(new Error('必须输入用户名'));
+    } else if (value.length <= 3) {
+        return callback(new Error('用户名需要大于3位'));
+    } else {
+        //最后一定要在else里面执行一个callback，不然会卡验证状态
+        return callback();
+    }
+};
 const rules = reactive({
     zh: [
         {
-            required: true,
-            message: '必须输入用户名',
+            validator: checkName,
             trigger: 'blur'
         }
     ],
