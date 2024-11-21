@@ -499,4 +499,143 @@
     });
     ```
 
-    
+### 5.5 pinia实例中内置的方法
+
+- 重置状态$reset()
+- 使用选项式 API 时，你可以通过调用 store 的 $reset() 方法将 state 重置为初始值
+
+- ```js
+  store.$reset()
+  ```
+
+- > 注意:
+  >
+  > $reset只能在选项式API中直接调出 , 如果要在setup中调用需要自己去在状态管理对象中自己声明该方法才行
+  >
+  > ```js
+  > export const useCounterStore = defineStore('counter', () => {
+  >     const count = ref(0)
+  >     function $reset() {
+  >         count.value = 0
+  >     }
+  >     return { count, $reset }
+  > })
+  > ```
+
+- 修改状态 $patch()
+
+  - $patch()可以修改多个属性
+
+  - $patch方法可以运行对state中的状态进行批量修改 , 之前我们可以直接从store.count ++ , 但是这些只能单个属性修改
+
+  - 接受一个对象
+
+    - ```js
+      const changeState = () => {
+          store.$patch({
+              count: store.count + 1,
+              age: 20
+          });
+      };
+      ```
+
+- 不过，用这种语法的话，有些变更真的很难实现或者很耗时：任何集合的修改（例如，向数组中添加、移除一个元素或是做 splice 操作）都需要你创建一个新的集合。因此， **$patch 方法也接受一个函数**来组合这种难以用补丁对象实现的变更。
+
+- 接受一个函数
+
+  - ```js
+    store.$patch((state) => {
+        state.items.push({ name: 'shoes', quantity: 1 });
+        state.hasChanged = true;
+    });
+    ```
+
+- 替换状态$state
+  - 这里的替换不能理解成是把状态进行替换 , **而是可以在已经定义好的state的基础上进行新增和修改操作**
+
+- ```js
+  const changeState = () => {
+      store.$state = { counter: 10, name: "zhangsan" };
+  };
+  ```
+
+  - > 代码分析:
+    >
+    > 以上执行之后 , 会往store中的state新增两个状态
+    > 
+
+
+- 订阅$subscribe()
+
+- 这里可以理解成pinia中提供的监听状态的方法于watch类似 , 当state发生变化的时候 , 触发该方法的执行 , 这个方法可以接收两个参数
+
+  - 参数1: 回调函数 , 这个回调函数会被注入两个参数 mutation , state
+
+  - 参数2: 配置对象 , 一般我们只会配置一个 {detached:true}
+
+- ```js
+  cartStore.$subscribe((mutation, state) => {
+      //mutation的实参是一个对象,记录状态改变时的一些情况
+      //其内部主要三个属性
+      //1 mutation.events 里面主要记录了state改变前后的新值和老值
+      //2 mutation.storeId 值为当前调用该方法的store实例的id
+      //3 mutation.type 通过哪种方式修改的state 三个值 'direct' 'patch
+      object' 'patch function'
+      // 每当状态发生变化时，将整个 state 持久化到本地存储。
+      localStorage.setItem('cart', JSON.stringify(state))
+  })
+  ```
+
+  - >  注意:
+    >
+    > 通过$subscribe 监听的状态是直接绑定在调用该方法的组件上的 , 所以组件卸载的始画监听会自动删除 , 如果要在组件卸载的始画保留订阅 , 把第二个参数设置成 {detached:true}
+
+- 订阅action
+
+- 你可以通过 store.$onAction() 来监听 action 和它们的结果。传递给它的回调函数会在 action 本身之前执行。 after 表示在 promise 解决之后，允许你在 action解决后执行一个回调函数。同样地， onError 允许你在 action 抛出错误或 reject时执行一个回调函数。这些函数对于追踪运行时错误非常有用，类似于Vue docs 中的这个提示。
+
+- 这里有一个例子，在运行 action 之前以及 action resolve/reject 之后打印日志记录。
+
+- js
+
+- ```js
+  const unsubscribe = someStore.$onAction(
+    ({
+      name, // action 名称
+      store, // store 实例，类似 `someStore`
+      args, // 传递给 action 的参数数组
+      after, // 在 action 返回或解决后的钩子
+      onError, // action 抛出或拒绝的钩子
+    }) => {
+      // 为这个特定的 action 调用提供一个共享变量
+      const startTime = Date.now()
+      // 这将在执行 "store "的 action 之前触发。
+      console.log(`Start "${name}" with params [${args.join(', ')}].`)
+  
+      // 这将在 action 成功并完全运行后触发。
+      // 它等待着任何返回的 promise
+      after((result) => {
+        console.log(
+          `Finished "${name}" after ${
+            Date.now() - startTime
+          }ms.\nResult: ${result}.`
+        )
+      })
+  
+      // 如果 action 抛出或返回一个拒绝的 promise，这将触发
+      onError((error) => {
+        console.warn(
+          `Failed "${name}" after ${Date.now() - startTime}ms.\nError: ${error}.`
+        )
+      })
+    }
+  )
+  
+  // 手动删除监听器
+  unsubscribe()
+  ```
+
+
+- 默认情况下，*action 订阅器*会被绑定到添加它们的组件上(如果 store 在组件的 `setup()` 内)。这意味着，当该组件被卸载时，它们将被自动删除。如果你想在组件卸载后依旧保留它们，请将 `true` 作为第二个参数传递给 *action 订阅器*，以便将其从当前组件中分离：
+
+​	

@@ -3,7 +3,20 @@ import PageView from './PageView.vue';
 import { reactive, ref } from 'vue';
 import Api from '../api';
 import { userLoginInfo } from '../store/login';
+
+// 定义一个名为store的常量，其值为调用userLoginInfo()函数的返回值
 const store = userLoginInfo();
+const changeState = () => {
+    // store.$patch({
+    //     count: store.count + 1,
+    //     age: 20
+    // });
+    // store.$patch((state) => {
+    //     state.list.push(6);
+    // });
+    store.$state = { counter: 12, name: 'zhangsan' };
+
+};
 const formData = reactive({
     zh: '',
     password: ''
@@ -61,6 +74,7 @@ const submitForm = (formEl) => {
 </script>
 <template>
     <PageView class="flex-row j-c a-c">
+        <button @click="changeState">demo</button>
         <div class="login">
             <el-form ref="ruleFormRef" :model="formData" label-width="80px" :rules="rules" status-icon>
                 <el-form-item label="用户名" prop="zh">
