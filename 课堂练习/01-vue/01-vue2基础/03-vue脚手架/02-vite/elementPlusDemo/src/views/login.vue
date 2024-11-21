@@ -1,6 +1,7 @@
 <script setup>
 import PageView from './PageView.vue';
 import { reactive, ref } from 'vue';
+import Api from '../api';
 const formData = reactive({
     zh: '',
     password: ''
@@ -42,6 +43,7 @@ const submitForm = (formEl) => {
     formEl.validate((isValid, invalidFields) => {
         if (isValid) {
             console.log('登录成功');
+            Api.adminInfo.checkLogin(formData);
         } else {
             console.log('登录失败', invalidFields);
             return false;
