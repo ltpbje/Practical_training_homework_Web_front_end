@@ -1,3 +1,4 @@
+import component from "element-plus/es/components/tree-select/src/tree-select-option.mjs";
 import { createRouter, createWebHistory } from "vue-router";
 const routes = [
     {
@@ -9,7 +10,24 @@ const routes = [
     {
         path: '/home',
         name: 'home',
-        component: () => import('../views/home.vue')
+        component: () => import('../views/home.vue'),
+        children: [
+            {
+                path: '/index',
+                name: 'index',
+                component: () => import('../views/home/HomeIndex.vue')
+            },
+            {
+                path: '/list',
+                name: 'list',
+                component: () => import('../views/home/HomeList.vue')
+            },
+            {
+                path: '/data',
+                name: 'data',
+                component: () => import('../views/home/HomeData.vue')
+            },
+        ]
     },
     {
         path: '/login',

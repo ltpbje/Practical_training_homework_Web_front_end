@@ -1,18 +1,21 @@
 <script setup>
 import { reactive } from 'vue';
-import { Location } from '@element-plus/icons-vue';
+import { Location, Link, Setting } from '@element-plus/icons-vue';
 const menuList = [
     {
         title: '首页',
-        url: '/index'
+        url: '/index',
+        icon: Location
     },
     {
         title: '列表管理',
-        url: '/list'
+        url: '/list',
+        icon: Link
     },
     {
         title: '数据管理',
-        url: '/data'
+        url: '/data',
+        icon: Setting
     },
 
 ];
@@ -24,7 +27,7 @@ const menuList = [
             <el-menu-item v-for="(item, index) in menuList
             " default-active="'/index'" :key="item.url" :index="item.url">
                 <el-icon>
-                    <Location />
+                    <component :is="item.icon" />
                 </el-icon>
                 {{ item.title }}
             </el-menu-item>
