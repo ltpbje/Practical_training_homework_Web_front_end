@@ -1,3 +1,5 @@
+import { useRouter } from 'vue-router';
+const store = userLoginInfo();
 const submitForm = (formEl) => {
     if (!formEl) return;
     formEl.validate(async (isValid, invalidFields) => {
@@ -14,7 +16,8 @@ const submitForm = (formEl) => {
             if (results.status == "success") {
                 ElMessage.success(results.msg);
                 store.userInfo = results.data.loginUserInfo;
-                store.token = results.data.token;
+                store.userToken = results.data.token;
+                router.push({ name: 'home' }); //添加push方法实现跳转
             } else if (results.status == "fail") {
                 ElMessage({
                     message: results.msg,
