@@ -813,4 +813,315 @@
   };
   ```
 
+## 8、制作home页面布局
+
+
+
+### 8.1、Container布局容器组件
+
+- 开始制作之前我们先认识一些与布局相关的组件，与布局相关的组件主要分为两个部分，layout布局组件和contianer布局容器组件，这两类都属于basic基础组件
+- 用于布局的容器组件，方便快速搭建页面的基本结构：
+- <el-container> ：外层容器。 当子元素中包含 <el-header> 或 <el-footer>时，全部子元素会垂直上下排列， 否则会水平左右排列。
+- <el-header> ：顶栏容器。
+
+- <el-aside> ：侧边栏容器。
+
+- <el-main> ：主要区域容器。
+
+- <el-footer> ：底栏容器。
+
+- > 注意：
+  >
+  > 以上组件采用了 flex 布局，使用前请确定目标浏览器是否兼容。 此外， <el-container> 的直接子元素必须是后四个组件中的一个或多个。 后四个组件的父元素必须是一个 <el-container>
+
+
+
+### 8.2、layout布局组件
+
+- 当我们通过上面的布局容器组件完成了对证额页面的基础结构划分之后，我们就可以通过layout布局组件来对每个结构块内部进行更加精细化的局部，我们也可以直接把#app挂载区域作为一个巨大的容器直接开始通过layout组件进行布局的精细化处理
+- layout采用的是栅格布局，通过基础的 24 分栏，迅速简便地创建布局，主要通过以下两个组件来实现
+  - el-row 行组件
+  - el-col 列组件
+  - 具体设置可以查看官网文档
+
+### 8.3、制作左侧导航
+
+- ```vue
+  <template>
+      <div class="common-layout">
+          <el-container>
+              <el-header>Header</el-header>
+              <el-container>
+                  <el-aside width="200px">Aside</el-aside>
+                  <el-main>Main</el-main>
+              </el-container>
+          </el-container>
+      </div>
+  </template>
+  ```
+
+- 通过上面的布局实现了将home分成了三个大组件，首先我们先将左边的容器制作成一个单独的导航组件
+
+- 在views下面新建一个home目录用来管理home.vue页面组件下面使用的子结构组件，在home目录下创建LeftMenu.vue
+
+- 左侧导航我们采用Menu组件制作，简单认识下Menu组件
+
+- <el-menu></el-menu> 菜单组组件，一个完整的菜单导航由它开始
+
+- <el-sub-menu></el-sub-menu> 二级菜单组件
+
+- <el-menu-item></el-menu-item> 菜单项组件，包裹在上面两个组件内部使用
+
+- <el-menu-item-group></el-menu-item-group> 菜单项编组组件，可以嵌套在menu-item的外层将菜单项打包成一个组
+
+- ```vue
+  <script setup>
+  import { reactive } from 'vue';
+  const menuList = reactive([
+      {
+          title: "首页",
+          url: "/index"
+      },
+      {
+          title: "列表管理",
+          url: "/list"
+      },
+      {
+          title: "数据管理",
+          url: "/data"
+      }
+  ]);
+  </script>
+  
+  <template>
+      <el-aside width="200px">
+          <el-menu default-active="1" router>
+              <el-menu-item v-for="item in menuList" :key="item.url" :index="item.url">{{ item.title }}</el-menu-item>
+          </el-menu>
+      </el-aside>
+  </template>
+  <style scoped></style>
+  ```
+
+  
+
+- > 代码分析：
+  >
+  > 在上面的代码里面，我们使用了一些组件中的属性来完成一些设置，这些的属性的作用：
+  >
+  > 在el-menu：
+  >
+  > - default-active 表当当前列中默认的高亮项，取的值是el-menu-item中的index属性值
+  >
+  > - router是否启用vue-router模式，启用后，el-menu-item中的index属性会作为跳转路径来使用
+  >
+  > 在el-menu-item：
+  >
+  > index 作为当前菜单项的唯一标识使用，当el-menu开启了vue-router模式，该属性的值就是你点击当前菜单项之后跳转的路径
+
+### 8.4、elementplus图标使用
+
+- 在调用Menu的时候，官网的Demo实例我们可以看到图标使用，element-plus有自己的图标库，我们可以进行调用
+
+- 安装图标依赖
+
+  - ```cmd
+    npm install @element-plus/icons-vue
+    ```
+
+    
+
+- 安装自动按需 导入的插件
+
+  - ```cmd
+    npm i unplugin-icons -D
+    ```
+
+- vite.config.js配置
+
+  - ```js
+    import { defineConfig } from 'vite';
+    import vue from '@vitejs/plugin-vue';
+    import AutoImport from 'unplugin-auto-import/vite';
+    import Components from 'unplugin-vue-components/vite';
+    import { ElementPlusResolver } from 'unplugin-vuecomponents/resolvers';
+    import Icons from 'unplugin-icons/vite';
+    import IconsResolver from 'unplugin-icons/resolver';
+    import Inspect from 'vite-plugin-inspect';
+    // https://vite.dev/config/
+    export default defineConfig({
+        plugins: [
+            vue(),
+            AutoImport({
+                resolvers: [
+                    ElementPlusResolver(),
+                    // Auto import icon components
+                    // 自动导入图标组件
+                    IconsResolver({
+                        prefix: 'Icon',
+                    }),
+                ],
+            }),
+            Components({
+                resolvers: [
+                    // Auto register icon components
+                    // 自动注册图标组件
+                    IconsResolver({
+                        enabledCollections: ['ep'],
+                    }),
+                    // Auto register Element Plus components
+                    // 自动导入 Element Plus 组件
+                    ElementPlusResolver(),
+                ],
+            }),
+            Icons({
+                autoInstall: true,
+            }),
+            Inspect()
+        ],
+    });
+    ```
+
+- 手动按需导入
+
+  - 在需要使用图标的组件中我们通过安装的@element-plus/icons-vue图标中import导入即可
+
+  - ```cmd
+    import { Location,Menu as IconMenu } from '@element-plus/icons-vue';
+    ```
+
+
+- 调用
+
+  - ```vue
+    <el-icon><IconMenu /></el-icon>
+    ```
+
+  ### 8.5、制作左侧导航路由
+
+- 现在我们使用刚才的模拟数据，实现左侧导航的点击跳转
+
+- 制作home页面下的子路由，新建三个与侧边导航项对应的三个子页面组件
+
+- ```js
+  import { createRouter, createWebHistory } from 'vue-router';
+  const routes = [
+      {
+          path: "/",
+          redirect: {
+              name: "login"
+          }
+      },
+      {
+          path: "/home",
+          name: "home",
+          component: () => import('../views/home.vue'), //异步加载
+          children: [
+              {
+                  path: '/index',
+                  name: 'index',
+                  component: () =>
+                      import('../views/home/HomeIndex.vue')
+              },
+              {
+                  path: '/list',
+                  name: 'list',
+                  component: () =>
+                      import('../views/home/HomeList.vue')
+              },
+              {
+                  path: '/data',
+                  name: 'data',
+                  component: () =>
+                      import('../views/home/HomeData.vue')
+              }
+          ]
+      },
+      {
+          path: "/login",
+          name: "login",
+          component: () => import('../views/login.vue')
+      }
+  ];
+  const router = createRouter({
+      history: createWebHistory(),
+      routes
+  });
+  export default router;
+  ```
+
+  - > 注意：
+    >
+    > 在menuList组件的Menu组件记得开启router模式，这样menu-item组件可以使用使用index属性作为跳转路径使用
+
+- 现在切换显示的二级路由都在home路由的下面，所以我们在home.vue中插入router-view，来显示路由跳转切换的组件
+
+  - ```vue
+    <script setup>
+    import LeftMenu from './home/leftMenu.vue';
+    </script>
+    <template>
+        <div class="common-layout">
+            <el-container>
+                <LeftMenu />
+                <el-container>
+                    <el-header>Header</el-header>
+                    <el-main>
+                        <router-view></router-view>
+                    </el-main>
+                </el-container>
+            </el-container>
+        </div>
+    </template>
+    ```
+
+### 8.6、左侧导航图标动态渲染
+
+- 现在的情况，我们的左侧导航是根据数据渲染出来的，而并非是写死的，而我们的图标调用是通过组件的虚拟标签来调用的，那么意味着，我们需要把图标组件写入到模板中取，但是一旦这么写了就相当把图标写死了，渲染出来的菜单项的前置图标都会是一样的，所以我们需要对图标进行动态渲染，也就是说我们需要把图标组件作为一个动态组件进行渲染
+
+- vue提供了一个内置组件 专门用来实现动态组件的渲染，这个组件本身相当于一个占位符，需要使用is属性来指定绑定的组件
+
+- 现在我们先手动导入menuList中需要使用的图标
+
+- > 注意：
+  >
+  > 我们这里不推荐使用自动导入，因为我们现在需要将图标作为动态组件进行渲染，这种情况下自动导入的图标组件在进行渲染的时候会出现安装不上情况，所以如果我们需要将图标组件作为动态组件渲染，最好采用手动导入
+
+- ```vue
+  <script setup>
+  import { reactive } from 'vue';
+  import { Location, Notification, Setting } from '@elementplus/icons-vue';
+  const menuList = reactive([
+      {
+          title: "首页",
+          url: "/index",
+          icon: Location
+      },
+      {
+          title: "列表管理",
+          url: "/list",
+          icon: Notification
+      },
+      {
+          title: "数据管理",
+          url: "/data",
+          icon: Setting
+      }
+  ]);
+  </script>
+  
+  <template>
+      <el-aside width="200px">
+          <el-menu class="el-menu-vertical-demo" default-active="1" router>
+              <el-menu-item v-for="item in menuList" :key="item.url" :index="item.url">
+                  <el-icon>
+                      <component :is="item.icon"></component>
+                  </el-icon>
+                  {{ item.title }}
+              </el-menu-item>
+          </el-menu>
+      </el-aside>
+  </template>
+  ```
+
   
