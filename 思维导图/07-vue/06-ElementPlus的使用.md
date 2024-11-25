@@ -1124,4 +1124,423 @@
   </template>
   ```
 
+### 8.7、制作左侧导航激活项保持
+
+- 现在我们可以通过路由实现左侧导航的切换跳转，但是，当我们刷新页面的时候，因为路径没有变化所有右侧的内容不会变化，但是，左侧对应的激活菜单项的高亮样式不见了
+- 我们的el-menu中有一个属性default-active可以通过设置于menu-item的index属性一样的值来确定当前menu组件的默认激活项 ，但是，现在因为我们在el-menu组件上面开启了vue-router模式，所以，我们所有的el-menu-item中的index属性都被拿来当做跳转路径了，所以，如果我们想设置默认激活就需要把el-menu的default-active属性的值设置成对应路径即可
+- 在leftMenu.vue中需要使用路由对象中的path
+- ```vue
+  <script setup>
+  import { reactive, shallowReactive } from 'vue';
+  import { Location, Notification, Setting } from '@element-plus/icons-vue';
+  import { useRoute } from 'vue-router';
+  const route = useRoute();
+  const menuList = shallowReactive([
+      {
+          title: "首页",
+          url: "/index",
+          icon: Location
+      },
+      {
+          title: "列表管理",
+          url: "/list",
+          icon: Notification
+      },
+      {
+          title: "数据管理",
+          url: "/data",
+          icon: Setting
+      }
+  ]);
+  </script>
+  <template>
+      <el-aside width="200px">
+          <!-- route表示，当点击哪个导航项就把哪个路由单体对象的path作为
+  default-active的值来保持激活项 -->
+          <el-menu class="el-menu-vertical-demo" :default-active="route.path" router>
+              <el-menu-item v-for="item in menuList" :key="item.url" :index="item.url">
+                  <el-icon>
+                      <component :is="item.icon"></component>
+                  </el-icon>
+                  {{ item.title }}
+              </el-menu-item>
+          </el-menu>
+      </el-aside>
+  </template>
+  ```
+
+### 8.8、制作二级导航菜单（制作递归组件）  
+
+- 我们的侧边导航是通过数据渲染出来的动态导航，那么，如果现在要制作二级导航，也需要对应的数据，我们先准备一些模拟数据
+
+- 在原有一级导航数据下面添加一个children把其作为管理二级导航的数组
+
+- ```js
+  const menuList = shallowReactive([
+      {
+          title: "首页",
+          url: "/index",
+          icon: Location
+      },
+      {
+          title: "列表管理",
+          url: "/list",
+          icon: Notification,
+          children: [
+              {
+                  title: "列表信息",
+                  url: "/list/info",
+                  icon: Location
+              },
+              {
+                  title: "管理信息",
+                  url: "/list/manage",
+                  icon: Location
+              },
+          ]
+      },
+      {
+          title: "数据管理",
+          url: "/data",
+          icon: Setting
+      }
+  ]);
+  ```
+
+  - 现在将菜单项组组件做一个二次封装，做成一个导航项组件做递归使用
+  - 新建NavItem.vue
+    - 在组件内部我们将使用el-menu-item和el-sub-menu这两套组件通过v-if和v-else的搭配判断导航数据中是否children来决定渲染哪套
+
+```vue
+<script setup>
+const props = defineProps({
+    item: {
+        type: Object
+    }
+});
+</script>
+<template>
+    <el-menu-item v-if="!item.children" :index="props.item.url">
+        <el-icon>
+            <component :is="props.item.icon"></component>
+        </el-icon>
+        {{ props.item.title }}
+    </el-menu-item>
+    <el-sub-menu v-else>
+        <template #title>
+            <el-icon>
+                <component :is="props.item.icon">
+                </component>
+            </el-icon>
+            <span>{{ props.item.title }}</span>
+        </template>
+        <!-- 这里是关键，在自己组件内部调用自己，形成递归 -->
+        <nav-item v-for="sub in props.item.children" :key="sub.url" :item="sub"></nav-item>
+    </el-sub-menu>
+</template>
+<style scoped></style>
+```
+
+- > 代码分析：
+  >
+  > 上面的模板中同时写入el-menu-item和el-sub-menu，然后通过父组件传入的菜单项数据判断是否有children，如果有就代表有二级导航现需要渲染，所以v-if + v-else的组合会把el-menu-item给注释掉，渲染带有开关效果的el-sub-menu做二级导航组件，同理，当我们没有children的似乎和就把el-sub-menu注释掉，只渲染el-menu-item
+
+- 修改LeftMenu.vue
+
+  ```vue
+  <script setup>
+  import { reactive, shallowReactive } from 'vue';
+  import { Location, Notification, Setting } from '@element￾plus/icons-vue';
+  import { useRoute } from 'vue-router';
+  import NavItem from '../../components/NavItem.vue';
+  const route = useRoute();
+  const menuList = shallowReactive([
+      {
+          title: "首页",
+          url: "/index",
+          icon: Location
+      },
+      {
+          title: "列表管理",
+          url: "/list",
+          icon: Notification,
+          children: [
+              {
+                  title: "列表信息",
+                  url: "/list/info",
+                  icon: Location,
+              },
+              {
+                  title: "管理信息",
+                  url: "/list/manage",
+                  icon: Location
+              },
+          ]
+      },
+      {
+          title: "数据管理",
+          url: "/data",
+          icon: Setting
+      }
+  ]);
+  </script>
+  <template>
+      <el-aside width="200px">
+          <el-menu class="el-menu-vertical-demo" :default-active="route.path" router>
+              <NavItem v-for="item in menuList" :key="item.url" :item="item" />
+          </el-menu>
+      </el-aside>
+  </template>
+  <style scoped></style>
+  ```
+
+### 8.9、制作二级子路由的页面跳转
+
+```js
+const routes = [
+    {
+        path: "/",
+        redirect: {
+            name: "login"
+        }
+    },
+    {
+        path: "/home",
+        name: "home",
+        component: () => import('../views/home.vue'), //异步加载
+        children: [
+            {
+                path: '/index',
+                name: 'index',
+                component: () =>
+                    import('../views/home/HomeIndex.vue')
+            },
+            {
+                path: '/list',
+                name: 'list',
+                component: () =>
+                    import('../views/home/HomeList.vue'),
+                children: [
+                    {
+                        path: '/list/info',
+                        name: 'info',
+                        component: () =>
+                            import('../views/home/HomeList/HomeListInfo.vue')
+                    },
+                    {
+                        path: '/list/manage',
+                        name: 'manage',
+                        component: () =>
+                            import('../views/home/HomeList/HomeListManage.vue')
+                    }
+                ]
+            },
+            {
+                path: '/data',
+                name: 'data',
+                component: () =>
+                    import('../views/home/HomeData.vue')
+            }
+        ]
+    },
+    {
+        path: "/login",
+        name: "login",
+        component: () => import('../views/login.vue')
+    }
+];
+```
+
+- 然后再homeList.vue中添加router-view实现页面切换即可
+
+## 9、制作右侧header
+
+- 右侧的header部分，我们主要制作两个东西，分别是面包屑导航和退出登录按钮
+
+### 9.1、面包屑导航
+
+- 简单认识以下面包屑导航，其实面包屑导航类似于一个有序列表
+
+  - `<el-breadCrumb></el-breadCrumb>` 面包屑导航组件
+  - `<el-breadCrumb-item></el-breadCrumb-item>` 面包屑导航项组件
+
+- **在el-breadCrumb上有两个属性**
+
+  - separator ：可以定义面包屑导航项之间的分隔符，值是一个字符串
+
+  - separator-icon ： 可以指定面包屑导航项之间的分隔符为一个图标
+
+- **在el-breadCrumb-item上有一个属性**
+  - `:to="{ path: '/' }"` 可以设置导航项点击之后跳转的路由
+
+- **创建BreadCrumb.vue组件**
+
+  - ```vue
+    <script setup>
+    </script>
+    <template>
+        <el-breadcrumb separator="/">
+            <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
+        </el-breadcrumb>
+    </template>
+    <style scoped></style>
+    ```
+
+- 然后把该组件导入到home.vue中在header中调用
+
+- 接下来的问题就是面包屑导航中渲染的数据从何而来？
+
+  - 在面包屑导航内渲染的数据应该是与左侧导航当前选中的菜单项的内容保持一致的，我们当前跳转到哪个菜单项对应的页面，面包屑导航的内容就是哪个，也就是面包屑导航渲染出来的内容完全由路由跳转来决定，那么，谁决定我们就找谁要数据
+  - 在路由单体当中还可以设置一个meta的属性，这个属性包含的对象信息是可以由我们来自定义的，我们就用这个来定义数据
+  - 在每个路由上面添加一个meta
+
+```js
+const routes = [
+    {
+        path: "/",
+        redirect: {
+            name: "login"
+        }
+    },
+    {
+        path: "/home",
+        name: "home",
+        meta: { title: "首页" },
+        component: () => import('../views/home.vue'), //异步加载
+        children: [
+            {
+                path: '/index',
+                name: 'index',
+                meta: { title: "首页" },
+                component: () =>
+                    import('../views/home/HomeIndex.vue')
+            },
+            {
+                path: '/list',
+                name: 'list',
+                meta: { title: "列表管理" },
+                component: () =>
+                    import('../views/home/HomeList.vue'),
+                children: [
+                    {
+                        path: '/list/info',
+                        name: 'info',
+                        meta: { title: "列表信息" },
+                        component: () =>
+                            import('../views/home/HomeList/HomeListInfo.vue')
+                    },
+                    {
+                        path: '/list/manage',
+                        name: 'manage',
+                        meta: { title: "信息管理" },
+                        component: () =>
+                            import('../views/home/HomeList/HomeListManage.vue')
+                    }
+                ]
+            },
+            {
+                path: '/data',
+                name: 'data',
+                meta: { title: "数据管理" },
+                component: () =>
+                    import('../views/home/HomeData.vue')
+            }
+        ]
+    },
+    {
+        path: "/login",
+        name: "login",
+        component: () => import('../views/login.vue')
+    }
+];
+```
+
+- 在breadCrumb.vue中调用路由对象中的title值
+
+- ```vue
+  <script setup>
+  import { useRoute } from 'vue-router';
+  import { ref, onMounted } from 'vue';
+  const route = useRoute();
+  const list = ref([]);
+  onMounted(() => {
+      list.value = route.matched;
+      console.log(route.matched);
+  });
+  </script>
+  <template>
+      <el-breadcrumb separator="/">
+          <el-breadcrumb-item v-for="(item, index) in list" :key="index" :to="{ path: '/' }">{{ item.meta.title
+              }}</el-breadcrumb-item>
+      </el-breadcrumb>
+  </template>
+  ```
+
+- > 代码分析：
+  >
+  > 上面我们使用route.matched属性，这个属性会获取当前跳转路径下每一级对应的路由单体对象，把每一级的路由单体对象作为数组保存下来，我们通过遍历这个数组来或取每一级子路由对象中的meta
+  >
+  > 以上我们搞定之后，虽然渲染出来了，但是切换页面的时候，面包屑导航依然还是第一次开打的内容，不会实时改变
+  >
+  > 原因：
+  >
+  > 我们点击左侧导航项切换页面的时候，实际上切换的是home.vue中的main的部分，而我们现在是spa单页面应用，实现的是局部跟新，也就是我们在切换页面的时候并不会整个页面刷新，而面包屑导航组件在home.vue的header里面，并不在更新范围内，所以导致breadCrumb组件的生命周期不跟新
+
+- 通过监听解决面包屑导航内容更新
+
+```vue
+<script setup>
+import { useRoute } from 'vue-router';
+import { ref, onMounted, watch } from 'vue';
+const route = useRoute();
+const list = ref([]);
+watch(route, (newVal) => {
+    list.value = newVal.matched;
+});
+onMounted(() => {
+    list.value = route.matched;
+});
+</script>
+<template>
+    <el-breadcrumb separator="/">
+        <el-breadcrumb-item v-for="(item, index) in list" :key="index" :to="{ path: '/' }">{{ item.meta.title
+            }}</el-breadcrumb-item>
+    </el-breadcrumb>
+</template>
+```
+
+- 实现点击面包屑导航进行跳转
+
+- ```vue
+  <template>
+      <el-breadcrumb separator="/">
+          <el-breadcrumb-item v-for="(item, index) in list" :key="index" :to="item.path">{{ item.meta.title
+              }}</el-breadcrumb-item>
+      </el-breadcrumb>
+  </template>
+  ```
+
   
+
+- 现在再来切换到首页可以看到，面包屑导航会显示两个首页，解决如下
+
+- ```vue
+  import { useRoute } from 'vue-router';
+  import { ref, onMounted, watch } from 'vue';
+  const route = useRoute();
+  const list = ref([]);
+  const getBreadCrumb = (matched) => {
+      if (matched.length && matched[1].name == "index") {
+          list.value = matched.slice(0, 1);
+      } else {
+          list.value = matched.slice(1, matched.length);
+      }
+  };
+  watch(route, (newVal) => {
+      getBreadCrumb(newVal.matched);
+  });
+  onMounted(() => {
+      list.value = route.matched;
+  });
+  ```
+

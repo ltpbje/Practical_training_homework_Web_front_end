@@ -1,5 +1,6 @@
 <script setup>
 import LeftMenu from './home/LeftMenu.vue';
+import BreadCrumb from '../components/BreadCrumb.vue';
 </script>
 
 <template>
@@ -9,7 +10,9 @@ import LeftMenu from './home/LeftMenu.vue';
             <LeftMenu></LeftMenu>
 
             <el-container>
-                <el-header>Header</el-header>
+                <el-header>
+                    <BreadCrumb></BreadCrumb>
+                </el-header>
                 <el-main>
                     <router-view></router-view>
                 </el-main>

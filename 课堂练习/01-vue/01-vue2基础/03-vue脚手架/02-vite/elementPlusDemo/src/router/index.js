@@ -10,26 +10,36 @@ const routes = [
     {
         path: '/home',
         name: 'home',
+        meta: { title: '首页' },
+
         component: () => import('../views/home.vue'),
         children: [
             {
                 path: '/index',
                 name: 'index',
+                meta: { title: '首页' },
+
                 component: () => import('../views/home/HomeIndex.vue')
             },
             {
                 path: '/list',
                 name: 'list',
+                meta: { title: '列表管理' },
+
                 component: () => import('../views/home/HomeList.vue'),
                 children: [
                     {
                         path: '/list/info',
                         name: 'info',
+                        meta: { title: '信息列表' },
+
                         component: () => import('../views/HomeList/HomeListInfo.vue')
                     },
                     {
                         path: '/list/manage',
                         name: 'manage',
+                        meta: { title: '管理信息' },
+
                         component: () => import('../views/HomeList/HomeListManage.vue')
                     }
                 ]
@@ -37,6 +47,8 @@ const routes = [
             {
                 path: '/data',
                 name: 'data',
+                meta: { title: '数据管理' },
+
                 component: () => import('../views/home/HomeData.vue')
             },
         ]
