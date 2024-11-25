@@ -1,16 +1,18 @@
 <template>
-    <HomeData />
+    <h2>homelistInfo</h2>
+    <HomeData></HomeData>
 </template>
+
+
 <script setup>
 import { defineAsyncComponent } from 'vue';
 import Loading from '../../components/Loading.vue';
 import Error from '../../components/Error.vue';
 const HomeData = defineAsyncComponent({
-    loader: () => new Promise((resolve, reject) => {
-        //正常来说这里会执行一个请求
+    loader: () => new Promise((reslove, reject) => {
         setTimeout(() => {
-            if (false) {
-                resolve(import('./HomeData.vue'));
+            if (true) {
+                reslove(import('../home/HomeData.vue'));
             } else {
                 reject();
             }
@@ -18,6 +20,10 @@ const HomeData = defineAsyncComponent({
     }),
     errorComponent: Error,
     loadingComponent: Loading,
-    delay: 2000
+    delay: 0
 });
 </script>
+
+
+
+<style lang="scss" scoped></style>

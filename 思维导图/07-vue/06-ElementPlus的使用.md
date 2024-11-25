@@ -1918,3 +1918,80 @@ let option = {
 ```
 
 - 现在我们就可以看到地图中会根据data中的数据显示对应的热力分段颜色，即使应用用我们需要请求热力数据传给data
+
+## 11、异步组件
+
+- 所有需要执行异步加载或者组件内部有异步请求的方法的组件我们都可以把它们包装成异步组件
+
+- 异步操作的经典代名词就是Promise，之前学习Promise的时候我们讲过，Promise有三个状态，而将一个组件包装成异步组件的精髓在于在这三个状态上面，也就说我们可以在加载异步组件的时候，根据返回的Promise对象的状态在页面上渲染不同的结果
+
+- 创建异步组件：
+
+- vue2中异步组件时通过将组件定义为返回Promise的函数来创建的，例如：
+
+- ```js
+  const asyncPage = () => import('./NextPage.vue')
+  ```
+
+- 带选项的：
+
+- ```js
+  const asyncPage = {
+      component:() => import('./NextPage.vue'),
+      delay:200,
+      timeout:3000,
+      error:ErrorComponent,
+      loading:LoadingComponent
+  }
+  ```
+
+- 在vue3中，由于功能组件被定义成了纯函数，因此需要通过将异步组件定义包装在新的 defineAsyncComponent 方法来西安市定义异步组件
+
+```vue
+<template>
+    <HomeData />
+</template>
+<script setup>
+import { defineAsyncComponent } from 'vue';
+import Loading from '../../components/Loading.vue';
+import Error from '../../components/Error.vue';
+const HomeData = defineAsyncComponent({
+    loader: () => new Promise((resolve, reject) => {
+        //正常来说这里会执行一个请求
+        setTimeout(() => {
+            if (false) {
+                resolve(import('./HomeData.vue'));
+            } else {
+                reject();
+            }
+        }, 3000);
+    }),
+    errorComponent: Error,
+    loadingComponent: Loading,
+    delay: 2000
+});
+</script>
+```
+
+- > 代码分析：
+  >
+  > 我们loader的属性其实是接收一个函数作为属性值来使用的，而我们为了实现异步操作，我们将Promise对象作为该函数的返回值让loader可以获取一个异步结果
+  >
+  > 我	们在Promise对象设置setTimeout 人为制作3秒的pending等待状态，当loader接收到Promise处于等待状态的时候，会渲染loading组件，然后我们还可以人为修改判断条件为false让3秒之后转成失败状态，从而渲染error组件
+  >
+  > 注意：
+  >
+  > 这里的loader属性的写法只是为了模拟渲染结果而写，真实情况下只会赋值一个() => import('./xxxx.vue')
+
+- 以下为实际的写法
+
+- ```js
+  const HomeData = defineAsyncComponent({
+      loader:() => import('./HomeData.vue'),
+      errorComponent:Error,
+      loadingComponent:Loading,
+      delay:2000
+  })
+  ```
+
+  

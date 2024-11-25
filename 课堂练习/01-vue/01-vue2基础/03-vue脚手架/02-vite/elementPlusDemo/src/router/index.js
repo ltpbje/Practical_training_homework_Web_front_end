@@ -49,7 +49,7 @@ const routes = [
                 name: 'data',
                 meta: { title: '数据管理' },
 
-                component: () => import('../views/home/HomeData.vue')
+                component: () => import('../views/HomeList/HomeDataAsync.vue')
             },
         ]
     },
