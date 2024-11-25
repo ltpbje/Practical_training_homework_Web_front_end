@@ -1,4 +1,4 @@
-- # elementPlus搭建后台管理系统demo
+# elementPlus搭建后台管理系统demo
 
 
 - 技术栈：
@@ -1544,3 +1544,239 @@ onMounted(() => {
   });
   ```
 
+### 9.2、退出登录
+
+-  退出登录的功能其实就是清除掉全局状态中记录的用户信息和缓存
+
+  ```vue
+  <script setup>
+  import LeftMenu from './home/LeftMenu.vue';
+  import BreadCrumb from '../components/BreadCrumb.vue';
+  import { ref } from "vue";
+  import { userLoginInfo } from '../store/login';
+  import { useRouter } from 'vue-router';
+  const dialogVisible = ref(false);
+  const store = userLoginInfo();
+  const router = useRouter();
+  const goBack = () => {
+      dialogVisible.value = false;
+      store.$patch((state) => {
+          state.userInfo = null;
+          state.userToken = null;
+      });
+      localStorage.clear();
+      router.push({ name: 'login' });
+  };
+  </script>
+  <template>
+      <div class="common-layout">
+          <el-container>
+              <LeftMenu />
+              <el-container>
+                  <el-header class="flex-row a-c j-s-b">
+                      <BreadCrumb />
+                      <el-button type="primary" @click="dialogVisible =
+                          true">
+                          退出登录
+                      </el-button>
+                      <el-dialog v-model="dialogVisible" width="500" :before-close="handleClose">
+                          <span>是否确定退出登录？</span>
+                          <template #footer>
+                              <div class="dialog-footer">
+                                  <el-button @click="dialogVisible = false">取消
+                                  </el-button>
+                                  <el-button type="primary" @click="goBack">
+                                      确认
+                                  </el-button>
+                              </div>
+                          </template>
+                      </el-dialog>
+                  </el-header>
+                  <el-main>
+                      <router-view></router-view>
+                  </el-main>
+              </el-container>
+          </el-container>
+      </div>
+  </template>
+  ```
+
+## 10、Echart数据可视化
+
+- 安装数据可视化包
+
+- ```cmd
+  npm i echart --save
+  ```
+
+- 新建图表组件chart.vue ，导入echart
+
+- ```vue
+  <template>
+  
+  </template>
+  <script setup>
+      import * as echarts from 'echarts';
+  </script>
+  ```
+
+- 图表数据作为我们首页展示内容，将chart.vue组件导入到homeIndex当中
+
+### 10.1、制作图表数据
+
+- 其实制作过程可以分为三步
+  - 1、定义容器
+  - 2、进行配置
+  - 3、数据渲染
+
+- 现在我们以一个折线图来制作一下
+- **定义容器**
+
+```vue
+<template>
+    <div ref="chart" style="width:100%;height:300px;"></div>
+</template>
+<script setup>
+import * as echarts from '../../node_modules/echarts';
+import { ref } from 'vue';
+const chart = ref(null);
+const init = () => {
+    const myChart = echarts.init(chart.value);
+};
+</script>
+```
+
+- **进行配置**
+- 在初始化方法里面声明一个对象作为配置对象
+
+```vue
+<script setup>
+import * as echarts from '../../node_modules/echarts';
+import { ref, onMounted } from 'vue';
+const chart = ref(null);
+const init = () => {
+    const myChart = echarts.init(chart.value);
+    let option = {
+        xAxis: {
+            type: 'category',
+            data: ['衣服', '裤子', '帽子']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                data: [120, 200, 500],
+                type: "line"
+            }
+        ]
+    };
+    myChart.setOption(option);
+};
+onMounted(() => {
+    init();
+});
+</script>
+```
+
+> 代码分析：
+>
+> 在option对象内的几个配置项分别定义了图表的基础参数：
+>
+> - xAxis：对图表横向坐标进行配置
+>   - type 设置横向坐标的类型，category表示为类目型
+>   - data 设置每个分类的名称
+>
+> - yAxis：对图表纵向坐标进行配置
+>
+>   - type 设置纵向坐标的类型，value表示为值类型
+>
+> - series：在图表中展示的数据，这是一个数组，一个数组元素代表一条在图表中展示的数据
+>
+>   - data 具体的数据值
+>
+>   - type 图表数据的表现形式，这里使用的line 表示折线图
+>
+> 最后记得执行`myChart.setOption(option)`将配置传入到容器中
+
+- **数据渲染**
+
+- ```js
+  onMounted(() => {
+      init()
+  })
+  ```
+
+- 这样，一个基础的图表就完成了，但是我们发现使用elementPlus制作是弹性布局，但是我们的图表不会自适应
+
+### 10.2、响应式图表制作
+
+- 我们图表提供了一个resize方法，可以把图表变成响应式
+
+- 在我们的ini方法里面添加一个window的监听即可
+
+- ```js
+  window.addEventListener('resize',() => {
+      myChart.resize();
+  })
+  ```
+
+
+### 10.3、图表组件复用
+
+- 我们在实际应用中，可能会使用到多张图表，如果我们每一张图表都创建一个组件浪费且麻烦
+
+- 我们知道常规的图表主要的用处就是展示数据，那么，我们可以组件传值的方式，在不同地方调用同一个组件传入不同的数据，从而展示不同的数据图表
+- 在chart.vue中制作接收数据的接口
+
+```js
+const props = defineProps({
+    chartData: {
+        type: Array,
+        default: () => [10, 20, 30, 40, 50]
+    },
+    chartType: {
+        type: String,
+        default: () => 'line'
+    },
+    categoryType: {
+        type: Array,
+        default: () => ['a', 'b', 'c']
+    }
+});
+const init = () => {
+    const myChart = echarts.init(chart.value);
+    let option = {
+        xAxis: {
+            type: 'category',
+            data: props.categoryType
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                data: props.chartData,
+                type: props.chartType
+            }
+        ]
+    };
+    myChart.setOption(option);
+    window.addEventListener('resize', () => {
+        myChart.resize();
+    });
+};
+```
+
+- 在homeIndex.vue 中重复调用chart.vue传入不同的数据
+
+- ```vue
+  <template>
+      <h2>index</h2>
+      <Chart chartType="line" :chartData="[20, 50, 30, 50]" :categoryType="['1', '2', '3', '4']" />
+      <Chart chartType="bar" :chart-data="[300, 230, 500, 400]" :category-type="['a', 'b', 'c', 'd']" />
+      <Chart chart-type="pie" :chart-data="[50, 60, 20]" :category-type="['e', 'd', 'f']" />
+  </template>
+  ```
+
+  

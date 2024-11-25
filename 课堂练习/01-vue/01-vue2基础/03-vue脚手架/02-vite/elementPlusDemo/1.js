@@ -1,17 +1,36 @@
-import { useRoute } from 'vue-router';
-import { ref, onMounted, watch } from 'vue';
-const route = useRoute();
-const list = ref([]);
-const getBreadCrumb = (matched) => {
-    if (matched.length && matched[1].name == "index") {
-        list.value = matched.slice(0, 1);
-    } else {
-        list.value = matched.slice(1, matched.length);
+const props = defineProps({
+    chartData: {
+        type: Array,
+        default: () => [10, 20, 30, 40, 50]
+    },
+    chartType: {
+        type: String,
+        default: () => 'line'
+    },
+    categoryType: {
+        type: Array,
+        default: () => ['a', 'b', 'c']
     }
+});
+const init = () => {
+    const myChart = echarts.init(chart.value);
+    let option = {
+        xAxis: {
+            type: 'category',
+            data: props.categoryType
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                data: props.chartData,
+                type: props.chartType
+            }
+        ]
+    };
+    myChart.setOption(option);
+    window.addEventListener('resize', () => {
+        myChart.resize();
+    });
 };
-watch(route, (newVal) => {
-    getBreadCrumb(newVal.matched);
-});
-onMounted(() => {
-    list.value = route.matched;
-});

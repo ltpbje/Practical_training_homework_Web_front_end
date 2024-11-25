@@ -1,17 +1,6 @@
-import { useRoute } from 'vue-router';
-import {ref,onMounted,watch} from 'vue';
-const route = useRoute();
-const list = ref([]);
-const getBreadCrumb = (matched) => {
-if(matched.length && matched[1].name == "index"){
-list.value = matched.slice(0,1)
-}else{
-list.value = matched.slice(1,matched.length);
-}
-}
-watch(route,(newVal) => {
-getBreadCrumb(newVal.matched)
-})
-onMounted(() => {
-list.value = route.matched
-})
+<template>
+    <h2>index</h2>
+    <Chart chartType="line" :chartData="[20, 50, 30, 50]" :categoryType="['1', '2', '3', '4']" />
+    <Chart chartType="bar" :chart-data="[300, 230, 500, 400]" :category-type="['a', 'b', 'c', 'd']" />
+    <Chart chart-type="pie" :chart-data="[50, 60, 20]" :category-type="['e', 'd', 'f']" />
+</template>
