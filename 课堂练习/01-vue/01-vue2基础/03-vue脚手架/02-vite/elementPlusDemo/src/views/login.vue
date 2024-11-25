@@ -84,7 +84,7 @@ const submitForm = (formEl) => {
                     type: 'success',
                 });
                 // 编程式导航
-                router.push({ name: 'home' });
+                router.push({ name: 'index' });
             } else if (results.status === 'fail') {
                 ElMessage({
                     message: '错误',
