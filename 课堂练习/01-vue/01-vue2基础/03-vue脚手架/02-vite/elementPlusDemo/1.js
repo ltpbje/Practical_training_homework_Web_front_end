@@ -1,36 +1,36 @@
-const props = defineProps({
-    chartData: {
-        type: Array,
-        default: () => [10, 20, 30, 40, 50]
+let option = {
+    title: {
+        text: "中国地图"
     },
-    chartType: {
-        type: String,
-        default: () => 'line'
-    },
-    categoryType: {
-        type: Array,
-        default: () => ['a', 'b', 'c']
-    }
-});
-const init = () => {
-    const myChart = echarts.init(chart.value);
-    let option = {
-        xAxis: {
-            type: 'category',
-            data: props.categoryType
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-                data: props.chartData,
-                type: props.chartType
+    series: [
+        {
+            type: 'map',
+            map: 'china',
+            data: [
+                { name: "河南省", value: '30000' },
+                { name: "西藏自治区", value: '10000' }
+            ],
+            label: {
+                //对地图文字设置
+                show: true, //是否显示地图文字
+                color: '#f00', //字体颜色
+                fontSize: 14
+            },
+            zoom: 1.2,
+            itemStyle: {
+                borderColor: '#0f0',
+                borderWidth: 2,
+                areaColor: '#00f'
             }
-        ]
-    };
-    myChart.setOption(option);
-    window.addEventListener('resize', () => {
-        myChart.resize();
-    });
+        }
+    ],
+    visualMap: { //虚拟地图热力分段设置
+        min: 800,
+        max: 30000,
+        text: ['high', 'low'],
+        realTime: false,
+        inRange: {
+            color: ['lightskyblue', 'yellow', 'red']
+        }
+    }
 };

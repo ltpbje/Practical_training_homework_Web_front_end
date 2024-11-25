@@ -1779,4 +1779,142 @@ const init = () => {
   </template>
   ```
 
-  
+### 10.4、map地址图表制作
+
+- 新建map.vue内部的图表制作方式与chart.vue里面一样的，把数据接收的接口删除掉
+- 下载地图数据
+
+- [DataV.GeoAtlas地理小工具系](https://datav.aliyun.com/portal/school/atlas/area_selector)
+
+```vue
+<template>
+    <div ref="chart" style="width:100%;height:700px;"></div>
+</template>
+<script setup>
+import * as echarts from '../../node_modules/echarts';
+import chinaMap from '../utils/chinaMap.json';
+import { ref, onMounted } from 'vue';
+const chart = ref(null);
+const init = () => {
+    const myChart = echarts.init(chart.value);
+    echarts.registerMap('china', chinaMap);
+    let option = {
+        title: {
+            text: "中国地图"
+        },
+        series: [
+            {
+                type: 'map',
+                map: 'china'
+            }
+        ]
+    };
+    myChart.setOption(option);
+    window.addEventListener("resize", () => {
+        myChart.resize();
+    });
+};
+onMounted(() => {
+    init();
+});
+</script>
+```
+
+- 修改地图样式
+- 通过label和 itemStyle设置样式
+
+```js
+let option = {
+    title: {
+        text: "中国地图"
+    },
+    series: [
+        {
+            type: 'map',
+            map: 'china',
+            label: {
+                //对地图文字设置
+                show: true, //是否显示地图文字
+                color: '#f00', //字体颜色
+                fontSize: 14
+            },
+            zoom: 1.2,
+            itemStyle: {
+                borderColor: '#0f0',
+                borderWidth: 2,
+                areaColor: '#00f'
+            }
+        }
+    ]
+};
+```
+
+- **根据数据制作热力图**\
+  - 地图图表的作用大部分情况下应用的都是热力图，根据数据来决定地图中不同区域的热点显示，通过series数组内的元素对象中的添加的data属性设置
+
+```js
+series: [
+    {
+        type: 'map', map: 'china',
+        data: [
+            { name: "湖南省", value: '20000' },
+            { name: "西藏自治区", value: '10000' }
+        ],
+        label: {
+            //对地图文字设置
+            show: true, //是否显示地图文字
+            color: '#f00', //字体颜色
+            fontSize: 14
+        },
+        zoom: 1.2,
+        itemStyle: {
+            borderColor: '#0f0',
+            borderWidth: 2,
+            areaColor: '#00f'
+        }
+    }
+];
+```
+
+- 制作热力分段表
+
+```js
+let option = {
+    title: {
+        text: "中国地图"
+    },
+    series: [
+        {
+            type: 'map',
+            map: 'china',
+            data: [
+                { name: "河南省", value: '30000' },
+                { name: "西藏自治区", value: '10000' }
+            ],
+            label: {
+                //对地图文字设置
+                show: true, //是否显示地图文字
+                color: '#f00', //字体颜色
+                fontSize: 14
+            },
+            zoom: 1.2,
+            itemStyle: {
+                borderColor: '#0f0',
+                borderWidth: 2,
+                areaColor: '#00f'
+            }
+        }
+    ],
+    visualMap: { //虚拟地图热力分段设置
+        min: 800,
+        max: 30000,
+        text: ['high', 'low'],
+        realTime: false,
+        inRange: {
+            color: ['lightskyblue', 'yellow', 'red']
+        }
+    }
+};
+```
+
+- 现在我们就可以看到地图中会根据data中的数据显示对应的热力分段颜色，即使应用用我们需要请求热力数据传给data

@@ -1,6 +1,31 @@
 <template>
-    <h2>index</h2>
-    <Chart chartType="line" :chartData="[20, 50, 30, 50]" :categoryType="['1', '2', '3', '4']" />
-    <Chart chartType="bar" :chart-data="[300, 230, 500, 400]" :category-type="['a', 'b', 'c', 'd']" />
-    <Chart chart-type="pie" :chart-data="[50, 60, 20]" :category-type="['e', 'd', 'f']" />
+    <div ref="chart" style="width:100%;height:700px;"></div>
 </template>
+<script setup>
+import * as echarts from '../../node_modules/echarts';
+import chinaMap from '../utils/chinaMap.json';
+import { ref, onMounted } from 'vue';
+const chart = ref(null);
+const init = () => {
+    const myChart = echarts.init(chart.value);
+    echarts.registerMap('china', chinaMap);
+    let option = {
+        title: {
+            text: "中国地图"
+        },
+        series: [
+            {
+                type: 'map',
+                map: 'china'
+            }
+        ]
+    };
+    myChart.setOption(option);
+    window.addEventListener("resize", () => {
+        myChart.resize();
+    });
+};
+onMounted(() => {
+    init();
+});
+</script>
