@@ -20,7 +20,19 @@ const routes = [
             {
                 path: '/list',
                 name: 'list',
-                component: () => import('../views/home/HomeList.vue')
+                component: () => import('../views/home/HomeList.vue'),
+                children: [
+                    {
+                        path: '/list/info',
+                        name: 'info',
+                        component: () => import('../views/HomeList/HomeListInfo.vue')
+                    },
+                    {
+                        path: '/list/manage',
+                        name: 'manage',
+                        component: () => import('../views/HomeList/HomeListManage.vue')
+                    }
+                ]
             },
             {
                 path: '/data',
