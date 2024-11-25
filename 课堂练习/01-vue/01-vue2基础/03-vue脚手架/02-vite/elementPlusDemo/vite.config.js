@@ -10,9 +10,6 @@ export default defineConfig({
     AutoImport({
       resolvers: [ElementPlusResolver(),],
     }),
-    Icons({
-      autoInstall: true,
-    }),
     Components({
       resolvers: [ElementPlusResolver(),],
     }),

@@ -1,7 +1,9 @@
 <script setup>
-import { reactive } from 'vue';
+import { reactive, shallowReactive } from 'vue';
 import { Location, Link, Setting } from '@element-plus/icons-vue';
-const menuList = [
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const menuList = shallowReactive([
     {
         title: '首页',
         url: '/index',
@@ -10,7 +12,19 @@ const menuList = [
     {
         title: '列表管理',
         url: '/list',
-        icon: Link
+        icon: Link,
+        children: [
+            {
+                title: '列表信息',
+                url: '/list/info',
+                icon: Location,
+            },
+            {
+                title: '管理信息',
+                url: '/list/manage',
+                icon: Location,
+            }
+        ]
     },
     {
         title: '数据管理',
@@ -18,14 +32,15 @@ const menuList = [
         icon: Setting
     },
 
-];
+]);
 </script>
 
 <template>
     <el-aside width="200px">
-        <el-menu router>
-            <el-menu-item v-for="(item, index) in menuList
-            " default-active="'/index'" :key="item.url" :index="item.url">
+        <!--－route表示，当点击哪个导航项就把哪个路由单体对象的path作为default-active的值来保持激活项页 -->
+
+        <el-menu router :default-active="route.path" class="el-menu-vertical-demo">
+            <el-menu-item v-for=" (item, index) in menuList " :key="item.url" :index="item.url">
                 <el-icon>
                     <component :is="item.icon" />
                 </el-icon>
