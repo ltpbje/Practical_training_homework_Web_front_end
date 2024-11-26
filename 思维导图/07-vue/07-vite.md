@@ -1,4 +1,4 @@
-- # vite生产环境
+# vite生产环境
 
 
 vite作为脚手架工具搭建一套本地服务器运行的开发环境，那么其生产环境的配置如何，我们现在主要学习了两个脚手架工具一个vue/cli一个vite，在vue/cli中其内置的打工工具是webpack，vite采用的是rollup，所以现在我们先简单认识一下rollup
@@ -214,4 +214,24 @@ rollupOptions: {
   base:process.env.NODE_ENV == "production" ? './' : '/',
   ```
 
-  
+
+
+# 仿饿了么（小叮当）简易外卖程序
+
+- 通过vite脚手架新建vue工程目录
+
+- ```cmd
+  npm i create@latest
+  ```
+
+  - > 自己安装好sass，vue-router，pinia
+    >
+    > 扩展：
+    >
+    > 安装sass之后可能会出现以下提示：
+    >
+    > Deprecation Warning: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+    >
+    > 这个提示是因为sass某些api将在2.0.0版本后弃用，在vite中配置如下即可取消
+    >
+    > 警告
