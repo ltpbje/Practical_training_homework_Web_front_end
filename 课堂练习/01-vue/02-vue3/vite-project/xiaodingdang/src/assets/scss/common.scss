@@ -1,0 +1,75 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+ul,ol{
+    list-style: none;
+}
+
+
+#app{
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+:root{
+    font-size:  calc(100vw / 375 * 100);
+}
+
+
+body{
+    font-size: 16px;
+}
+@media only screen and (min-width:769px)  {
+    :root{
+        font-size:  calc(768px / 375 * 100);
+    }
+    #app{
+        width: 768px;
+        margin: 0 auto;
+    }
+}
+
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+
+.j-c{
+    justify-content: center;
+}
+.a-c{
+    align-items: center;
+}
+
+.j-s-a{
+    justify-content: space-around;
+}
+.j-s-b{
+    justify-content: space-between;
+}
+.j-s-e{
+    justify-content: space-evenly;
+}
+.flex-1{
+    flex: 1;
+}
+
+$primaryColor:#0079FC !default;
+$colorMap:(primary:$primaryColor);
+
+@each $key,$value in $colorMap{
+    .bg-#{$key}{
+        background-color: $value;
+    }
+    .text-#{$key}{
+        color: $value;
+    }
+}
