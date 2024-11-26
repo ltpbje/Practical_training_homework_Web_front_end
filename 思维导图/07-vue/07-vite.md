@@ -235,3 +235,303 @@ rollupOptions: {
     > 这个提示是因为sass某些api将在2.0.0版本后弃用，在vite中配置如下即可取消
     >
     > 警告
+
+- ```js
+  export default defineConfig({
+      css: {
+          preprocessorOptions: {
+              scss: {
+                  api: "modern-compiler"
+              }
+          }
+      },
+      //.......
+  });
+  ```
+
+
+
+## 1、重置工程目录
+
+- 创建好工程目录之后，四件事：
+
+  - 1、把默认自带的功能组件和页面组件都删除掉
+
+  - 2、根组件app.vue的样式模板清空
+
+  - 3、换上我们自己的全局样式
+
+  - 4、清默认路由与全局状态
+
+- 在assets目录下新建scss目录，创建common.scss做全局样式
+
+```scss
+*{
+    padding: 0;
+    margin: 0;
+}
+
+ul,ol{
+    list-style: none;
+}
+
+
+#app{
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+:root{
+    font-size:  calc(100vw / 375 * 100);
+}
+
+
+body{
+    font-size: 16px;
+}
+@media only screen and (min-width:769px)  {
+    :root{
+        font-size:  calc(768px / 375 * 100);
+    }
+    #app{
+        width: 768px;
+        margin: 0 auto;
+    }
+}
+
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+
+.j-c{
+    justify-content: center;
+}
+.a-c{
+    align-items: center;
+}
+
+.j-s-a{
+    justify-content: space-around;
+}
+.j-s-b{
+    justify-content: space-between;
+}
+.j-s-e{
+    justify-content: space-evenly;
+}
+.flex-1{
+    flex: 1;
+}
+
+$primaryColor:#0079FC !default;
+$colorMap:(primary:$primaryColor);
+
+@each $key,$value in $colorMap{
+    .bg-#{$key}{
+        background-color: $value;
+    }
+    .text-#{$key}{
+        color: $value;
+    }
+}
+```
+
+- 导入到入口文件中，作为全局样式使用
+- 创建“全屏”盒子组件 PageView.vue
+
+```vue
+<template>
+    <div class="page-view-box">
+        <slot></slot>
+    </div>
+</template>
+<script setup>
+</script>
+
+<style scoped lang="scss">
+.page-view-box {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+</style>
+```
+
+- 在main.js入口文件中把全屏黑注册成全局组件
+
+- ```js
+  import PageView from './components/PageView.vue'
+  app.component("PageView",PageView)
+  ```
+
+## 2、制作tab-bar
+
+- 创建home.vue，分成上中下三栏布局
+
+- ```vue
+  <template>
+      <page-view class="flex-column">
+          <div class="title-bar"></div>
+          <div class="content-box flex-1"></div>
+          <ul class="tab-bar"></ul>
+      </page-view>
+  </template>
+  <script setup>
+  </script>
+  <style scoped lang="scss"></style>
+  ```
+
+  
+
+- 先制作路由部分，在views目录下面分别创建HomeIndex，HomeSearch，HomeNews，My页面组件，然后再路由中分别设置好这些页面对应的路由对象
+
+```js
+const routes = [
+    {
+        path: '/',
+        redirect: {
+            name: 'index'
+        }
+    },
+    {
+        path: '/home',
+        name: 'home',
+        component: () => import('@/views/home/Home.vue'),
+        children: [
+            {
+                path: '/home/index',
+                name: 'index',
+                component: () => import('@/views/home/HomeIndex.vue')
+            },
+            {
+                path: '/home/search',
+                name: 'search',
+                component: () => import('@/views/home/HomeSearch.vue')
+            },
+            {
+                path: '/home/news',
+                name: 'news',
+                component: () => import('@/views/home/HomeNews.vue')
+            }
+        ]
+    },
+    {
+        path: '/my',
+        name: 'my',
+        component: () => import('@/views/my/My.vue')
+    },
+];
+```
+
+- > 分析：
+  >
+  > 这里我们根据跳转效果，把home和my设置成一级页面跳转，index，search，news作为home下的二级页面再home页面中作为局部的组件切换跳转
+  >
+  > 然后把home下的index作为项目首页设置成项目根路径下的重定向跳转
+  >
+  > **注意：**
+  >
+  > 现在我们确定了页面组件的层级关系之后就需要开始设置对应的router-view其中一级页面现在又home和my，而一级页面必须要再app.vue根组件中进行渲染，所以我们需要在app.vue中添加router-view负责home与my之间的跳转
+  >
+  > app.vue
+  >
+  > ```vue
+  > <template>
+  >     <router-view></router-view>
+  > </template>
+  > ```
+  >
+  > 然后index，search，news作为home下的二级页面，所以，我们你子啊home.vue的content-box部分插入router-view负责index，search，news三个页面在home.vue中的跳转
+  >
+  > home.vue
+  >
+  > ```vue
+  > <template>
+  >     <page-view class="flex-cloumn">
+  >         <div class="title-bar"></div>
+  >         <div class="content-box flex-1">
+  >             <router-view></router-view>
+  >         </div>
+  >         <ul class="tab-bar"></ul>
+  >     </page-view>
+  > </template>
+  > ```
+  >
+  > 
+
+- 回到home.vue开始制作tab-bar分布的结构布局与跳转
+
+```vue
+<template>
+
+
+    <ul class="tab-bar flex-row j-s-a">
+        <router-link :to="{ name: 'index' }" custom #default="{ navigate, isActive }">
+            <li @click="navigate" :class="{ 'text-primary': isActive }">
+                <img src="../../assets/icon/home.png" v-show="!isActive" />
+                <img src="../../assets/icon/home_action.png" v-show="isActive" />
+                <span>外卖</span>
+            </li>
+        </router-link>
+        <router-link :to="{ name: 'search' }" custom #default="{ navigate, isActive }">
+            <li @click="navigate" :class="{ 'text-primary': isActive }">
+                <img src="../../assets/icon/search.png" v-show="!isActive" />
+                <img src="../../assets/icon/search_action.png" v-show="isActive" />
+                <span>搜索</span>
+            </li>
+        </router-link>
+        <router-link :to="{ name: 'news' }" custom #default="{ navigate, isActive }">
+            <li @click="navigate" :class="{ 'text-primary': isActive }">
+                <img src="../../assets/icon/list.png" v-show="!isActive" />
+                <img src="../../assets/icon/list_action.png" v-show="isActive" />
+                <span>新闻</span>
+            </li>
+        </router-link>
+        <router-link :to="{ name: 'my' }" custom #default="{ navigate, isActive }">
+            <li @click="navigate" :class="{ 'text-primary': isActive }">
+                <img src="../../assets/icon/user.png" v-show="!isActive" />
+                <img src="../../assets/icon/user_action.png" v-show="isActive" />
+                <span>我的</span>
+            </li>
+        </router-link>
+    </ul>
+</template>
+```
+
+- 样式部分
+
+- ```vue
+  <style scoped lang="scss">
+  .tab-bar {
+      border-top: solid 1px #ccc;
+      height: .55rem;
+      color: #666;
+  
+      li {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          font-size: .12rem;
+  
+          img {
+              margin-bottom: .05rem;
+              width: .24rem;
+          }
+      }
+  }
+  </style>
+  ```
+
+- > 分析：
+  >
+  > 因为这里的图标是png格式，不是字体图标，所以不能直接由color样式来控制高亮效果，所以，这里利用了两张图标通过v-show来显示隐藏替换的方式完成高亮效果的切换
+
+- 至此，目前所有的一级，二级页面的跳转就算完成了
