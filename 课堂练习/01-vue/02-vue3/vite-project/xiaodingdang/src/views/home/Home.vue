@@ -1,7 +1,15 @@
 <template>
     <PageView class="flex-column">
 
-        <div class="title-bar">1</div>
+        <title-bar v-if="route.name == 'index'">
+            外卖
+        </title-bar>
+        <title-bar :show-icon="false" v-else-if="route.name == 'search'">
+            搜索
+        </title-bar>
+        <title-bar :show-icon="false" v-else-if="route.name == 'news'">
+            新闻
+        </title-bar>
         <div class="content-box flex-1">
             <router-view></router-view>
         </div>
@@ -42,7 +50,9 @@
 </template>
 
 <script setup>
-
+import TitleBar from '@/components/TitleBar.vue';
+import { useRoute } from 'vue-router';
+const route = useRoute();
 </script>
 
 <style lang="scss" scoped>
