@@ -11,9 +11,16 @@
 
 <script setup>
 import { getSwiperData } from '@/utils/api/index';
-import { onMounted } from 'vue';
+import { onMounted, reactive } from 'vue';
+const swiperData = reactive([]);
 onMounted(async () => {
-    console.log(await getSwiperData());
+    const result = (await getSwiperData()).list;
+    const arr1 = result.slice(0, 8);
+    const arr2 = result.slice(8, 16);
+    // console.log(arr1, arr2);
+    swiperData.push(arr1);
+    swiperData.push(arr2);
+    console.log(swiperData);
 
 });
 </script>
