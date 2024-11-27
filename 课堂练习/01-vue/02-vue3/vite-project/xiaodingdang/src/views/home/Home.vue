@@ -74,4 +74,8 @@ const route = useRoute();
         }
     }
 }
+
+.content-box {
+    overflow: auto;
+}
 </style>

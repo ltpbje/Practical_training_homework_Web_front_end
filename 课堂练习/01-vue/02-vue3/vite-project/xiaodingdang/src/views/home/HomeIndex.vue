@@ -1,36 +1,66 @@
 <template>
     <div>
-        <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-            <van-swipe-item>1</van-swipe-item>
-            <van-swipe-item>2</van-swipe-item>
-            <van-swipe-item>3</van-swipe-item>
-            <van-swipe-item>4</van-swipe-item>
+        <van-swipe class="my-swipe" :autoplay indicator-color="aqua">
+            <van-swipe-item class="flex-row" v-for="(item, index) in swiperData" :key="index">
+                <div class="banner-item" v-for="(sub, subIndex) in item" :key="subIndex">
+                    <img :src="'http://127.0.0.1:8900' + sub.image_url" alt="">
+                    <p>{{ sub.title }}</p>
+                </div>
+            </van-swipe-item>
         </van-swipe>
+
+        <div class="shop-list">
+            <ShopItem></ShopItem>
+        </div>
+
     </div>
 </template>
 
 <script setup>
 import { getSwiperData } from '@/utils/api/index';
 import { onMounted, reactive } from 'vue';
+import ShopItem from '@/components/ShopItem.vue';
 const swiperData = reactive([]);
-onMounted(async () => {
-    const result = (await getSwiperData()).list;
-    const arr1 = result.slice(0, 8);
-    const arr2 = result.slice(8, 16);
-    // console.log(arr1, arr2);
-    swiperData.push(arr1);
-    swiperData.push(arr2);
+const renderSwiperData = async () => {
+    const results = (await getSwiperData()).list;
+    let _length = Math.ceil(results.length / 8);
+    for (let i = 0; i < _length; i++) {
+        if (i < _length - 1) {
+            swiperData.push(results.splice(0, 8));
+        } else {
+            swiperData.push(results);
+        }
+
+    }
     console.log(swiperData);
+};
+onMounted(() => {
+    renderSwiperData();
 
 });
 </script>
 
 <style lang="scss" scoped>
-.my-swipe .van-swipe-item {
-    color: #fff;
-    font-size: 20px;
-    line-height: 150px;
-    text-align: center;
-    background-color: #39a9ed;
+.flex-row {
+    flex-wrap: wrap;
+
+    .banner-item {
+        width: 25%;
+        text-align: center;
+
+        img {
+            width: 60%;
+        }
+
+
+    }
+}
+
+:deep(.van-swipe__indicator) {
+    background-color: black;
+}
+
+:deep(.van-swipe__indicator--active) {
+    background-color: aqua;
 }
 </style>

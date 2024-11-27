@@ -535,3 +535,454 @@ const routes = [
   > 因为这里的图标是png格式，不是字体图标，所以不能直接由color样式来控制高亮效果，所以，这里利用了两张图标通过v-show来显示隐藏替换的方式完成高亮效果的切换
 
 - 至此，目前所有的一级，二级页面的跳转就算完成了
+
+## 3、制作title-bar
+
+- 由于title-bar再home中渲染的时候，每个页面的内容都是不一样的，所以我们可以把title-bar单独做成一个组件进行复用
+
+- 在components目录中创建TitleBar.vue
+
+  ```vue
+  <template>
+      <div class="title-bar">
+          <div class="left-icon"></div>
+          <div class="center-title">
+              <slot></slot>
+          </div>
+          <div class="right-icon"></div>
+      </div>
+  </template>
+  ```
+
+- > 分析：
+  >
+  > 中间的div根据调用页面的不同渲染的文本内容也会不同，所以我们要先预设好插槽，方便后期调用
+
+- 在title-bar的左右两边分别有图标需要渲染，这里我们直接使用elementPlus提供的图标库，elementPlus的图标库是可以独立在elementplus的组件库之外使用的
+
+- 所以我们直接安装图标库
+
+- ```cmd
+  npm install @element-plus/icons-vue --save
+  ```
+
+- 然后我们通过手动按需导入的方式，导入我们需要使用的图标
+
+- ```vue
+   <template>
+      <div class="title-bar bg-primary">
+          <div class="left-icon">
+              <Search style="width:.18rem;margin-top:.11rem" />
+          </div>
+          <div class="center-title">
+              <slot></slot>
+          </div>
+          <div class="right-icon">
+              <User style="width:.18rem;margin-top:.11rem" />
+          </div>
+      </div>
+  </template>
+  <script setup>
+      import { Search, User } from '@element-plus/icons-vue'
+  </script>
+  ```
+
+- > 注意：
+  >
+  > 这里我们在调用elmentplus的图标的时候，不使用el-icon来调用，而是直接使用svg方式调用，因为el-icon是elementplus组件库提供的组件，但是我们这里并没有安装组件库，只安装图标库
+
+- 图标成功引入之后，先完成title-bar的样式布局
+
+```vue
+
+<style lang="scss" scoped>
+    .title-bar {
+        height: .4rem;
+        text-align: center;
+        color: #fff;
+        line-height: .4rem;
+
+        .left-icon {
+            position: absolute;
+            left: .1rem;
+            top: 0;
+        }
+
+        .right-icon {
+            position: absolute;
+            right: .1rem;
+            top: 0;
+        }
+    }
+</style>
+```
+
+- 样式完成之后开始制作props用来接收外部传入的数据，用来决定图标的显示隐藏
+
+```vue
+<template>
+    <div class="title-bar bg-primary">
+        <div class="left-icon" v-show="props.showIcon">
+            <Search style="width:.18rem;margin-top:.11rem" />
+        </div>
+        <div class="center-title">
+            <slot></slot>
+        </div>
+        <div class="right-icon" v-show="props.showIcon">
+            <User style="width:.18rem;margin-top:.11rem" />
+        </div>
+    </div>
+</template>
+<script setup>
+    import { Search, User } from '@element-plus/icons-vue';
+    const props = defineProps({
+        showIcon: {
+            type: Boolean,
+            default: () => true
+        }
+    })
+</script>
+
+```
+
+- 由于title-bar是一个独立在home中的一个区域，所以是不能同home.vue的routerview中的二级页面切换
+- 所以我们直接在home.vue中直接通过v-if配合v-else-if来进行重复调用完成在不同页面中的渲染效果
+
+- home.vue
+
+```vue
+<template>
+    <page-view class="flex-column">
+        <title-bar v-if="route.name == 'index'">外卖</title-bar>
+        <title-bar :show-icon="false" v-else-if="route.name ==
+'search'">搜索</title-bar>
+        <title-bar :show-icon="false" v-else-if="route.name ==
+'news'">新闻</title-bar>
+        <div class="content-box flex-1">
+            <router-view></router-view>
+        </div>
+        .......
+    </page-view>
+</template>
+<script setup>
+    import TitleBar from '@/components/TitleBar.vue';
+    import { useRoute } from 'vue-router';
+    const route = useRoute();
+</script>
+
+```
+
+- > 分析：
+  >
+  > 这里我们使用的判断条件是根据路由来决定的，根据当前跳转的路由来决定渲染哪一个title-bar
+
+## 4、外卖页面制作（index）
+
+- 在HomeIndex.vue中的内容主要有两个部分组成
+
+  - 1、轮播图
+
+  - 2、商家列表
+
+### 4.1、轮播图制作
+
+- 轮播图的实现方式有很多，我们之前使用过的swiper来实现，在很多的ui组件库里面也自带的有轮播组件可以直接调用，也可以自己手写一个
+
+- 这里我们介绍一个叫做vant的ui组件库，与elemntplus不太一样的地方，elementplus主要还是针对PC端开发做后台管理系统的，而vant是专门针对移动端界面开发的ui组件库
+
+- 安装vant
+
+  - ```cmd
+    npm i vant --save
+    ```
+
+- 然后可以进入官方文档查看做自动导入的配置
+
+- 安装自动导入的配置插件
+
+  - ```cmd
+    npm i @vant/auto-import-resolver unplugin-vue-components unplugin-auto-import -D
+    ```
+
+- vite.config.js
+
+- ```js
+  import vue from '@vitejs/plugin-vue';
+  import AutoImport from 'unplugin-auto-import/vite';
+  import Components from 'unplugin-vue-components/vite';
+  import { VantResolver } from '@vant/auto-import-resolver';
+  export default {
+      plugins: [
+          vue(),
+          AutoImport({
+              resolvers: [VantResolver()],
+          }),
+          Components({
+              resolvers: [VantResolver()],
+          }),
+      ],
+  };
+  ```
+
+- 接下来就可以直接找到swipe组件，导入到HomeIndex组件中使用
+
+```vue
+
+<template>
+    <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+        <van-swipe-item>1</van-swipe-item>
+        <van-swipe-item>2</van-swipe-item>
+        <van-swipe-item>3</van-swipe-item>
+        <van-swipe-item>4</van-swipe-item>
+    </van-swipe>
+</template>
+<script setup>
+</script>
+<style scoped lang="scss">
+    .my-swipe .van-swipe-item {
+        color: #fff;
+        font-size: 20px;
+        line-height: 150px;
+        text-align: center;
+        background-color: #39a9ed;
+    }
+</style>
+```
+
+- 效果正常就说明自导配置成功，接下来根据项目本身的需求，在轮播图中实际轮播的是分类信息，所以我们这里要开始制作请求
+
+### 4.2、axios应用
+
+- 安装axios
+
+- ```cmd
+  npm i axios -S
+  ```
+
+- 然后我们创建一个uitls目录，在其目录内创建axios拦截设置
+
+- axiosInstance.js
+
+- ```js
+  import axios from "axios";
+  //创建一个axios拦截器进行配置
+  const axiosInstance = axios.create({
+      timeout: 5000, //响应时长
+      baseURL: "http://127.0.0.1:8900/" //配置服务器地址
+  });
+  axiosInstance.interceptors.response.use(
+      resp => {
+          //通过响应拦截其把响应对象中的data作为实际响应结果返回，数据都在
+          resp.data中;
+          return resp.data;
+      },
+      error => {
+          console.log("请求失败", error);
+      }
+  );
+  export default axiosInstance;
+  ```
+
+- 然后我们就可以通过以下方式来发送请求
+
+- ```js
+  axiosInstance.get("请求路径")
+  axiosInstance.post("请求路径")
+  ```
+
+- 接下来在utils目录中创建一个api目录，在该目录下创建一个index.js文件用于统一管理所有的请求
+
+- > 注意：
+  >
+  > 因为我们现在的项目中使用到的请求接口数据较少，所以我们就直接把所有的请求接口统一到index.js文件中管理，不再继续分类管理
+
+- ```js
+  import axiosInstance from "../axiosInstance.js";
+  export const getSwiperData = () => axiosInstance.get('/category')
+  //getSwiperData 用于请求轮播图中的分类数据
+  ```
+
+  
+
+- 然后我们在index.vue中导入该方法测试是否可行
+
+- ```vue
+  
+  <script setup>
+      import { getSwiperData } from '@/utils/api';
+      import { onMounted } from 'vue';
+      onMounted(async () => {
+          console.log(await getSwiperData());
+      })
+  </script>
+  ```
+
+- 能够在控制台正常打印出来数据就表示请求成功了，接下来就是做数据渲染
+
+- > 渲染效果分析：
+  >
+  > 这里我们看效果可以得到一个结论，每一个轮播项里面会渲染8个分类，也就说，每8个分类就会多一个轮播项
+  >
+  > 那么，我们可以把响应返回的数据做成一个二维数组，一维中的每个元素表示轮播项，二维中的每个元素表示每个轮播项中的分类信息
+  >
+  > 所以我们需要把返回的数据做二次处理变成一个二维数组再进行渲染
+
+- 现在我们再HomeIndex中制作一个用于接收数据的响应式数组，并且再挂载之后把数据做成二维数组
+
+- ```vue
+  
+  <script setup>
+      import { getSwiperData } from '@/utils/api';
+      import { onMounted, reactive } from 'vue';
+      const swiperData = reactive([]);
+      onMounted(async () => {
+          let results = (await getSwiperData()).list;
+          //思考如何实现把results中的数组变成一个二维数组
+      })
+  </script>
+  
+  ```
+
+  
+
+### 4.3、商家列表
+
+- 商家列表中的每一项结构布局都是一致的，对于这种情况，我们一般就直接把列表项单独做成一个组件，然后通过列表渲染的方式进行复用
+- 所以，新建一个ShopItem.vue制作商家项组件
+- html结构
+
+```vue
+
+<template>
+    <div class="shop-item flex-row a-c">
+        <div class="shop-left">
+            <img src="" alt="">
+        </div>
+        <div class="shop-center flex-1 flex-column">
+            <div class="shop-title flex-row a-c">
+                <span>品牌</span>
+                <h3>每时每刻</h3>
+            </div>
+            <div class="shop-rate flex-row a-c">
+                <div class="rate">
+                    <van-rate v-model="value" readonly allow-half size="14px" color="orange" />
+                </div>
+                <div class="rate-score">{{ value }}</div>
+                <div class="sale-count">
+                    月销：100单
+                </div>
+            </div>
+            <div class="shop-costs">
+                <span>￥18元起送 / 配送费约5元</span>
+            </div>
+        </div>
+        <div class="shop-right flex-column">
+            <div class="shop-support">
+                <span>包</span>
+                <span>包</span>
+                <span>包</span>
+            </div>
+            <div class="shop-server">
+                <span>叮当配送</span>
+            </div>
+        </div>
+    </div>
+</template>
+
+```
+
+- 样式部分
+
+  ```vue
+  
+  <style lang="scss" scoped>
+      .shop-item {
+          height: .8rem;
+          padding: .1rem .15rem;
+          border-bottom: solid 1px #ccc;
+  
+          .shop-left {
+              width: .8rem;
+  
+              img {
+                  width: 80%;
+                  height: 80%;
+                  border: solid 1px #000;
+              }
+          }
+  
+          .shop-center {
+              .shop-title {
+                  span {
+                      background: yellow;
+                      font-weight: bold;
+                      padding: 0 .05rem;
+                      font-size: .14rem;
+                  }
+  
+                  h3 {
+                      font-size: .15rem;
+                      margin-left: .05rem;
+                  }
+              }
+  
+              .shop-rate {
+                  padding: .03rem 0 .12rem 0;
+  
+                  .sale-count {
+                      font-size: .12rem;
+                      color: #666;
+                      padding-left: .05rem;
+                  }
+              }
+  
+              .rate-score {
+                  color: #f00;
+                  font-size: .14rem;
+              }
+  
+              .shop-costs {
+                  font-size: .12rem;
+                  color: #666;
+              }
+          }
+  
+          .shop-right {
+              width: .8rem;
+              font-size: .12rem;
+              align-items: end;
+  
+              .shop-support {
+                  span {
+                      border: solid 1px #666;
+                      color: #666;
+                      margin-left: .03rem;
+                      padding: .01rem;
+                  }
+              }
+  
+              .shop-server {
+                  margin: .03rem 0 0 .03rem;
+  
+                  span {
+                      border: solid 1px #00A16A;
+                      color: #00A16A;
+                      padding: .01rem;
+                  }
+              }
+          }
+      }
+  </style>
+  
+  ```
+
+  - js部分，由于使用vant的rating组件，所以需要准备一些基础数据
+
+- ```vue
+  <script setup>
+      import {ref} from 'vue';
+      const value = ref(3.3);
+  </script>
+  ```
+
+  
