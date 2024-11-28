@@ -1,45 +1,53 @@
 <template>
     <div class="shop-item flex-row a-c">
         <div class="shop-left flex-row a-c">
-            <img src="" alt="">
+            <img :src="'http://127.0.0.1:8900/' + props.shopInfo.image_path" alt="">
         </div>
         <div class="shop-center flex-1 flex-column j-c">
 
             <div class="shop-title flex-row a-c">
                 <span>品牌</span>
-                <h3>每时每刻</h3>
+                <h3>{{ props.shopInfo.name }}</h3>
             </div>
             <div class="shop-rate flex-row a-c">
                 <van-rate v-model="value" readonly allow-half size="14px" color="orange" />
                 <div class="rate-score">{{ value }}</div>
                 <div class="sale-count">
-                    月销：100单
+                    月销：{{ props.shopInfo.recent_order_num }}单
                 </div>
             </div>
             <div class="shop-costs">
-                <span>￥18元起送 ／ 配送费约5元</span>
+                <span>￥{{ props.shopInfo.float_minimum_order_amount }}元起送 ／ 配送费约{{ props.shopInfo.float_delivery_fee
+                    }}元</span>
             </div>
         </div>
         <div class="shop-right flex-column j-c">
             <div class="shop-support">
-                <span>包</span>
-                <span>包</span>
-                <span>包</span>
+                <span v-for="(item, index) in props.shopInfo.supports" :key="index">{{ item.icon_name }}</span>
+
             </div>
             <div class="shop-server ">
-                <span>叮当配送</span>
+                <span>{{ props.shopInfo.delivery_mode.text }}</span>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-const value = 3.5;
+import { ref } from 'vue';
+
+const value = ref(3.5);
+const props = defineProps({
+    shopInfo: {
+        type: Object
+    }
+});
+value.value = props.shopInfo.rating;
 </script>
 
 <style lang="scss" scoped>
 .shop-item {
-    height: 0.8rem;
+    height: 0.9rem;
     padding: .1rem .15rem;
     border-bottom: 1px solid #ccc;
 
