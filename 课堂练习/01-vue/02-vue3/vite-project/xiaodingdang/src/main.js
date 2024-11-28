@@ -7,8 +7,9 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
 import Loading from './components/Loading.vue';
-
+import { Lazyload } from 'vant';
 const app = createApp(App);
+app.use(Lazyload);
 app.component('PageView', PageView);
 app.component('Loading', Loading);
 app.use(createPinia());
