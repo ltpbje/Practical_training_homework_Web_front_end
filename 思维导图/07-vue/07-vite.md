@@ -894,7 +894,7 @@ const routes = [
 - 样式部分
 
   ```vue
-  
+  \.""
   <style lang="scss" scoped>
       .shop-item {
           height: .8rem;
@@ -976,7 +976,7 @@ const routes = [
   
   ```
 
-  - js部分，由于使用vant的rating组件，所以需要准备一些基础数据
+  - js部分，由于使用vant的rating  组件，所以需要准备一些基础数据
 
 - ```vue
   <script setup>
@@ -985,4 +985,119 @@ const routes = [
   </script>
   ```
 
+
+## 5、pinia全局状态管理应用
+
+- 以上我们完成了外卖页面的基本制作，接下来我们做一些优化，首先，我们在渲染图片的时候会手动拼接上本地服务器的地址，后期一旦上线以后，我们需要把所有的拼接过服务器地址的地方全部进行替换
+
+- 我们为了方便后期替换，我们可以把服务器地址做成一个全局状态，后期，我们只需要替换掉全局状态中的值就可以完成对所有调用该服务器地址状态值的替换
+
+- ```js
+  import { defineStore } from 'pinia';
+  export const serverAddress = defineStore('serverAddress', {
+      state: () => {
+          return {
+              baseURL: "http://127.0.0.1:8900/"
+          };
+      }
+  })
+  ```
+
+- > 注意：
+  >
+  > 部分数据中的路径地址，有的是绝对，有的是相对，我们需要统一，不然做地址拼接的时候会多或少一个 / 导致路径错误
+
+- 然后我们在HomeIndex和ShopItem两个组件中导入全局状态实例，把原来手动拼接的地址替换成baseURL
+
+## 6、loading动画
+
+- 在每次发送请求到返回响应的中间时间段，由于组件没有数据可供渲染会导致页面空白，为了提高用户体验，一般我们会在此期间提供一个反馈信息
+- 我们可以直接使用vant提供的loading组件，也可以自己封装一个loading组件
+- 这里采用一个混合的写法，对vant的Loading组件做二次封装编辑成自己的组件
+- 在components目录下新建一个Loading组件
+
+- > 由于vant自带的loading组件没有全屏遮罩层，所以我们自己对vant的loading组件做二次封装，添加一个全屏遮罩层
+
+- ```vue
+  <template>
+      <div class="loading flex-row a-c j-c">
+          <van-loading size="40px" vertical color="deepskyblue">加载
+              中...</van-loading>
+      </div>
+  </template>
+  <script setup>
+  </script>
+  <style scoped lang="scss">
+      .loading {
+          background: rgba(255, 255, 255, 0.9);
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+      }
+  </style>
+  ```
+
   
+
+- 然后把该组件注册成全局组件
+
+- main.js
+
+- ```js
+  import Loading from './components/Loading.vue';
+  const app = createApp(App);
+  app.component("Loading", Loading)
+  ```
+
+  
+
+- 在HomeIndex组件中调用，并设置一个布尔值配合v-show来控制Loading的显示隐藏
+
+- ```vue
+  <template>
+      ......
+      <Loading v-show="showLoading" />
+  </template>
+  <script setup>
+  ......
+      const showLoading = ref(false);
+  </script>
+  
+  ```
+
+  - 接下来，我们需要把HomeIndex中使用到的所有的请求方法整合一下，进行统一执行，从而方便设置Loading动画的显示隐藏
+
+  - ```js
+    const indexInit = () => {
+        renderSwiperData();
+        getShopList();
+    };
+    const showLoading = ref(false);
+    onMounted(() => {
+        showLoading.value = true;
+        indexInit();
+        showLoading.value = false;
+    })
+    ```
+
+    
+
+- > 分析：
+  >
+  > 这里我们把商家列表和分类信息的请求方法打包到了一个indexInit方法中执行，当该方法开始执行显示Loading，当该方法结束隐藏Loading
+  >
+  > 由于这里是本地请求，不太可能看到Loading的效果，所以我们可以通过定时器人为执行要给请求时长，如下
+  >
+  > ```js
+  > onMounted(() => {
+  >     showLoading.value = true;
+  >     setTimeout(() => {
+  >         indexInit();
+  >         showLoading.value = false;
+  >     }, 3000);
+  > })
+  > ```
+  >
+  > 

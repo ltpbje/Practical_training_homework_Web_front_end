@@ -14,6 +14,7 @@
         </div>
 
     </div>
+    <Loading v-show="showLoading"></Loading>
 </template>
 
 <script setup>
@@ -23,6 +24,7 @@ import ShopItem from '@/components/ShopItem.vue';
 import { serverAddress } from '@/stores/server';
 const store = serverAddress();
 const swiperData = reactive([]);
+
 // 分类信息数据
 const renderSwiperData = async () => {
     const results = (await getSwiperData()).list;
@@ -43,9 +45,17 @@ const getShopList = async () => {
     shopListData.value = (await shopList()).list;
 
 };
-onMounted(() => {
+const indexInit = () => {
     renderSwiperData();
     getShopList();
+};
+const showLoading = ref(false);
+onMounted(() => {
+    showLoading.value = true;
+    setTimeout(() => {
+        indexInit();
+        showLoading.value = false;
+    }, 300);
 });
 </script>
 
