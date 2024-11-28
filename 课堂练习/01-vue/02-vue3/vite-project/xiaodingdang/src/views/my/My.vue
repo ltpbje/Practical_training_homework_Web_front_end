@@ -18,7 +18,7 @@
                 <input type="text" class="login-pass" placeholder="验证码" v-model="loginInfo.mark1">
                 <p>温馨提示：未注册小叮当外卖的手机号，登录时将自动注册，且代表已经同意</p>
                 <button type="button">登录</button>
-                <div class="yzm">获取验证码</div>
+                <div class="yzm" @click="regPhone">获取验证码</div>
             </div>
             <div class="password-login" v-show="tabChange == 2">2</div>
         </div>
@@ -28,17 +28,30 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { reactive, ref, watch } from 'vue';
+import { yzm } from '@/utils/api';
+import { showNotify } from 'vant';
+
+
 const tabChange = ref(1);
 const router = useRouter();
 const loginInfo = reactive({
     tell: '',
     mark1: ''
 });
-const
-    watch(loginInfo, (newVal) => {
-        console.log(newVal);
+const yzmCode = ref(0);
+const regPhone = async () => {
 
-    });
+    // console.log(1);
+    if (loginInfo.tell[0] == 1 && loginInfo.tell.length == 11 && Number(loginInfo.tell) + '' != 'NaN') {
+
+        yzmCode.value = (await yzm()).code;
+        loginInfo.mark1 = yzmCode.value;
+    } else {
+        console.log(1);
+        showNotify({ message: '手机号格式不正确', type: 'danger' });
+    }
+};
+
 </script>
 
 <style lang="scss" scoped>

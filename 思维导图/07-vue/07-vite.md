@@ -1101,3 +1101,293 @@ const routes = [
   > ```
   >
   > 
+
+# 仿饿了么（小叮当）简易外卖程序 -- 登录
+
+- 这里的登录页面分成两种登录方式，分别是短信登录和密码登录，然后通过选项卡切换的方式让用户自由选择登录方式
+
+- 所以，先完成登录方式的切换
+
+## 1、制作登录方式的切换
+
+- 在vue中实现选项卡切换时非常方便简单的，基本思路就是通过一个响应式数据的值的修改配合v-if或者v-show来实现显示隐藏的切换
+
+  - > 同时，在My.vue中还有一个返回上一个页面的按钮
+    >
+    > 我们先把这个按钮做了
+    >
+    > My.vue
+    >
+    > ```vue
+    > 
+    > <template>
+    >     <page-view>
+    >         <div class="go-back flex-row a-c">
+    >             <van-icon name="arrow-left" size=".25rem" color="#666" @click="router.back()" />
+    >         </div>
+    >     </page-view>
+    > </template>
+    > <script setup>
+    >     import { useRouter } from 'vue-router';
+    >     const router = useRouter();
+    > </script>
+    > <style scoped lang="scss">
+    >     .go-back {
+    >         height: .7rem;
+    >         padding-left: .2rem;
+    >     }
+    > </style>
+    > ```
+    >
+    > 
+
+- 然后，开始正式制作tab切换部分
+
+- 先准备一个响应式数据用于切换显示隐藏
+
+- ```vue
+  <script setup>
+      import { ref } from 'vue';
+      const tabChange = ref(1);
+  </script>
+  ```
+
+  - 这里准备一个数字1，然后我们通过点击事件给这个tabChange重新赋值，让其在1与2之间来回切换来实现两种登录方式的切换
+
+  - ```vue
+    <template>
+        <page-view class="flex-column">
+            <div class="go-back flex-row a-c">
+                <van-icon name="arrow-left" size=".25rem" color="#666" @click="router.back()" />
+            </div>
+            <div class="login-form flex-1 flex-column a-c">
+                <h2>小叮当外卖</h2>
+                <ul class="login-tab flex-row">
+                    <li @click="tabChange = 1">短信登录</li>
+                    <li @click="tabChange = 2">密码登录</li>
+                </ul>
+                <div class="message-login" v-show="tabChange ==
+    1">1</div>
+                <div class="password-login" v-show="tabChange ==
+    2">2</div>
+            </div>
+        </page-view>
+    </template>
+    ```
+
+  - 样式部分
+
+  - ```vue
+    
+    <style scoped lang="scss">
+        .go-back {
+            height: .7rem;
+            padding-left: .2rem;
+        }
+    
+        .login-form {
+            h2 {
+                font-size: .38rem;
+                color: #4EB2FF;
+                padding: .4rem 0 .5rem 0;
+            }
+    
+            .login-tab {
+                width: 60%;
+    
+                li {
+                    flex: 1;
+                    text-align: center;
+                }
+            }
+        }
+    </style>
+    
+    ```
+
+    
+
+## 2、短信登录
+
+- 当切换效果完成之后，我们就先开始短信登录部分的制作，先把布局结构制作完毕
+- html部分
+
+```vue
+<template>
+    <page-view class="flex-column">
+        ......
+        <div class="login-form flex-1 flex-column a-c">
+            <h2>小叮当外卖</h2>
+            <ul class="login-tab flex-row">
+                <li @click="tabChange = 1"><span :class="
+{'active':tabChange == '1'}">短信登录</span></li>
+                <li @click="tabChange = 2"><span :class="
+{'active':tabChange == '2'}">密码登录</span></li>
+            </ul>
+            <div class="message-login" v-show="tabChange == 1">
+                <input type="text" class="login-user" placeholder="手机号">
+                <input type="text" class="login-pass" placeholder="验证码">
+                <p>温馨提示：未注册小叮当外卖的手机号，登录时将自动注册，且
+                    代表已经同意</p>
+                <button type="button">登录</button>
+                <div class="yzm flex-row a-c">获取验证码</div>
+            </div>
+            <div class="password-login" v-show="tabChange ==
+2">2</div>
+        </div>
+    </page-view>
+</template>
+```
+
+- 样式部分
+
+```vue
+
+<style scoped lang="scss">
+    ...... .login-form {
+        h2 {
+            font-size: .38rem;
+            color: #4EB2FF;
+            padding: .4rem 0 .5rem 0;
+        }
+
+        .login-tab {
+            width: 60%;
+
+            li {
+                flex: 1;
+                text-align: center;
+            }
+        }
+
+        .message-login {
+            padding-top: .15rem;
+            position: relative;
+
+            input {
+                box-sizing: border-box;
+                width: 80%;
+                margin: .1rem 10%;
+                height: .44rem;
+                border-radius: 5px;
+                border: solid 1px #ccc;
+                padding: 0 50% 0 5%;
+            }
+
+            p {
+                font-size: .14rem;
+                line-height: .22rem;
+                color: #999;
+                padding: 0 10%;
+                margin-bottom: .3rem;
+            }
+
+            button {
+                background: #4CD96F;
+                border: none;
+                width: 80%;
+                margin: 0 10%;
+                height: .4rem;
+                border-radius: 6px;
+                color: #fff;
+            }
+
+            .yzm {
+                position: absolute;
+                top: .25rem;
+                height: .44rem;
+                right: 15%;
+                font-size: .14rem;
+                color: #4EB2FF;
+            }
+        }
+    }
+</style>
+```
+
+- 完成之后我们可以开始制作表单数据校验
+
+- 这里我们先制作一个用于双向绑定到input表单的响应式对象来实时获取用户在表单中输入的内容
+
+- ```js
+  const loginInfo = reactive({
+      teil:"",
+      mark1:""
+  })
+  ```
+
+- 然后我们通过v-model实现双向绑定
+
+- ```vue
+  <input type="text" class="login-user" placeholder="手机号" v-model="loginInfo.teil">
+  <input type="text" class="login-pass" placeholder="验证码" v-model="loginInfo.mark1">
+  ```
+
+- > 注意：
+  >
+  > 这里的响应式对象中的属性名是与后端接收的属性名一致的，方便结构取值
+
+- 然后我们开始制作验证手机号的方法，并且在验证通过是发送获取短信验证码的请求
+
+- 先在utils的api目录的index.js中编写用于请求验证码的方法
+
+- ```js
+  export const yzm = () => axiosInstance.get('/get_tell_mark')
+  ```
+
+- 然后导入到my组件中，根据验证手机号的结构来判断是否发送该请求
+
+- ```js
+  const regPhone = async () => {
+      if (loginInfo.teil[0] == 1 && loginInfo.teil.length == 11 && String(Number(loginInfo.
+  teil)) != "NaN") {
+          loginInfo.mark1 = (await yzm()).code;
+      }
+  }
+  ```
+
+  
+
+- 然后把该方法通过点击事件绑定到获取验证码的按钮上
+
+- ```vue
+  <div class="yzm flex-row a-c" @click="regPhone">获取验证码</div>
+  ```
+
+- 当手机号验证不通过的时候，不发送验证码请求，同时反馈错误信息
+
+- 所以我们在regPhone的方法中加入else的部分
+
+- 这里的错误信息我们使用vant组件库提供的消息提示来完成
+
+- > vant中提供的消息提示的调用方式有两种
+  >
+  > 1. 直接通过辅助函数的方式调用，需要导入vant的样式文件
+  > 2. 通过消息组件调用，根据true / false来处理消息的显示隐藏
+  >
+  > 这里我们使用第二种，也可以使用第一种，但是注意要导入样式
+
+```js
+const show = ref(false);
+const regPhone = async () => {
+    if (loginInfo.teil[0] == 1 && loginInfo.teil.length == 11 &&
+        String(Number(loginInfo.teil)) != "NaN") {
+        loginInfo.mark1 = (await yzm()).code;
+    } else {
+        show.value = true;
+        setTimeout(() => {
+            show.value = false;
+        }, 2000);
+    }
+}
+```
+
+- 然后在template中插入消息提示组件
+
+- ```vue
+  <van-notify v-model:show="show" type="danger">
+      <span>手机格式不正确</span>
+  </van-notify>
+  ```
+
+  
