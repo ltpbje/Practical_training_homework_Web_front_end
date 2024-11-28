@@ -3,7 +3,7 @@
         <van-swipe class="my-swipe" :autoplay="3000" indicator-color="aqua">
             <van-swipe-item class="flex-row" v-for="(item, index) in swiperData" :key="index">
                 <div class="banner-item" v-for="(sub, subIndex) in item" :key="subIndex">
-                    <img :src="'http://127.0.0.1:8900' + sub.image_url" alt="">
+                    <img :src="store.baseURL + sub.image_url" alt="">
                     <p>{{ sub.title }}</p>
                 </div>
             </van-swipe-item>
@@ -20,6 +20,8 @@
 import { getSwiperData, shopList } from '@/utils/api/index';
 import { onMounted, reactive, ref } from 'vue';
 import ShopItem from '@/components/ShopItem.vue';
+import { serverAddress } from '@/stores/server';
+const store = serverAddress();
 const swiperData = reactive([]);
 // 分类信息数据
 const renderSwiperData = async () => {

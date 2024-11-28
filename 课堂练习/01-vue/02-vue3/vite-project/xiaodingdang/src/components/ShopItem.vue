@@ -1,7 +1,7 @@
 <template>
     <div class="shop-item flex-row a-c">
         <div class="shop-left flex-row a-c">
-            <img :src="'http://127.0.0.1:8900/' + props.shopInfo.image_path" alt="">
+            <img :src="store.baseURL + props.shopInfo.image_path" alt="">
         </div>
         <div class="shop-center flex-1 flex-column j-c">
 
@@ -35,7 +35,8 @@
 
 <script setup>
 import { ref } from 'vue';
-
+import { serverAddress } from '@/stores/server';
+const store = serverAddress();
 const value = ref(3.5);
 const props = defineProps({
     shopInfo: {
