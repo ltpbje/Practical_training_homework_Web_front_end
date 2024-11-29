@@ -8,3 +8,10 @@ export const getSwiperData = () => axiosInstance.get('/category');
 export const shopList = () => axiosInstance.get('/shops');
 
 export const yzm = () => axiosInstance.get('/get_tell_mark');
+
+
+
+export const messageLogin = ({ tell, mark1 }) => axiosInstance.post('/login_tell', {
+    tell,
+    mark1
+});
