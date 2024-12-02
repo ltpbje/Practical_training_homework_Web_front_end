@@ -24,11 +24,11 @@
                 </button>
             </div>
             <div class="password-login" v-show="tabChange == 2">
-                <input type="text" placeholder="账号">
-                <input type="password" placeholder="密码">
-                <input type="text" placeholder="验证码">
-                <button class="login-btn">登录</button>
-                <div id="v-container"></div>
+                <input type="text" placeholder="账号" v-model="pwdLoginInfo.username">
+                <input type="password" placeholder="密码" v-model="pwdLoginInfo.password">
+                <input type="text" placeholder="验证码" v-model="pwdLoginInfo.mark2">
+                <button class="login-btn" @touchstart="pwdLoginCheck(pwdLoginInfo)">登录</button>
+                <div id="v-container" class="pic-yzm" @touchstart="resetCode"></div>
             </div>
         </div>
     </page-view>
@@ -37,13 +37,46 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { reactive, ref, onMounted } from 'vue';
-import { yzm, messageLogin } from '@/utils/api';
+import { yzm, messageLogin, yzmCode, pwdLogin } from '@/utils/api';
 import { showNotify } from 'vant';
 import { serverAddress } from '@/stores/server';
 import { GVerify } from '@/utils/GVerify';
+let yzmObj = null;
+let picYzm = '';
 
-onMounted(() => {
-    new GVerify('v-container');
+const getCode = async () => {
+    const GVoption = {
+        id: 'v-container',
+        canvasId: 'verifyCanvas',
+        width: '100',
+        height: '42',
+        code: ''
+    };
+    yzmObj = new GVerify(GVoption, async () => {
+        return await yzmCode();
+    });
+    picYzm = await yzmObj.refresh();
+};
+const pwdLoginInfo = reactive({
+    username: '',
+    password: '',
+    mark2: ''
+});
+// 由于getcode方法只会在组件挂载的时候执行一次，然后刷新的验证码无法二次赋值给picYzm用于登录验证，所以专门再新建一个resetcode方法用于刷新验证码的时同将刷新后的验证码赋值给picYzm;
+const resetCode = async () => {
+    picYzm = await yzmObj.refresh();
+};
+const pwdLoginCheck = async (pwdLoginInfo) => {
+    if (picYzm == pwdLoginInfo.mark2) {
+        store.userToken = (await pwdLogin(pwdLoginInfo)).token;
+        router.back();
+    } else {
+        showNotify({ type: 'danger', message: " 验证码不正确" });
+    }
+}; onMounted(() => {
+    getCode();
+    // new GVerify(GVoption);
+    // yzmObj.refresh();
 });
 const store = serverAddress();
 const tabChange = ref(1);
@@ -57,7 +90,7 @@ let checkLoginInfo = {
     tell: '',
     mark1: ''
 };
-const yzmCode = ref(0);
+const yzmCode1 = ref(0);
 const countNum = ref(31);
 //在获取验证码之后的倒计时方法中，当倒计时完毕时把checkLoginInfo中的mark1赋值为0，表示之前的验证码已经过期;
 const countDown = () => {
@@ -75,8 +108,8 @@ const regPhone = async () => {
     // console.log(1);
     if (loginInfo.tell[0] == 1 && loginInfo.tell.length == 11 && Number(loginInfo.tell) + '' != 'NaN') {
         flag.value = true;
-        yzmCode.value = (await yzm()).code;
-        loginInfo.mark1 = yzmCode.value;
+        yzmCode1.value = (await yzm()).code;
+        loginInfo.mark1 = yzmCode1.value;
         checkLoginInfo = { ...loginInfo }; //新增这句用来记录当此获取的手机号与验证码
         countDown();
     } else {
@@ -92,8 +125,10 @@ store.$subscribe((mutations, state) => {
 //2、判断checkLoginInfo中的 mark1的值是否为0，如果为0就表示验证码已经过期需要重新获取
 //3、表单中的手机号与验证码与checkLoginInfo中记录的不一致，提示用户验证码或手机号错误
 const messageLoginCheck = async (loginInfo) => {
-    if (checkLoginInfo.tell == loginInfo.tell && checkLoginInfo.mark1 == loginInfo.mark1 && loginInfo.tell != '') {
+    if (checkLoginInfo.tell == loginInfo.tell && checkLoginInfo.mark1 == loginInfo.mark1 &&
+        loginInfo.tell != '') {
         store.userToken = (await messageLogin(loginInfo)).token;
+        router.back();
     } else if (checkLoginInfo.mark1 === 0) {
         showNotify({ message: '验证码过期', type: 'warning' });
     } else {
@@ -135,6 +170,13 @@ const messageLoginCheck = async (loginInfo) => {
     .password-login {
         margin-top: .1rem;
         position: relative;
+
+        .pic-yzm {
+            position: absolute;
+            right: 10%;
+            top: 1.38rem;
+            // border: 1px solid #000;
+        }
 
         .yzm {
             position: absolute;

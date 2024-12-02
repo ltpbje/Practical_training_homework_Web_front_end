@@ -15,3 +15,12 @@ export const messageLogin = ({ tell, mark1 }) => axiosInstance.post('/login_tell
     tell,
     mark1
 });
+
+
+export const yzmCode = () => axiosInstance.get('/get_code');
+
+export const pwdLogin = ({ username, password, mark2 }) => axiosInstance.post('/login_pwd', {
+    username,
+    password,
+    mark2
+});
