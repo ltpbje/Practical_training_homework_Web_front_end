@@ -33,8 +33,8 @@ import { useRouter } from 'vue-router';
 import { reactive, ref, watch } from 'vue';
 import { yzm, messageLogin } from '@/utils/api';
 import { showNotify } from 'vant';
-
-
+import { serverAddress } from '@/stores/server';
+const store = serverAddress();
 const tabChange = ref(1);
 const router = useRouter();
 const flag = ref(false);
@@ -73,14 +73,16 @@ const regPhone = async () => {
         showNotify({ message: '手机号格式不正确', type: 'danger' });
     }
 };
-
+store.$subscribe((mutations, state) => {
+    localStorage.setItem('userToken', state.userToken);
+});
 //在发送登录请求的方法中添加一个判断，这个判断有三个可执行方向
 //1、在验证码有效期内，判断表单中输入的手机号与验证码是否与checkLoginInfo中的记录一致，如果一致直接发送登录请求;
 //2、判断checkLoginInfo中的 mark1的值是否为0，如果为0就表示验证码已经过期需要重新获取
 //3、表单中的手机号与验证码与checkLoginInfo中记录的不一致，提示用户验证码或手机号错误
 const messageLoginCheck = async (loginInfo) => {
     if (checkLoginInfo.tell == loginInfo.tell && checkLoginInfo.mark1 == loginInfo.mark1 && loginInfo.tell != '') {
-        await messageLogin(loginInfo);
+        store.userToken = (await messageLogin(loginInfo)).token;
     } else if (checkLoginInfo.mark1 === 0) {
         showNotify({ message: '验证码过期', type: 'warning' });
     } else {

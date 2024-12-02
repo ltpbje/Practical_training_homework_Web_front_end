@@ -36,7 +36,7 @@
                     <span>新闻</span>
                 </li>
             </router-link>
-            <router-link :to="{ name: 'my' }" custom #default='{ navigate, isActive }'>
+            <router-link :to="{ name: 'profile' }" custom #default='{ navigate, isActive }'>
 
                 <li @click="navigate" :class="{ 'text-primary': isActive }">
                     <img src="../../assets/icon/list.png" alt="" v-show="!isActive">
