@@ -1390,4 +1390,139 @@ const regPhone = async () => {
   </van-notify>
   ```
 
+
+- > 分析：
+  >
+  > 这里我们直接把响应的验证码作为验证码输入框的value值进行输出，实现了一个类似于自动填充验证码的效果
+
+- 现在，当我们通过手机号获取验证码之后在30秒内无法再继续发送获取验证码的请求，并执行一个30秒的倒数
+
+- > 这里我们把yzm的标签改成button，通过button的disabled属性来实现倒数期间的按钮禁用，从而不会出现倒数期间点击之后再次触发获取验证码的情况
+  >
+  > 注意：
+  >
+  > 因为把yzm改成了button标签，之前的样式中登录按钮直接使用的button标签名作为选择器，为了避免样式冲突，给登录按钮加一个类名 .login-btn作为区分
+
+- ```js
+  const flag = ref(false); //用来控制disabled属性启停按钮禁用
+  const countNum = ref(31); //倒计时用的响应式数值
+  const countDown = () => {
+      countNum.value--;
+      if (countNum.value >= 0) {
+          setTimeout(countDown, 1000);
+      } else {
+          countNum.value = 31;
+          flag.value = false;
+      }
+  }
+  ```
+
+- > 分析：这里我们使用递归配合定时实现了间隔1秒执行一次的递减运算，每次递减运算的响应式结果会实时渲染到页面中，对应的获取验证码部分的标签结构也做如下修改
+
+- ```vue
+  <button class="yzm flex-row a-c" @click="regPhone" :disabled="flag">
+      <span v-if="countNum == 31">获取验证码</span>
+      <span v-else>{{ countNum }}秒</span>
+  </button>
+  ```
+
   
+
+- > 分析：
+  >
+  > 这里根据countNum做一个判断，决定渲染在按钮当中的内容
+
+- 接下来就可以制作短信登录的请求
+
+- 在api目录中制作发送短信请求的方法
+
+- ```js
+  export const messageLogin = ({ tell, mark1 }) =>
+  axiosInstance.post('/login_tell', {
+      tell,
+      mark1
+  })
+  ```
+
+- 然后导入到My.vue开始制作登录请求的方法
+
+- ```js
+  import { yzm, messageLogin } from '@/utils/api';
+  //......
+  const messageLoginCheck = (loginInfo) => {
+      messageLogin(loginInfo);
+  }
+  ```
+
+在登录按钮上绑定该方法
+
+```vue
+<!-- 把表单中输入的信息loginInfo作为实参传入到登录请求中 -->
+<button type="button" class="login-btn" @click="messageLoginCheck(loginInfo)">登录</button>
+```
+
+- 这样其实可以直接登录成功的
+
+- 但是，这里我们多做一些考虑，比如：
+  - 情况1：当用户正常获取到验证码之后，不小心输出错误，我们需要提示用户验证码错误
+  - 情况2：真实场景下，当验证码过期了，我们也需要提示用户，让其重新获取验证码
+- 基于以上的情况，我们可以做如下处理：
+  - 先直接声明一个变量不需要做成响应式，单纯就是为记录，当下次成功获取验证的手机号与正码本身的，如果验证码在有效期内，只要手机号与对应的验证码没有问题就可以正常登录
+
+```js
+//声明一个checkLoginInfo用于记录当此验证码有效期内的验证码和手机号，不需要做成响应式;
+let checkLoginInfo = {
+    teil: "",
+    mark1: ""
+};
+//在获取验证码的方法中，添加一句话，将当此获取的验证码与手机号记录到
+checkLoginInfo当中;
+const regPhone = async () => {
+    if (loginInfo.teil[0] == 1 && loginInfo.teil.length == 11 &&
+        String(Number(loginInfo.teil)) != "NaN") {
+        flag.value = true;
+        loginInfo.mark1 = (await yzm()).code;
+        checkLoginInfo = { ...loginInfo }; //新增这句用来记录当此获取的手
+        机号与验证码;
+        countDown();
+    } else {
+        showNotify({ type: 'danger', message: '手机格式不正确' });
+    }
+};
+//在获取验证码之后的倒计时方法中，当倒计时完毕时把checkLoginInfo中的mark1赋值为0，表示验证码过期;
+const countDown = () => {
+    countNum.value--;
+    if (countNum.value >= 0) {
+        setTimeout(countDown, 1000);
+    } else {
+        countNum.value = 31;
+        flag.value = false;
+        checkLoginInfo.mark1 = 0;
+    }
+};
+//在发送登录请求的方法中添加一个判断，这个判断有三个可执行方向
+//1、在验证码有效期内，判断表单中输入的手机号与验证码是否与checkLoginInfo中的记录一致，如果一致直接发送登录请求;
+//2、判断checkLoginInfo中的mark1的值是否为0，如果为0就表示验证码已经过期需要重新获取;
+//3、表单中的手机号与验证码与checkLoginInfo中记录的不一致，提示用户验证码或手机号错误;
+const messageLoginCheck = async (loginInfo) => {
+    if (checkLoginInfo.teil == loginInfo.teil &&
+        checkLoginInfo.mark1 == loginInfo.mark1) {
+        await messageLogin(loginInfo);
+    } else if (checkLoginInfo.mark1 == 0) {
+        showNotify({
+            type: 'warning', message: '验证码已经过期，请重新获取'
+        });
+    } else {
+        showNotify({ type: 'danger', message: '手机号或正码错误' });
+    }
+}
+
+```
+
+- 最后，当登录成功之后我们需要将登录成功之后返回的用户信息和token作为全局状态保存，从而将登录状态保持住，并且在后续的请求中可以携带token作为请求头，让需要登录权限才能发送的请求可以成功发送，让需要登录之后才能跳转的页面可以跳转
+
+- > 扩展：
+  >
+  > 1、我们可以在登录请求发送的过程中，将登录按钮做成禁用状态，避免用户手贱疯狂按登录按钮
+  >
+  > 2、由于是唯一账户，所以返回的只有token，所以全局状态中只需要记录token
