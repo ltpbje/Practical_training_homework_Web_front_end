@@ -1526,3 +1526,334 @@ const messageLoginCheck = async (loginInfo) => {
   > 1、我们可以在登录请求发送的过程中，将登录按钮做成禁用状态，避免用户手贱疯狂按登录按钮
   >
   > 2、由于是唯一账户，所以返回的只有token，所以全局状态中只需要记录token
+
+- 在pinia实例中添加一个userToken状态
+
+- ```js
+  import { defineStore } from 'pinia';
+  export const serverAddress = defineStore('serverAddress', {
+      state: () => {
+          return {
+              baseURL: "http://127.0.0.1:8900/",
+              userToken: null
+          };
+      }
+  })
+  ```
+
+- 在my.vue组件中导入，并在登录方法添加对应的token赋值操作
+
+- ```js
+   const messageLoginCheck = async (loginInfo) => {
+          if (checkLoginInfo.teil == loginInfo.teil && checkLoginInfo.mark1 == loginInfo.mark1) {
+              store.userToken = (await messageLogin(loginInfo)).token;
+          } else if (checkLoginInfo.mark1 == 0) {
+              showNotify({
+                  type: 'warning', message: '验证码已经过期，请重新获取'
+              });
+          } else {
+              showNotify({ type: 'danger', message: '手机号或正码错误' });
+          }
+      }
+  ```
+
+- 在my组件中订阅全局状态，实现token的本地缓存
+
+- ```js
+  store.$subscribe((mutations,state) => {
+      localStorage.setItem('userToken',state.userToken);
+  })
+  ```
+
+- 最后，登录成功之后跳转到个人中心页面
+
+- 在home目录下新建HomeProfile.vue ，制作路由当登录成功之后跳转到该页面
+
+- > 注意：
+  >
+  > 在home的tab-bar中，我的选项本来应该是跳转到HomeProfile上，也就是说HomeProfile本来应该是home下的二级页面
+  >
+  > 但是因为Profile中渲染的数据属于个人数据，需要登录权限，所以，正常的逻辑应该是我们点击我的选项之后，我们需要设置一个路由前置守卫，判断如果跳转的是Profile页面，先判断是否登录，如果已经登录正常跳转，如果没有登录直接重定向到登录页面
+
+- 在入口文件main.js中制作路由守卫
+
+- > 在开始编写路由守卫之前，我们对文件命名做一些调整，这样可以更好的表意
+  >
+  > 1、把my组件更名为login，表示登录页面，在views目录下新建一个login目录用于存放login组件，而原本的my应该是个人中心也弥漫，只因为没有登录所以会被重定向到登录而页面
+  >
+  > 2、在home目录下新建HomeProfile组件作为个人中心页面使用，之前的my目录就可以删除掉
+  >
+  > 3、当以上两项修改完毕之后，记得要修改路由，还有home中detab-bar部分我的选项的跳转路径
+
+- 基于重新修改的结果
+
+- ```js
+  router.beforeEach((to,from) => {
+      if(!localStorage.userToken && to.name !== 'login'){
+          return {name:'login'}
+      }
+  })
+  ```
+
+- > 分析：
+  >
+  > 基于上面的全局前置守卫，当本地缓存中没有token同时跳转的页面也不是login页面的时候，就表示在接下来你要跳转的非login页面，是在没有登录情况下不能进入的页面，所以会重定向到login页面
+
+- 但是，以上的设置可以应该在一些后台管理系统当中，但是现在我们开发的并不是专门面向管理员的后台系统，而是一个面向一般大众用户开发的程序，所以，像上面的这种导航守卫的设置就会有问题，因为部分页面我们是可以允许用户在不登录的情况下也是可以跳转浏览的
+
+- 这个时候，我们就需要做一个区分，哪些页面是需要登录之后才能跳转，哪些不是不需要的，这个时候，我们可以在路由上面设置个meta属性用于区别
+
+- 打开router目录中的index.js给路由对象配置meta
+
+```js
+
+
+        const routes = [{
+            path: '/',
+            redirect: {
+                name: 'index'
+            }
+        },
+        {
+            path: '/home',
+            name: 'home',
+            component: () => import('@/views/home/Home.vue'),
+            children: [
+                {
+                    path: '/home/index',
+                    name: 'index',
+                    component: () => import('@/views/home/HomeIndex.vue'),
+                    meta: {
+                        requiresAuth: false
+                    }
+                },
+                {
+                    path: '/home/search',
+                    name: 'search',
+                    component: () => import('@/views/home/HomeSearch.vue'),
+                    meta: {
+                        requiresAuth: false
+                    }
+                },
+                {
+                    path: '/home/news',
+                    name: 'news',
+                    component: () => import('@/views/home/HomeNews.vue'),
+                    meta: {
+                        requiresAuth: false
+                    }
+                },
+                {
+                    path: '/home/profile',
+                    name: 'profile',
+                    component: () => import('@/views/home/HomeProfile.vue'),
+                    meta: {
+                        requiresAuth: true
+                    }
+                }
+            ]
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: () => import('../views/login/Login.vue'),
+            meta: {
+                requiresAuth: false
+            }
+        },
+        ]
+```
+
+- > 分析：
+  >
+  > 这里我们给路由添加一个meta路由元信息，其中设置了一个叫做requiresAuth的属性，meta中的路由元信息是可以用户自定义的，也就是说，这个我们自定定义的requiresAuth属性，根据它的值来区分哪些是需要登录跳转，哪些不需要
+
+- 基于上面的配置，我们对路由前置守卫进行修改
+
+- ```js
+  router.beforeEach((to, from) => {
+      if (!localStorage.userToken && to.name !== 'login' && to.meta.requiresAuth) {
+          return { name: 'login' };
+      }
+  })
+  ```
+
+  
+
+## 3、密码登录
+
+- 密码登录与短信登录其实差别不大，这里，我们对比之前制作的短信登录最大的区别在于，密码登录里面我们设置了一个图形验证码
+
+- 制作模板：
+
+- ```html
+  ......
+  <div class="password-login" v-show="tabChange == 2">
+      <input type="text" placeholder="账号">
+      <input type="password" placeholder="密码">
+      <input type="text" placeholder="验证码">
+      <button type="button" class="login-btn">登录</button>
+  </div>
+  ......
+  ```
+
+- 样式部分：
+
+  - 这里我们直接利用之前短信登录中写好的input和button样式
+
+  - 直接在之前写好的scss嵌套结构上使用分组选择器把password-login类名与之前的message-login分为一组即可
+
+  - ```scss
+    .message-login,.password-login{
+        .......
+    }
+    ```
+
+- 图形验证码我们使用一个插件GVeirfy.js
+
+- 该插件原本的作用是在前端使用canvas绘制一个图形验证码，其功能内部自带了可以随机生成4未验证码的操作，这里，我们对其做了一些修改，让其生成的图形验证码的内容是根据后端返回的数据来决定的
+
+- 作为第三方工具类型存放在utils目录下，然后导入到login.vue中
+
+- ```js
+  import { GVerify } from '@/utils/GVeirfy';
+  ```
+
+- 其导入的是一个构造函数，通过实例化一个图形验证码对象来生成一个canvas绘制验证码
+
+- 在实例化过程中可以传入一个配置对象来调整配置验证码的相关参数
+
+- login.vue
+
+- ```js
+  const GVoption = {
+      id: 'v-container',
+      canvasId: 'verifyCanvas',
+      width: '100',
+      height: '48',
+      code: ''
+  };
+  onMounted(() => {
+      let yzmObj = new GVerify(GVoption);
+      yzmObj.refresh();
+  })
+  ```
+
+- 样式部分：
+
+  ```scss
+  .message-login,
+  .password-login {
+      padding-top: .15rem;
+      position: relative;
+  
+      .pic-yzm {
+          position: absolute;
+          right: 10%;
+          top: 1.52rem;
+      }
+  
+      .......
+  }
+  ```
+
+  - 制作获取图形验证码的请求，在api目录下的index.js
+
+  - ```js
+    export const yzmCode = () => axiosInstance.get('/get_code')
+    ```
+
+  - 导入到login.vue中制作请求方法
+
+  - ```js
+    let yzmObj = null;
+    const getCode = async () => {
+        const GVoption = {
+            id: 'v-container',
+            canvasId: 'verifyCanvas',
+            width: '100',
+            height: '48',
+            code: ''
+        };
+        yzmObj = new GVerify(GVoption, async () => {
+            return await yzmCode();
+        });
+        await yzmObj.refresh();
+    };
+    onMounted(() => {
+        getCode();
+    })
+    ```
+
+  - > 分析：
+    >
+    > 这里我们需要把创建验证码对象的过程放到发送验证码方法的体内，在获取到验证码之后才可以开始绘制，从而让验证码对象每次创建的时候可以正确获取到验证码
+
+- 验证码搞定之后，我们就可以开始在api目录中制作密码登录请求
+
+- ```js
+  export const pwdLogin = ({ username, password, mark2 }) =>
+      axiosInstance.post('/login_pwd', {
+          username,
+          password,
+          mark2
+      })
+  ```
+
+- 然后导入到login组件中制作登录方法与相关配套设置
+
+```js
+let yzmObj = null; //声明yzmObj用来接收new出来的验证码对象
+let picYzm = ''; //声明picYzm用于获取在getCode方法体内获取的后端响应
+的验证码;
+const getCode = async () => {
+    //......
+    //将getCode方法体内获取的验证码赋值给picYzm，方便跨域调用
+    picYzm = await yzmObj.refresh();
+};
+//由于getCode方法只会在组件挂载的时候执行一次，然后刷新的验证码无法二次赋值给 picYzm用于登录验证，所以专门再新建一个resetCode方法用于刷新验证码的时同将刷新后的验证码赋值给picYzm;
+const resetCode = async () => {
+    picYzm = await yzmObj.refresh();
+};
+//声明一个响应式对象pwdLoginInfo，通过v-model绑定到表单中用于实时获取再登录
+表单中输入的数据;
+const pwdLoginInfo = reactive({
+    username: '',
+    password: '',
+    mark2: ''
+});
+//声明pwdLoginCheck方法，用于发送密码登录请求
+const pwdLoginCheck = async (pwdLoginInfo) => {
+    //因为账号密码是固定的，所以这里只校验了验证码
+    if (picYzm == pwdLoginInfo.mark2) {
+        store.userToken = (await pwdLogin(pwdLoginInfo)).token;
+    } else {
+        showNotify({ type: 'danger', message: '验证码不正确' });
+    }
+};
+onMounted(() => {
+    getCode();
+})
+```
+
+- 在pwdLoginInfo与pwdLoginCheck 绑定到对应的标签上
+
+- ```html
+  <input type="text" placeholder="账号" v-model="pwdLoginInfo.username">
+  <input type="password" placeholder="密码" v-model="pwdLoginInfo.password">
+  <input type="text" placeholder="验证码" v-model="pwdLoginInfo.mark2">
+  <button type="button" class="login-btn" @touchstart="pwdLoginCheck(pwdLoginInfo)">登录</button>
+  <div id="v-container" class="pic-yzm" @touchstart="resetCode"></div>
+  ```
+
+  
+
+- 以上两种登录方式就基本制作完毕了，最后在两种登录方法上添加一句编程式导航，实现登录成功后自动跳转即可
+
+- 一般来说，从哪个页面跳转到登录页面，当成功成功之后就再返回哪个页面，所以我们可以再pwdLoginCheck和messageLoginCheck方法的if判断中添加路由管理对象的back方法即可
+
+- ```js
+  router.back();
+  ```
+
+  
