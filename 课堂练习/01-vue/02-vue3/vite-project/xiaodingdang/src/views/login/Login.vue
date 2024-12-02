@@ -23,17 +23,28 @@
                     <span v-else>{{ countNum }}秒</span>
                 </button>
             </div>
-            <div class="password-login" v-show="tabChange == 2">2</div>
+            <div class="password-login" v-show="tabChange == 2">
+                <input type="text" placeholder="账号">
+                <input type="password" placeholder="密码">
+                <input type="text" placeholder="验证码">
+                <button class="login-btn">登录</button>
+                <div id="v-container"></div>
+            </div>
         </div>
     </page-view>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { yzm, messageLogin } from '@/utils/api';
 import { showNotify } from 'vant';
 import { serverAddress } from '@/stores/server';
+import { GVerify } from '@/utils/GVerify';
+
+onMounted(() => {
+    new GVerify('v-container');
+});
 const store = serverAddress();
 const tabChange = ref(1);
 const router = useRouter();
@@ -120,7 +131,8 @@ const messageLoginCheck = async (loginInfo) => {
         }
     }
 
-    .message-login {
+    .message-login,
+    .password-login {
         margin-top: .1rem;
         position: relative;
 
