@@ -343,3 +343,70 @@
 - > 分析：
   >
   > 正常可以接收到post请求的话，跟随post请求传递的数据会保存在req请求对象的body中
+  > 
+
+# express项目制作
+
+- 初始化项目：
+
+- ```cmd
+  npm init --yes
+  ```
+
+  
+
+- 安装依赖包
+
+- ```cmd
+  npm i express mysql --save
+  ```
+
+## 1、开始项目的基本功能制作
+
+- 导入数据库操作的封装对象
+
+- 创建项目入口文件index.js
+
+- ```js
+  const express = require('express');
+  const http = require('http');
+  const app = express();
+  const server = http.createServer(app);
+  server.listen(8080,'0.0.0.0',() => {
+      console.log('server is running ...')
+  })
+  ```
+
+## 2、编写服务层
+
+- 服务层其实就时一个一个的对象，这个对象用于操作对应的数据表，这里对象里面有很多常用的操作数据库的方法，比如增删改查，分页查询等等一系列方法，而且其方法的内部结构非常简单，在不同的方法内准备好需要执行的sql语句，然后再调用数据库封装对象中的excuteSql方法，将准备好的SQL语句作为该方法的参数传入操作数据库即可
+- 新建services目录
+- 根据数据库来创建service对象
+- 根据数据库我们会创建三个service对象，所以我们再services目录下创建三个文件用于分别保存三个服务对象
+
+- 1、admin_info 管理员表 ------- AdminInfoService.js
+
+- 2、room_info 房间表 -------- RoomInfoService.js
+
+- 3、stu_info 学生表 --------- StuInfoService.js
+
+- 现在以roomInfoService为例完成服务对象
+
+- ```js
+  class RoomInfoService {
+      add(){}
+      deleteId(){}
+      update(){}
+      findId(){}
+      query(){}
+  }
+  ```
+
+  
+
+- 现在我们强制约束，每个service至少有5个方法，但是这样的话就会形成高耦合状态
+- 现在我们再中间加一层BaseService，提供一个基础服务，以达到项目解耦的状态
+- **思路：继承**
+- RoomInfoService ----> 继承 ------> BaseService ------> 继承DButils.js
+
+### 2.1、BaseService功能重构
