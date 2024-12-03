@@ -410,3 +410,43 @@
 - RoomInfoService ----> 继承 ------> BaseService ------> 继承DButils.js
 
 ### 2.1、BaseService功能重构
+
+```js
+//公共服务类，主要用于解耦，并提供基础方法
+const DButils = require('../utils/DButils.js');
+class BaseService extends DButils {
+    constructor() {
+        super();
+        this.tableMap = {
+            admin_info: 'admin_info',
+            room_info: 'room_info',
+            stu_info: 'stu_info'
+        };
+        this.currentTableName = "";
+    }
+    async deleteId(id) {
+        let strSql = `delete from ${this.currentTableName} where id = ?`;
+        let results = await this.excuteSql(strSql, [id]);
+        return results.affectedRows > 0 ? true : false;
+    }
+}
+```
+
+- > 分析：
+  >
+  > 再上面的代码中，为了更好的实现于数据库的解耦关系，我们再当前的BaseService中创建了tabMap对象，用于映射数据表，同时提供一个公共方法deleteId
+
+### 2.2、RoomInfoService.js举例
+
+- ```js
+  const BaseService = require('./baseService.js');
+  class RoomInfoService extends BaseService {
+      constructor() {
+          super();
+          this.currentTableName = this.tableMap.room_info;
+      }
+  }
+  module.exports = RoomInfoService
+  ```
+
+  
