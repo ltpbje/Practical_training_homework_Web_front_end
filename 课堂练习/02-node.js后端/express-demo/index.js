@@ -43,8 +43,9 @@ app.engine("html", template);// 告诉我们的app，模块的后缀是.html;
 app.set("views", path.join(__dirname, "views"));
 // app.set('views engine', "html");//所有的html
 
-
-app.use();
+app.use("/roomInfo", require('./routes/roomInfoRoute'));
+// 使用express.static()中间件，将静态文件目录设置为./static，并将该目录映射到/abc路径下
+app.use('/abc', express.static('./static'));
 
 
 
