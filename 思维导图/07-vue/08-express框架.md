@@ -221,3 +221,125 @@
   > **扩展：MVVM模块**
   >
   > 如果在前后端分离开发的模式下，在后端程序中就不会执行一个渲染数据的操作，而是直接把获取的数据返回给前端，然后前端在自己渲染
+
+## 4、express路由（后端路由）
+
+- 路由简单来说就是一个集散中心，后端路由负责接收请求然后分发服务，具体来说我们写的app.get就是一个路由，get方法中的回调函数就是提供的服务，但是现在我们不可能说把所有可以提供的服务全部都写在一个index.js这个文件中，这些下去这个文件会非常臃肿，所以模块化开发的思路未我们提供了一个解决方案
+
+- 这里我们以一个宿舍管理系统的演示案例来进行说明
+
+- 一般来说对于路由的分文件管理，我们可以根据数据库的设计来决定，一般根据数据库中的数据模块来划分
+
+- 现在的话，我们的演示项目中主要有三个大的数据功能模块，分别是管理员模块，房间信息模块，学生信息模块，那么，我们就可以根据这个来进行文件划分
+
+- 现在我们可以在项目目录下创建一个routes目录，在这个目录下面专门用来存放路由对象，路由的文件名命名使用小驼峰写法，比如admin_info模块的路由我呢见我们可以叫做adminInfoRoute.js
+
+- 这里，我们就以roomInfoRoute.js为例说明下
+
+- ```js
+  const express = require('express');
+  const router = express.Router();
+  router.get('/roomInfoList', (req, resp) => {
+      resp.send("你进入了路由里面的roomInfoList");
+  });
+  router.get('/roomInfoPage', (req, resp) => {
+      resp.send("你进入了路由里面的roomInfoPage");
+  });
+  router.get('/roomInfodelete', (req, resp) => {
+      resp.send("你进入了路由里面的roomInfodelete");
+  });
+  module.exports = router;
+  ```
+
+  - 然后在入口文件中index.js引入路由文件
+
+  - ```js
+    app.use("/roomInfo",require('./routes/roomInfoRoute.js'));
+    ```
+
+  - > 分析：
+    >
+    > 现在写在use中的第一个参数的路径，会作为一级路径，原本写在路由文件中get方法的第一个参数的路径，作为二级路径，两者拼接到一起，然后带上服务器地址，形成一个完整的room_info模块的后端数据接口
+
+## 5、express静态文件区域
+
+- express里面所有的请求全部都会被程序或者路由接管，这个时候所有的请求都必须经过路由或者程序本身的统一，否则后端是不会为该请求提供服务的，这个时候有些特殊文件我们是不需要经过路由同意的，比如图片，JS文件，CSS文件，字体文件等等，这个时候可以把这个文件设置在一个静态区域中，这些文件不受限制，可以直接访问
+
+- ```js
+  app.use('请求路径',express.static('静态目录路径'))
+  ```
+
+  ## 6、resp对象的使用
+
+  - 之前我们简单的说过resp就是服务器响应给浏览器的对象，我们可以通过这个对象向客户端返回一些东西
+  - 1、resp.send() 向客户端返回一个字符串
+
+  - 2、resp.sendFile() 向客户端返回一个文件下载信息，客户端会提示下载文件
+
+  - 3、resp.json() 向客户端返回一个JSON字符串
+
+  - 4、resp.render() 向客户端返回一个经过渲染的模板文件
+
+## 7、服务器接收前端传递的数据
+
+### 7.1 get请求
+
+- 假设现在我们有这样是一个地址：http://127.0.0.1:8081/roomInfo/roomInfoList?userName=zhangsan&age=18
+
+- 这个地址会最终进入到服务器的路由当中
+
+- ```js
+  router.get('/roomInfoList',(req,resp) => {
+      console.log(req.query.userName)
+      resp.send("你进入了路由里面的roomInfoList")
+  })
+  ```
+
+  
+
+- > 分析：
+  >
+  > get请求传递的参数其实就在地址当中的search部分
+  >
+  > 所有的search参数都会在req对象的query属性中调用
+  >
+  > ```js
+  > req.query.userName;
+  > req.query.age;
+  > ```
+
+### 7.2 post请求
+
+- 之前我们的get请求是一个基础请求方式，是一种需要把值放在地址后面的，也就是所谓的地址栏传值，这个请求最大的特点就是简单，方便，但是确定也很明显
+
+- 缺点：
+- 1、它会把所有的请求参数都在地址栏上面，敏感信息就直接暴露了
+- 2、浏览器的地址栏有字符长度的限制，它不适合传递大量的数据，同时也无法传递文件
+- post请求就解决了这些问题，post请求时不基于浏览器地址栏的，它会把请求的参数以报文的形式放在请求体当中，这样就可以进行大批量的数据传递
+- 在express的框架当中，如果要接收post请求，需要安装一个中间件body-parser
+
+- 安装
+
+- ```cmd
+  npm i body-parser --save
+  ```
+
+- 导入入口文件配置
+
+- ```js
+  const bodyParser = require('body-parser')
+  app.use(bodyParser.urlencoded({extended:false})) //urlencoded代表地址栏里面的url直接使用encoded解码后使用
+  app.use(bodyParser.json({limit:'30mb'})); //把文件数据转成JSON传输，文本内容最大容器设置30MB
+  ```
+
+- 最后我们可以设置一个post请求的接口测试
+
+- ```js
+  router.post('/add',(req,resp) => {
+      console.log(req.body,"1111");
+  })
+  ```
+
+- > 分析：
+  >
+  > 正常可以接收到post请求的话，跟随post请求传递的数据会保存在req请求对象的body中

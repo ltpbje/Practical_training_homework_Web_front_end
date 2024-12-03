@@ -5,6 +5,7 @@ const template = require('./node_modules/express-art-template');
 const app = express();
 const DButils = require('./DButils');
 const { log } = require('console');
+const bodyParser = require('body-parser');
 let s = new Set();
 app.get('/', (req, resp) => {
     console.log("我接收了你的请求", req.ip);
@@ -45,6 +46,11 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use("/roomInfo", require('./routes/roomInfoRoute'));
 // 使用express.static()中间件，将静态文件目录设置为./static，并将该目录映射到/abc路径下
+// 使用body-parser中间件，解析urlencoded格式的请求体，extended设置为false表示使用系统模块querystring来解析
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '30mb' }));
+
+
 app.use('/abc', express.static('./static'));
 
 

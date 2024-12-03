@@ -7,7 +7,8 @@ class DButils {
             port: 3306,
             user: 'root',
             password: '123456',
-            database: 'h2003'
+            database: 'h2003',
+            multipleStatements: true//开启之后，可以多条sql语句同时执行
         });
         return conn;
     }
