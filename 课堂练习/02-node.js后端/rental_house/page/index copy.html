@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script>
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     // 页面加载完毕后执行的代码
+        //     fetch('http://127.0.0.1:3000/query?id=2')
+        //         .then(response => {
+        //             // 检查响应状态
+        //             if (!response.ok) {
+        //                 throw new Error('Network response was not ok');
+        //             }
+        //             // 解析JSON数据
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             // 处理获取的数据
+        //             console.log(data);
+        //         })
+        //         .catch(error => {
+        //             // 处理错误情况
+        //             console.error('There has been a problem with your fetch operation:', error);
+        //         });
+        // });
+
+
+
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     // 创建一个新的 XMLHttpRequest 对象
+        //     var xhr = new XMLHttpRequest();
+
+        //     // 配置请求的类型（GET），URL 以及是否异步
+        //     xhr.open('GET', 'http://127.0.0.1:3000/query?id=2', true);
+
+        //     // 设置请求完成的回调函数
+        //     xhr.onload = function () {
+        //         if (xhr.status >= 200 && xhr.status < 300) {
+        //             // 请求成功，处理响应数据
+        //             var data = JSON.parse(xhr.responseText);
+        //             console.log(data);
+        //         } else {
+        //             // 请求失败，处理错误
+        //             console.error(xhr.statusText);
+        //         }
+        //     };
+
+        //     // 设置请求失败的回调函数
+        //     xhr.onerror = function () {
+        //         console.error('Request failed');
+        //     };
+
+        //     // 发送请求
+        //     xhr.send();
+        // });
+
+        $(function () {
+            $.get('http://127.0.0.1:3000/query?id=2', function (res) {
+                console.log(res);
+            });
+        })
+
+    </script>
+</body>
+
+</html>

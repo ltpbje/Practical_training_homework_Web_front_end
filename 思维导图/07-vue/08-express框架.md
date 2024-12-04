@@ -773,3 +773,118 @@ server.listen(8080, '0.0.0.0', () => {
   ```
 
 - 现在，当我们点击查询按钮的时候就可以看到渲染结果了
+
+- > **扩展：jQ的AJAX二次封装**
+  >
+  > 这里我们利用JQuery提供的ajax方法对其进行二次封装，方便后续调用
+  >
+  > ```js
+  > var baseURL = "http://127.0.0.1:8080";
+  > var request = {
+  >     get: function (url, data) {
+  >         return new Promise(function (resolve, reject) {
+  >             $.ajax({
+  >                 method: 'get',
+  >                 url: baseURL + url,
+  >                 data: data,
+  >                 success: function (res) {
+  >                     resolve(res);
+  >                 },
+  >                 error: function (error) {
+  >                     reject(error);
+  >                 }
+  >             });
+  >         });
+  >     },
+  >     post: function () {
+  >         return new Promise(function (resolve, reject) {
+  >             $.ajax({
+  >                 method: 'post',
+  >                 url: baseURL + url,
+  >                 data: data,
+  >                 success: function (res) {
+  >                     resolve(res);
+  >                 },
+  >                 error: function (error) {
+  >                     reject(error);
+  >                 }
+  >             });
+  >         });
+  >     }
+  > }
+  > ```
+  >
+  > 
+
+## 2、分页查询
+
+- 上面我们已经把所有的房间信息全部渲染出来了，但是太长了，需要进行分页管理，所以我们现在需要对我们的查询数据进行分页查询
+
+- 在做分页查询的时候首先我们一定要先确定每页显示的数量，不然分页查询无从查起
+
+- 在BaseService.js中添加一个属性用来决定一页显示多少条数据
+
+- ```js
+  this.pageSize = 10;
+  ```
+
+  
+
+  
+
+  - 要做成分页查询我们需要知道的数据
+
+  - 1、当前查询第几页 pageIndex
+
+  - 2、共有多少页 pageCount
+
+  - 3、共多少条数据 totalCount
+
+  - 在model目录下创建一个pageList.js
+
+```js
+class PageList {
+    constructor(pageIndex, totalCount, listData, pageSize) {
+        this.pageIndex = pageIndex;
+        this.totalCount = totalCount;
+        this.pageCount = Math.ceil(totalCount / pageSize);
+        this.listData = listData;
+        this.pageStart = this.pageIndex - 3 > 0 ? this.pageIndex
+            - 3 : 1;
+        this.pageEnd = this.pageStart + 6 > this.pageCount ?
+            this.pageCount : this.pageStart + 6;
+    }
+}
+module.exports = PageList;
+```
+
+-  以上就做为分页查询专属的数据模板进行使用
+- 现在我们把getListByPage方法进行完善
+
+```js
+const BaseService = require('./BaseService.js');
+const PageList = require("../model/PageList.js");
+class RoomInfoService extends BaseService {
+    //.......
+    async getListByPage({ room_name, pageIndex }) {
+        let strSql = `select * from ${this.currentTableName} where 1`;
+        let countSql = `select count(*) 'total_count' from ${this.currentTableName} where 1`;
+        let strWhere = ``;
+        let ps = [];
+        if (room_name) {
+            strWhere += ` and room_like ?`;
+            ps.push(`${room_name}`);
+        }
+        strSql += ` ${strWhere} limit ${(pageIndex - 1) *
+            this.pageSize},${this.pageSize}`;
+        countSql += strWhere;
+        let results = await this.excuteSql(strSql + ";" +
+            countSql, [...ps, ...ps]);
+        let pageList = new PageList(pageIndex, results[1]
+        [0].total_count, this.pageSize, results[0]);
+        return pageList;
+    }
+}
+module.exports = RoomInfoService
+```
+
