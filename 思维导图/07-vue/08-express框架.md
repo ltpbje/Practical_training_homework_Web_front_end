@@ -450,3 +450,123 @@ class BaseService extends DButils {
   ```
 
   
+
+## 3、简单工厂模式
+
+- 我们在后面使用功能的适合（需要使用这些service的时候），我们会发现一个高耦合的情况，如果当某一个文件或某几个文件同时都需要使用多个service的时候，我们需要把这些挨个导入并且挨个new一遍才能调里面的方法
+
+- 现在我们需要降低这个耦合性，所以我们会生产一个对象叫做工厂对象，这个工厂专门用于生产所有的service
+
+- ```js
+  class ServiceFactory {
+      constructor() {
+          throw new Error("当前对象不需要new");
+      }
+      static createRoomInfoService() {
+          let RoomInfoService =
+              require('../services/RoomInfoService.js');
+          return new RoomInfoService;
+      }
+      //.....
+  }
+  module.exports = ServiceFactory;
+  ```
+
+  - 上面的代码我们手动创建了一个工厂，这样后期我们在使用service的时候统一使用这个ServiceFactory就好，当我们需要使用这个service，可以这些写
+
+  - ```js
+    const ServiceFactory = require("./factory/ServiceFactory.js");
+    ServiceFactory.createRoomInfoService().deleteId(1);
+    ```
+
+  - 这个时候，我们可以看到所有的服务都是由工厂来生产，同时serviceFactory里面的方法都是静态方法，不需要new可以直接调用，而这些工厂内的静态方法的调用直接返回一个new好的服务对象，那么我们就可以直接从这些服务对象中调用服务方法来操作数据库
+
+## 4、抽象工厂模式
+
+```js
+const path = require('path');
+const fs = require('fs');
+const serviceFactory = (() => {
+    let obj = {};
+    let arr = fs.readdirSync(path.join(__dirname, "../services"));
+    //['AdminInfoService.js','BaseService.js','RoomInfoService.js','StuInfoService.js'];
+    //构建属性名
+    for (let item of arr) {
+        let propertyName = item.replace(".js", "").replace(/^[A-Z]/, p => p.toLowerCase());
+        let temp =
+            require(path.join(__dirname, '../services', item));
+        if (typeof temp === "function") {
+            obj[propertyName] = Reflect.construct(temp, []);
+        }
+    }
+    return obj;
+})();
+module.exports = serviceFactory;
+```
+
+- > 分析：
+  >
+  > 在当前的抽象工厂模式下，我们直接读取了services目录，然后找到了文件信息（文件名），动态创建对象，动态导入文件，然后通过反射导入的构造函数来new出来服务对象
+  >
+  > 后期由新的数据表，我们就可以会有新的服务对象，那么就会在services目录创建新的xxxxService.js，这个时候抽象工厂会自动帮我们反射出来进行实例化，然后做到自己的工厂对象内部的属性上面
+
+## 5、制作room_info路由
+
+- 先制作一个用于查询表数据的服务方法，由于所有的表都可以支持完整的表查询服务，所以我们把这个服务方法做成一个基础方法由BaseService.js来提供
+
+```js
+//公共服务类，主要用于解耦，并提供基础方法
+const DButils = require('../utils/DButils.js');
+class BaseService extends DButils {
+    constructor() {
+        super();
+        this.tableMap = {
+            admin_info: 'admin_info',
+            room_info: 'room_info',
+            stu_info: 'stu_info'
+        };
+        this.currentTableName = "";
+    }
+    //表数据查询
+    getAllList() {
+        let strSql = `select * from ${this.currentTableName}`;
+        return this.excuteSql(strSql);
+    }
+}
+module.exports = BaseService
+```
+
+- 继承至该BaseService的服务对象就都可以继承到这个方法
+
+- 新建routes目录，创建roomInfoRoute.js文件
+
+- ```js
+  const express = require('express');
+  const router = express.Router();
+  const serviceFactory = require('../ServiceFactory/ServiceFactory.js');
+  router.get('/roomInfoList', async (req, resp) => {
+      try {
+          let results = await
+              serviceFactory.roomInfoService.getAllList();
+          resp.json(results);
+      } catch (error) {
+          console.log(error);
+      }
+  });
+  module.exports = router;
+  ```
+
+  - 在入口文件中导入room_info的路由对象加载到应用实例中
+
+  - ```js
+    app.use('/roomInfo',require('./routes/roomInfoRoute.js'))
+    ```
+
+  - 那么，现在应该是可以在浏览器中直接输入以下地址可以获取到房间信息表中的所有房间信息的JSON数据
+
+  - ```
+    http://127.0.0.1:8080/roomInfo/roomInfoList
+    ```
+
+    
+
