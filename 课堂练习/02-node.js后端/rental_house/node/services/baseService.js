@@ -11,11 +11,15 @@ class BaseService extends DButils {
         };
         this.currentTableName = '';
     }
-    async deleteId(id) {
-        let strSql = `delete from ${this.currentTableName} where id = ?`;
-        let results = await this.excuteSql(strSql, [id]);
-        // return false;
-        return results.affectedRows > 0 ? true : false;
+    // async deleteId(id) {
+    //     let strSql = `delete from ${this.currentTableName} where id = ?`;
+    //     let results = await this.excuteSql(strSql, [id]);
+    //     // return false;
+    //     return results.affectedRows > 0 ? true : false;
+    // }
+    getAllList() {
+        let strSql = `select * from ${this.currentTableName}`;
+        return this.excuteSql(strSql);
     }
 }
 

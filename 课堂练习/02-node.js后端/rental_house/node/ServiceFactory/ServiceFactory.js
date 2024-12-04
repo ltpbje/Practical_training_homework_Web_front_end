@@ -16,6 +16,9 @@ const serviceFactory = (() => {
             obj[propertyName] = Reflect.construct(temp, []);
         }
     }
+    // console.log(obj);
+
+    return obj;
 
 })();
-
+module.exports = serviceFactory;
