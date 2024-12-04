@@ -570,3 +570,108 @@ module.exports = BaseService
 
     
 
+## 6、跨域请求
+
+- 我们先准备一个前端的页面
+
+- ```html
+  <!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initialscale=1.0">
+      <title>Document</title>
+      <script src="js/jquery-3.5.1.min.js"></script>
+  </head>
+  
+  <body>
+      <script>
+          $(function () {
+              $.get('http://127.0.0.1:8080/roomInfo/roomInfoList', function (res
+              ) {
+                  console.log(res);
+              });
+          })
+      </script>
+  </body>
+  
+  </html>
+  
+  ```
+
+- 当我们通过前端网页发送了一个ajax请求的时候报错了，因为这个ajax请求不允许跨域的数据产生
+
+- > **什么是跨域？**
+  >
+  > 这个是一个浏览器安全策略的设置导致的一个问题，这个安全策略叫做同源策略，当请求来源于请求去向不一致的时候，就会发生跨域的问题
+
+- ajax跨域是一个非常常见的问题，也是必须要解决得到问题，解决方式：
+- 1、反射代理
+- 2、通过在服务端添加响应头实现CORS
+- 3、jsonp
+- 设置cors拦截器
+
+```js
+const express = require('express');
+const http = require('http');
+const app = express();
+//cors拦截器
+app.use((req, resp, next) => {
+    resp.setHeader("Access-control-Allow-Origin", "*");
+    resp.setHeader("Access-control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    resp.setHeader("Access-control-Allow-Headers", "content-type");
+    next();
+});
+app.use('/roomInfo', require('./routes/roomInfoRoute.js'));
+const server = http.createServer(app);
+server.listen(8080, '0.0.0.0', () => {
+    console.log('server is running ...');
+})
+```
+
+- > 注意点：
+  >
+  > 这个拦截器一定要设置在服务器启动与路由加载之前
+
+## 7、封装返回的JSON数据
+
+- ```js
+  {
+      status："success",
+      msg:"数据请求成功",
+      data:[]
+  }
+  ```
+
+- 创建一个model目录，新建啊一个ResultJson.js
+
+- ```js
+  class ResultJson{
+      constructor(flag,msg,data=[]){
+          this.status = flag ? "success" : "fail";
+          this.msg = msg;
+          this.data = data;
+      }
+  }
+  module.exports = ResultJson;
+  ```
+
+- 现在我们给仅有的一个服务方法getAllList执行的响应结果套用上上面的响应数据结构
+
+- ```js
+  //......
+  const ResultJson = require('../model/ResultJson.js');
+  router.get('/roomInfoList', async (req, resp) => {
+      try {
+          let results = await
+              serviceFactory.roomInfoService.getAllList();
+          resp.json(new ResultJson(true, "数据请求成功", results));
+      } catch (error) {
+          console.log(error);
+      }
+  });
+  module.exports = router;
+  ```
+
+  
