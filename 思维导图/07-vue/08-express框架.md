@@ -675,3 +675,101 @@ server.listen(8080, '0.0.0.0', () => {
   ```
 
   
+
+# express后端项目搭建 -- 房间信息模块
+
+- 现在我们首先制作一个用于房间信息查询的方法，该方法的制作可以看作是一个综合查询的方法，并且不是单一的某一种查询方式
+- 对于当前应用场景来看，我们需要制作一个搜索查询（模糊查询）和分页查询为一体的查询服务方法
+
+## 1、制作查询方法
+
+- 在RoomInfoService.js中的构造函数内插入新的查询方法
+
+- ```js
+  getListByPage({ room_name }){
+      let strSql = `select * from ${this.currentTableName} where 1`;
+      let ps = [];
+      if (room_name) {
+          strSql += ` and room_name like ?`;
+          ps.push(`${room_name}`);
+      }
+      return this.excuteSql(strSql, ps);
+  }
+  ```
+
+- 然后再路由中调用该方法查询房间信息
+
+- ```js
+  router.get('/getListByPage', async (req, resp) => {
+      try {
+          let results = await
+              serviceFactory.roomInfoService.getListByPage(req.query);
+          resp.json(new ResultJson(true, "数据请求成功", results));
+      } catch (error) {
+          resp.status(500).json(new ResultJson(false, "数据请求失败", error));
+      }
+  })
+  ```
+
+- 制作一个roomInfoList.html前端页面，准备好基本的html结构之后，我们发送请求
+
+- ```js
+  
+      $(function () {
+          $("#btn-query").on("click", function () {
+              $.get("http://127.0.0.1:8080/roomInfo/getListByPage?room_name = " + 										$("#room_name").val(), function (res) {
+                  console.log(res);
+              });
+          });
+      })
+  ```
+
+  - > 分析：
+    >
+    > 这里我们html中会设置一个根据房间名来搜索的功能，同时准备一个搜索按钮btn-query，当点击搜索按钮的时候，如果搜索框内有房间名就根据房间所搜结果，如果没有就直接查询全部房间信息
+
+- 当以上请求可以正常拿到数据之后，我们就开始制作渲染数据所需要的模板，这里我们使用template-web来实现原生的html数据渲染
+
+```html
+<script type="text/html" id="temp1">
+    {{each roomInfoList item index}}
+    <tr>
+    <td><input type="checkbox"></td>
+    <td>{{item.room_name}}</td>
+    <td>{{item.max_count}}</td>
+    <td><span class="p-1 text-light rounded {{item.kt == 1 ?
+    'bg-success':'bg-danger'}}">{{item.kt == 1 ? "有":"无"}}</span>
+    </td>
+    <td><span class="p-1 text-light rounded {{item.network ==
+    1 ? 'bg-success':'bg-danger'}}">{{item.network == 1 ? "有":"无"}}
+    </span></td>
+    <td><span class="p-1 text-light rounded {{item.washroom
+    == 1 ? 'bg-success':'bg-danger'}}">{{item.washroom == 1 ?
+    "有":"无"}}</span></td>
+    <td>{{item.room_size}}</td>
+    <td>{{item.max_count}}</td>
+    <td>
+    <a href="#" class="btn btn-warning btn-sm">编辑</a>
+    <a href="#" class="btn btn-danger btn-sm">删除</a>
+    </td>
+    </tr>
+    {{/each}}
+</script>
+```
+
+- 修改get请求把响应的数据在template中渲染好之后，插入到tbody中
+
+- ```js
+  $(function () {
+      $("#btn-query").on("click", function () {
+          $.get("http://127.0.0.1:8080/roomInfo/getListByPage?room_name = " + 							$("#room_name").val(), function (res) {
+              var htmlStr = template("temp1", {
+                  roomInfoList: res.data
+              });
+              $("#table-roomInfo>tbody").html(htmlStr);
+          });
+      });
+  })
+  ```
+
+- 现在，当我们点击查询按钮的时候就可以看到渲染结果了

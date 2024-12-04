@@ -12,5 +12,15 @@ router.get('/roomInfoList', async (req, resp) => {
     }
 });
 
+router.get('/getListByPage', async (req, resp) => {
+    try {
+        let results = await serviceFactory.roomInfoService.getListByPage(req.query);
+        resp.json(new ResultJson(true, '数据请求成功', results));
+    } catch (error) {
+        console.log(error);
+        resp.status(500).json(new ResultJson(false, '数据请求失败', error));
+    }
+});
+
 
 module.exports = router;

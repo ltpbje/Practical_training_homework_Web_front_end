@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/html" id="temp1">
+        {{ each roomInfoList item index }}
+        <tr>
+            <td><input type="checkbox"></td>
+            <td>{{item.room_name}}</td>
+            <td>{{item.max_count}}</td>
+            <td><span class="p-1 text-light rounded {{item.kt==1 ? 'bg-success' :'bg-danger'}}">{{item.kt ==1 ? '有' : '无'}}</span></td>
+            <td><span class="p-1 text-light rounded {{item.network==1 ? 'bg-success' :'bg-danger'}}">{{item.network ==1 ? '有' : '无'}}</span></td>
+            <td><span class="p-1 text-light rounded {{item.washroom==1 ? 'bg-success' :'bg-danger'}}">{{item.washroom ==1 ? '有' : '无'}}</span></td>
+            <td>{{item.room_size}}</td>
+            <td>{{item.max_count}}</td>
+            <td>
+                <a href="#" class="btn btn-warning btn-sm">编辑</a>
+                <a href="#" class="btn btn-danger btn-sm">删除</a>
+            </td>
+
+        </tr>
+
+
+    </script>
+
+
+
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script src="./js/template-web.js"></script>
+    <script>
+        $(function () {
+            $("#btn-query").on("click", function () {
+
+                $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=` + $("#room_name").val(), function (res) {
+                    var htmlStr = template("temp1", {
+                        roomInfoList: res.data
+                    });
+                });
+                $('#table-roomInfo>tbody').html(htmlStr);
+            });
+            $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=`, function (res) {
+                console.log(res);
+
+            });
+        })
+
+
+    </script>
+</body>
+
+</html>
