@@ -1,4 +1,4 @@
-const BaseService = require('./baseService.js');
+const BaseService = require('./BaseService.js');
 
 
 class RoomInfoService extends BaseService {
