@@ -12,7 +12,9 @@ const serviceFactory = (() => {
         // // 输出转换后的属性名
         // console.log(propertyName);
         let temp = require(path.join(__dirname, '../services', item));
-
+        if (typeof temp === 'function') {
+            obj[propertyName] = Reflect.construct(temp, []);
+        }
     }
 
 })();
