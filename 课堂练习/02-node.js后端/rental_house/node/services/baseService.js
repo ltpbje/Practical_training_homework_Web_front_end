@@ -10,6 +10,7 @@ class BaseService extends DButils {
             stu_info: 'stu_info'
         };
         this.currentTableName = '';
+        this.pageSize = 10;
     }
     // async deleteId(id) {
     //     let strSql = `delete from ${this.currentTableName} where id = ?`;
