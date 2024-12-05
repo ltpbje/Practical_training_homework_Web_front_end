@@ -9,6 +9,39 @@
 
 <body>
     edit
+
+
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script src="./js/template-web.js"></script>
+    <script src="./js/base.js"></script>
+
+    <script>
+        $(function () {
+            function getById() {
+                //获取浏览器地址上的id
+                var u = new URL(location.href);
+                var id = u.searchParams.get('id');
+                var loading = Qmsg.loading('数据加载中...');
+                request.get("/roomInfo/findById", {
+                    id
+                }).then(function (res) {
+                    if (res.status == 'success') {
+                        var htmlStr = template('temp1', {
+                            roomInfo: res.data
+                        });
+                        $('.form-addRoomInfo').html(htmlStr);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                    Qmsg.error('服务器错误');
+
+                }).finally(function () {
+                    loading.close();
+                });
+            }
+        })
+    </script>
+
 </body>
 
 </html>

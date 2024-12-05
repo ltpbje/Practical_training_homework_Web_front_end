@@ -31,6 +31,12 @@ class RoomInfoService extends BaseService {
         let results = await this.excuteSql(strSql, [id]);
         return results[0];
     }
+
+    async update({ id, room_name, max_count, kt, network, washroom, room_size }) {
+        let strSql = `update h2003.room_info set room_name=?,max_count=?,kt=?,washroom=?,room_size=? where id = ?`;
+        let results = await this.excuteSql(strSql, [room_name, max_count, kt, network, washroom, room_size, id]);
+        return results.affectRows > 0 ? true : false;
+    }
 }
 module.exports = RoomInfoService;
 

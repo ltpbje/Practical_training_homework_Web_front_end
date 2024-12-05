@@ -1,9 +1,12 @@
 // 引入express模块
+const bodyParser = require('body-parser');
 const express = require('express');
 // 引入http模块
 const http = require('http');
 // 创建express应用
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: "30mb" }));
 app.use((req, resp, next) => {
     // 设置响应头，允许跨域访问
     resp.setHeader("Access-Control-Allow-Origin", "*");

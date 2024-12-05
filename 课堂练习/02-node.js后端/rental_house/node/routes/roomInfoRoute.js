@@ -32,5 +32,12 @@ router.get('/findById', async (req, resp) => {
         resp.status(500).json(new ResultJson(false, '数据请求失败', error));
     }
 });
-
+router.post('/update', async (req, resp) => {
+    try {
+        let results = await serviceFactory.roomInfoService.update(req.body);
+        resp.json(new ResultJson(results, results ? '修改成功' : '修改失败'));
+    } catch (error) {
+        resp.status(500).json(new ResultJson(false, '请求失败', error));
+    }
+});
 module.exports = router;
