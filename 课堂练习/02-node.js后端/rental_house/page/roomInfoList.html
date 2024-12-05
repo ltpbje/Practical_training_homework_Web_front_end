@@ -10,7 +10,7 @@
 <body>
     <button id="btn-query">查询</button>
     <input type="text" id="room_name">
-    <button>导出excel</button>
+    <button class="btn-export-excel">导出excel</button>
     <table id="table-roomInfo">
         <tbody></tbody>
     </table>
@@ -127,6 +127,10 @@
             $("#table-roomInfo>tbody").on("click", "#btn-delete", function () {
                 var index = $(this).attr('data-id');
                 deleteId(index);
+            });
+
+            $('.btn-export-excel').on('click', function () {
+                window.open(baseURL + "/roomInfo/exportExcel?room_name=" + $("#room_name").val());
             });
 
             // $("#btn-query").on("click", function () {

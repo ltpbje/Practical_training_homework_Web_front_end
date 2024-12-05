@@ -1140,3 +1140,192 @@ router.post('/update', async (req, resp) => {
 $("#form-addRoomInfo").on("click", "#btn-save", saveData)
 ```
 
+## 5、删除房间信息
+
+- 关于删除操作，一般来说数据库管理员是不会给我们直接删除数据的权限的，所以，我们其实执行所谓的删除操作本质上来讲是一个update更新操作，一般我们会给一张表中的数据添加一个用于执行逻辑删除（软删除）的字段，我们通过修改这个字段的值，配合查询的限制条件来实现逻辑删除
+
+- 这里我们就以room_info表中的isDel字段为例来进行说明，该字段是一个非空字段，起值只会是0或者1，我们通过在查询时添加对应字段的限制条件来限制查询结果，从而达到删除的效果
+
+- 现在先对之前的查询方法进行修改
+
+- RoomInfoService.js
+
+- ```js
+  async deleteId({ id }){
+      let strSql = `update ${this.currentTableName} set isDel = true where id = ?`;
+      let results = await this.excuteSql(strSql, [id]);
+      return results.affectedRows > 0 ? true : false;
+  }
+  ```
+
+- roomInfoRoute.js
+
+- ```js
+  router.get('/delete', async (req, resp) => {
+      try {
+          let results = await
+              serviceFactory.roomInfoService.deleteId(req.query);
+          resp.json(new ResultJson(results, results ? "修改成功" : "修改失败"));
+      } catch (error) {
+          resp.status(500).json(new ResultJson(false, "请求失败", error));
+      }
+  })
+  ```
+
+  - 在前端制作请求
+
+- > 这里我们在删除的按钮上面添加一个自定义属性data-id用于在数据渲染时记录当前渲染的这条数据的id，方便我们在删除时知道要删除的这条数据的id是多少
+
+```js
+function deleteId(id) {
+    var loading = Qmsg.loading("正在删除中...");
+    request.get('/roomInfo/delete', {
+        id: id
+    }).then(function (res) {
+        if (res.status == "success") {
+            Qmsg.success("删除成功");
+            getData(currentPageIndex);
+        }
+    }).catch(function (error) {
+        Qmsg.error("删除失败");
+    }).finally(function () {
+        loading.close();
+    });
+}
+$("#table-roomInfo>tbody").on("click", "#btn-delete", function () {
+    var index = $(this).attr("data-id");
+    deleteId(index);
+})
+```
+
+## 6、Excel导出
+
+- 这里我们制作一个将当前房间信息表中的所有数据导出成excel的功能
+
+- RoomInfoService.js
+
+```js
+async exportExcel({ room_name }){
+    let strSql = `select * from ${this.currentTableName} where isDel = false`;
+    let strWhere = ``;
+    let ps = [];
+    if (room_name) {
+        strWhere += ` and room_name like ?`;
+        ps.push(room_name);
+    }
+    strSql += strWhere;
+    return this.excuteSql(strSql, ps);
+}
+```
+
+- 现在我们需要把查询到的数据写入到excel表格中，所以需要一个第三方中间件支持
+
+- ```cmd
+  npm i node-xlsx --save
+  ```
+
+  
+
+- 编写用于创建excel表格第三方工具类
+
+```js
+const xlsx = require("node-xlsx");
+const path = require("path");
+const fs = require("fs");
+class ExcelUtils {
+    static resultsToExcel(results) {
+        if (results.length > 0) {
+            let headRow = Object.keys(results[0]);
+            let dataRows = results.map(item =>
+                Object.values(item));
+            dataRows.unshift(headRow);
+            let excelObj = {
+                name: "sheet1",
+                data: dataRows
+            };
+            let savePath =
+                path.join(__dirname, "../excelDir", `${Date.now()}-${parseInt(Math.
+                    random() * 1000)}.xlsx`);
+            let excelBuffer = xlsx.build([excelObj]);
+            fs.writeFileSync(savePath, excelBuffer);
+            return savePath;
+        } else {
+            return "";
+        }
+    }
+}
+module.exports = ExcelUtils;
+```
+
+- roomInfoRoute.js导入写好的excel工具类
+
+```js
+router.get("/exportExcel", async (req, resp) => {
+    let results = await
+        serviceFactory.roomInfoService.exportExcel(req.query);
+    let excelPath = ExcelUtils.resultsToExcel(results);
+    if (excelPath) {
+        resp.sendFile(excelPath);
+    } else {
+        resp.status(500).json(new ResultJson(false, "excel没有数据，不能下载"));
+    }
+})
+```
+
+- 前端制作请求获取excel文件下载
+
+```js
+$(".btn-export-excel").on("click", function () {
+    window.open(baseURL + "/roomInfo/exportExcel?room_name=" +
+        $("#room_name").val());
+})
+```
+
+- 现在，我们可以完成excel表格导出与下载，但是现在有新问题了，随着时间推移导出excel的次数越来越多，在服务器中堆积的excel文件就会越来越多，挤占服务器空间，所以我们需要定期清理
+- 这个时候我们在启动项目的时候在入口文件index.js中添加一个定时器，去完成清理
+
+```js
+const path = require("path");
+const fs = require("fs");
+server.listen(8080, '0.0.0.0', () => {
+    console.log('server is running ...');
+    const deleteExcelFile = () => {
+        let excelDirPath = path.join(__dirname, "./excelDir");
+        let arr = fs.readdirSync(excelDirPath);
+        for (let item of arr) {
+            let fileCreateTime = item.split("-")[0];
+            if (Date.now() - fileCreateTime > 5 * 60 * 1000) {
+                fs.unlinkSync(path.join(excelDirPath, item));
+            }
+        }
+    };
+    deleteExcelFile();
+    setInterval(deleteExcelFile, 5 * 60 * 1000);
+})
+```
+
+## 7、全局异常捕获
+
+- 在路由当中，我们写了很多的try...catch 异常捕获
+
+- 在 express框中提供了一个中间件express-async-errors ，这个包可以实现全局异常获取，这样我们可以简化非常多的代码
+
+- 安装包
+
+- ```cmd
+  npm i express-async-errors --save
+  ```
+
+- 在入口文件中导入全局异常捕获并进行配置
+
+- ```js
+  require('express-async-errors');
+  const ResultJson = require("./model/ResultJson.js");
+  //......
+  app.use((error, req, resp, next) => {
+      resp.status(500).json(new ResultJson(false, "数据请求失败", error));
+      next();
+  })
+  ```
+
+  
