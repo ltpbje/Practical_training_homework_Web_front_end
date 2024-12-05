@@ -39,7 +39,29 @@
                     loading.close();
                 });
             }
-        })
+            getById();
+            function saveData() {
+                var loading = Qmsg.loading('数据加载中...');
+                request.post("/roomInfo/update", {
+                    id: $('#id').val(),
+                    room_name: $('#room_name').val(),
+                    max_count: $('#max_count').val(),
+                    kt: $("[name='kt']:checked").val(),
+                    network: $("[name='network']:checked").val(),
+                    washroom: $("[name='washroom']:checked").val(),
+                    room_size: $('#room_size').val()
+                }).then(function (res) {
+                    Qmsg.success('保存成功');
+                    location.replace('./roomInfoList.html');
+                }).catch(function (error) {
+                    console.log(error);
+                    Qmsg.error('保存失败');
+                }).finally(function () {
+                    loading.close();
+                });
+            }
+            $("#form-addRoomInfo").on('click', '#btn-save', saveData);
+        })                                                            
     </script>
 
 </body>

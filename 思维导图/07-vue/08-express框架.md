@@ -888,3 +888,255 @@ class RoomInfoService extends BaseService {
 module.exports = RoomInfoService
 ```
 
+- 然后我们来改造前端请求
+
+```js
+$(function () {
+    var currentPageIndex = 1;
+    function getData(pageIndex) {
+        var loading = Qmsg.loading("正在加载数据中...");
+        request.get("/roomInfo/getListByPage", {
+            pageIndex: pageIndex,
+            room_name: $("#room_name").val()
+        }).then(function (res) {
+            if (res.status == "success") {
+                console.log(res);
+                Qmsg.success("数据获取成功");
+                var htmlStr = template("temp1", {
+                    roomInfoList: res.data.listData
+                });
+                $("#table-roomInfo>tbody").html(htmlStr);
+                //渲染页码
+                var htmlStr2 = template("temp2", {
+                    pageCount: res.data.pageCount,
+                    pageIndex: res.data.pageIndex,
+                    pageStart: res.data.pageStart,
+                    pageEnd: res.data.pageEnd
+                });
+                $(".pagination").html(htmlStr2);
+                //总数渲染
+                var htmlStr3 = template("temp3", {
+                    pageCount: res.data.pageCount,
+                    pageIndex: res.data.pageIndex,
+                    totalCount: res.data.totalCount
+                });
+                $("#page-list-info").html(htmlStr3);
+            }
+        }).catch(function (error) {
+            console.log(error);
+            Qmsg.error("服务器错误");
+        }).finally(function () {
+            loading.close();
+        });
+    }
+    getData(currentPageIndex);
+    $(".pagination").on("click", "li", function () {
+        var index = $(this).attr("data-index");
+        getData(index);
+        currentPageIndex = index;
+    });
+})
+```
+
+- 同时制作对应的模板
+
+```html
+<script type="text/html" id="temp2">
+    <li data-index="1" class="page-item"><a href="#"
+    class="page-link">首页</a></li>
+    <%for(var i = pageStart; i <= pageEnd;i++){%>
+    <li data-index="{{i}}" class="page-item"><a href="#"
+    class="page-link">{{i}}</a></li>
+    <%}%>
+    <li data-index="{{pageCount}}" class="page-item"><a
+    href="#" class="page-link">尾页</a></li>
+</script>
+<script type="text/html" id="temp3">
+    当前第{{pageIndex}}，共{{pageCount}}页，共{{totalCount}}条
+</script>
+
+```
+
+## 3、配置项目热启动
+
+- 在进行node项目开发的时候，我们更改了项目的源代码之后，我们希望项目自动重新启动，这个技术叫做热启动，它需要一个第三包来实现
+
+- ```cmd
+  npm i nodemon --save-dev
+  ```
+
+- 在package.json中配置启动脚本
+
+- ```cmd
+  "dev": "nodemon --watch ./"
+  ```
+
+  ## 4、编辑房间信息
+
+- 把之前渲染的表格模板中的后面两个按钮中的a连接，改一下
+
+- ```html
+  <td>
+      <a href="./editRoomInfo.html?id={{item.id}}" class="btn btnwarning btn-sm">编辑</a>
+      <a href="#" class="btn btn-danger btn-sm">删除</a>
+  </td>
+  ```
+
+- 制作新的用于通过id查询房间信息的服务
+
+- roomInfoService.js
+
+- ```js
+   async findById(id){
+      let strSql = `select * from ${this.currentTableName} where 1 and id = ?`;
+      let results = await this.excuteSql(strSql, [id]);
+      return results[0];
+  }
+  ```
+
+  
+
+- 新建后端路由，制作对应的数据接口分配新做的服务方法
+
+- roomInfoRoute.js
+
+- ```js
+  
+  router.get('/findById', async (req, resp) => {
+      try {
+          let { id } = req.query;
+          let results = await
+              serviceFactory.roomInfoService.findById(id);
+          resp.json(new ResultJson(true, "数据请求成功", results));
+      } catch (error) {
+          resp.status(500).json(new ResultJson(false, "数据请求失败", error));
+      }
+  })
+  ```
+
+  
+
+- 现在可以在编辑页面中渲染需要编辑的房间信息，然后我们通过修改编辑页面中的表单数据进行房间信息修改
+- 所以，这里先需要在房间编辑页面中请求对应id的房间信息
+- 在后端中就需要编写对应的服务与路由
+- RoomInfoService.js
+
+```js
+async findById(id){
+    let strSql = `select * from ${this.currentTableName} where 1 and id = ?`;
+    let results = await this.excuteSql(strSql,[id]);
+    return results[0]
+}
+```
+
+- roomInfoRoute.js
+
+  ```js
+  router.get('/findById', async (req, resp) => {
+      try {
+          let { id } = req.query;
+          let results = await
+              serviceFactory.roomInfoService.findById(id);
+          resp.json(new ResultJson(true, "数据请求成功", results));
+      } catch (error) {
+          resp.status(500).json(new ResultJson(false, "数据请求失败", error));
+      }
+  })
+  ```
+
+- 制作前端编辑页面的房间信息请求
+
+- ```js
+   $(function () {
+      function getById() {
+          //获取浏览器地址上的id
+          var u = new URL(location.href);
+          var id = u.searchParams.get("id");
+          var loading = Qmsg.loading("数据加载中...");
+          request.get("/roomInfo/findById", {
+              id: id
+          }).then(function (res) {
+              if (res.status == "success") {
+                  var htmlStr = template("temp1", {
+                      roomInfo: res.data
+                  });
+                  $("#form-addRoomInfo").html(htmlStr);
+              }
+          }).catch(function (error) {
+              console.log(error);
+              Qmsg.error("服务器错误");
+          }).finally(function () {
+              loading.close();
+          });
+      }
+      getById();
+  })
+  ```
+
+-  然后我们可以开始编辑房间信息并保存数据
+
+- 这里我们保存数据使用post请求（一般情况下往数据库中写入数据我们都使用post请求），所以记得安装body-parser用于解析post请求
+
+```js
+const bodyParser = require('body-parser');
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: "30mb" }))
+```
+
+- > 注意：
+  >
+  > bodyParser的use配置一定要在cors拦截器之前，不然无法解析req.body
+
+- 开始制作修改房间信息的服务
+
+- RoomInfoService.js
+
+```js
+async update({ id, room_name, max_count, kt, network, washroom, room_size }){
+            let strSql = `update rental_house.room_info set room_name=?,max_count=?,kt=?,network=?,washroom=?,room_size=? where id=?`;
+            let results = await this.excuteSql(strSql, [room_name, max_count, kt, network, washroom, room_size, id]);
+            return results.affectRows > 0 ? true : false;
+        }
+```
+
+- roomInfoRoute.js
+
+```js
+router.post('/update', async (req, resp) => {
+    try {
+        let results = await
+            serviceFactory.roomInfoService.update(req.body);
+        resp.json(new ResultJson(results, results ? "修改成功" : "修改失败"));
+    } catch (error) {
+        resp.status(500).json(new ResultJson(false, "请求失败", error));
+    }
+})
+```
+
+- 前端制作修改请求
+
+```js
+ function saveData() {
+    var loading = Qmsg.loading("正在保存中...");
+    request.post("/roomInfo/update", {
+        id: $("#id").val(),
+        room_name: $("#room_name").val(),
+        max_count: $("#max_count").val(),
+        kt: $("[name='kt']:checked").val(),
+        network: $("[name='network']:checked").val(),
+        washroom: $("[name='washroom']:checked").val(),
+        room_size: $("#room_size").val()
+    }).then(function (res) {
+        Qmsg.success("保存成功");
+        location.replace("./roomInfoList.html");
+    }).catch(function (error) {
+        console.log(error);
+        Qmsg.error("保存失败");
+    }).finally(function () {
+        loading.close();
+    });
+}
+$("#form-addRoomInfo").on("click", "#btn-save", saveData)
+```
+
