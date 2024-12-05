@@ -21,9 +21,10 @@ class RoomInfoService extends BaseService {
         strSql += `${strWhere} limit ${(pageIndex - 1) * this.pageSize},${this.pageSize}`;
         countSql += strWhere;
         let results = await this.excuteSql(strSql + ';' + countSql, [...ps, ...ps]);
-        let pageList = new PageList(pageIndex, results[1][0].total_count, this.pageSize, results[0]);
+        let pageList = new PageList(pageIndex, results[1][0].total_count, results[0], this.pageSize);
         return pageList;
     }
 }
+module.exports = RoomInfoService;
 
 

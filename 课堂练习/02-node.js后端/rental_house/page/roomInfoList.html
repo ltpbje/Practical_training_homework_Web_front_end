@@ -8,6 +8,20 @@
 </head>
 
 <body>
+
+    <input type="text" id="room_name">
+    <table id="table-roomInfo">
+        <tbody></tbody>
+    </table>
+
+    <div class="row">
+        <div class="col" id="page-list-info"></div>
+        <div class="col">
+            <div class="pagination justify-content-end">
+            </div>
+        </div>
+    </div>
+
     <script type="text/html" id="temp1">
         {{ each roomInfoList item index }}
         <tr>
@@ -25,29 +39,80 @@
             </td>
 
         </tr>
-
-
+        {{/each}}
+    </script>
+    <script type="text/html" id="temp2">
+        <ul>
+            <li data-index="1" class="page-item"><a href="#" class="page-link">首页</a></li>
+            <%for(var i = pageStart;i<=pageEnd;i++){%>
+                <li data-index="{{i}}" class="page-item"><a href="#" class="page-link">{{i}}</a></li>
+            <%}%>
+            <li data-index="{{pageCount}}" class="page-item"><a href="#" class="page-link">尾页</a></li>
+        </ul>
     </script>
 
+
+    <script type="text/html" id="temp3">
+        当前第{{pageIndex}}，共{{pageCount}}页，共{{totalcount}}条
+    </script>
 
 
     <script src="./js/jquery-3.7.1.min.js"></script>
     <script src="./js/template-web.js"></script>
+    <script src="./js/base.js"></script>
     <script>
         $(function () {
-            $("#btn-query").on("click", function () {
+            var currentPageIndex = 1;
+            function getData(pageIndex) {
+                // var loading = Qmsg.loading("正在加载数据中...");
+                request.get("/roomInfo/getListByPage", {
+                    pageIndex: pageIndex,
+                    room_name: $("#room_name").val()
+                }).then(function (res) {
+                    if (res.status == 'success') {
+                        // Qmsg.success("数据获取成功");
+                        // console.log(res.data.listData);
 
-                $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=` + $("#room_name").val(), function (res) {
-                    var htmlStr = template("temp1", {
-                        roomInfoList: res.data
-                    });
+                        var htmlStr = template("temp1", {
+                            roomInfoList: res.data.listData
+                        });
+                        $('#table-roomInfo>tbody').html(htmlStr);
+                        //渲染页码
+                        var htmlStr2 = template('temp2', {
+                            pageCount: res.data.pageCount,
+                            pageIndex: res.data.pageIndex,
+                            pageStart: res.data.pageStart,
+                            pageEnd: res.data.pageEnd
+                        });
+                        $('.pagination').html(htmlStr2);
+                        var htmlStr3 = template('temp3', {
+                            pageCount: res.data.pageCount,
+                            pageIndex: res.data.pageIndex,
+                            totalCount: res.data.totalCount,
+                        });
+                        $("#page-list-info").html(htmlstr3);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                    Qmsg.error('服务器错误');
+                }).finally(function () {
+                    // loading.close();
                 });
-                $('#table-roomInfo>tbody').html(htmlStr);
-            });
-            $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=`, function (res) {
-                console.log(res);
+            }
+            getData(1);
+            // $("#btn-query").on("click", function () {
 
-            });
+            //     $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=` + $("#room_name").val(), function (res) {
+            //         var htmlStr = template("temp1", {
+            //             roomInfoList: res.data
+            //         });
+            //     });
+            //     $('#table-roomInfo>tbody').html(htmlStr);
+            // });
+            // $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=`, function (res) {
+            //     console.log(res);
+
+            // });
         })
 
 
