@@ -8,7 +8,7 @@
 </head>
 
 <body>
-
+    <button id="btn-query">查询</button>
     <input type="text" id="room_name">
     <table id="table-roomInfo">
         <tbody></tbody>
@@ -21,6 +21,7 @@
             </div>
         </div>
     </div>
+    <div id="page-list-info"></div>
 
     <script type="text/html" id="temp1">
         {{ each roomInfoList item index }}
@@ -34,7 +35,7 @@
             <td>{{item.room_size}}</td>
             <td>{{item.max_count}}</td>
             <td>
-                <a href="#" class="btn btn-warning btn-sm">编辑</a>
+                <a href="./editRoomInfo.html?id={{item.id}}" class="btn btn-warning btn-sm">编辑</a>
                 <a href="#" class="btn btn-danger btn-sm">删除</a>
             </td>
 
@@ -53,7 +54,7 @@
 
 
     <script type="text/html" id="temp3">
-        当前第{{pageIndex}}，共{{pageCount}}页，共{{totalcount}}条
+        当前第{{pageIndex}}，共{{pageCount}}页，共{{totalCount}}条
     </script>
 
 
@@ -90,16 +91,26 @@
                             pageIndex: res.data.pageIndex,
                             totalCount: res.data.totalCount,
                         });
-                        $("#page-list-info").html(htmlstr3);
+                        $("#page-list-info").html(htmlStr3);
                     }
                 }).catch(function (error) {
                     console.log(error);
-                    Qmsg.error('服务器错误');
+                    // Qmsg.error('服务器错误');
                 }).finally(function () {
                     // loading.close();
                 });
             }
-            getData(1);
+            getData(currentPageIndex);
+
+            $('.pagination').on("click", "li", function () {
+                var index = $(this).attr('data-index');
+                getData(index);
+                currentPageIndex = index;
+            });
+
+            $('#btn-query').on("click", function () {
+                getData(1);
+            });
             // $("#btn-query").on("click", function () {
 
             //     $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=` + $("#room_name").val(), function (res) {

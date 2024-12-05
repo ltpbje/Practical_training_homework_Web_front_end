@@ -23,4 +23,14 @@ router.get('/getListByPage', async (req, resp) => {
 });
 
 
+router.get('/findById', async (req, resp) => {
+    try {
+        let { id } = req.query;
+        let results = await serviceFactory.roomInfoService.findById(id);
+        resp.json(new ResultJson(true, '数据请求成功', results));
+    } catch (error) {
+        resp.status(500).json(new ResultJson(false, '数据请求失败', error));
+    }
+});
+
 module.exports = router;

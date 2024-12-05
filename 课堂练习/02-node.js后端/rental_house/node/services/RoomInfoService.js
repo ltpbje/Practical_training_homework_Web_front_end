@@ -13,7 +13,7 @@ class RoomInfoService extends BaseService {
         let strWhere = ``;
         let ps = [];
         if (room_name) {
-            strWhere += ` and room_like ?`;
+            strWhere += ` and room_name like ?`;
             ps.push(`${room_name}`);
             // strSql += ` and room_name like ?`;
             // ps.push(`${room_name}`);
@@ -23,6 +23,13 @@ class RoomInfoService extends BaseService {
         let results = await this.excuteSql(strSql + ';' + countSql, [...ps, ...ps]);
         let pageList = new PageList(pageIndex, results[1][0].total_count, results[0], this.pageSize);
         return pageList;
+    }
+
+
+    async findById(id) {
+        let strSql = `select * from ${this.currentTableName} where 1 and id = ?`;
+        let results = await this.excuteSql(strSql, [id]);
+        return results[0];
     }
 }
 module.exports = RoomInfoService;
