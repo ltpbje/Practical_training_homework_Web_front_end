@@ -10,10 +10,10 @@
 <body>
     <button id="btn-query">查询</button>
     <input type="text" id="room_name">
+    <button>导出excel</button>
     <table id="table-roomInfo">
         <tbody></tbody>
     </table>
-
     <div class="row">
         <div class="col" id="page-list-info"></div>
         <div class="col">
@@ -36,7 +36,7 @@
             <td>{{item.max_count}}</td>
             <td>
                 <a href="./editRoomInfo.html?id={{item.id}}" class="btn btn-warning btn-sm">编辑</a>
-                <a href="#" class="btn btn-danger btn-sm">删除</a>
+                <a href="#" id="btn-delete" class="btn btn-danger btn-sm" data-id="{{item.id}}">删除</a>
             </td>
 
         </tr>
@@ -111,6 +111,24 @@
             $('#btn-query').on("click", function () {
                 getData(1);
             });
+            function deleteId(id) {
+                // var loading = Qmsg.loading("正在加载数据中...");
+                request.get('/roomInfo/delete', { id }).then(function (res) {
+                    if (res.status == 'success') {
+                        // Qmsg.success('删除成功');
+                        getData(currentPageIndex);
+                    }
+                }).catch(function (error) {
+                    // Qmsg.error('删除失败');
+                }).finally(function () {
+                    // loading.close();
+                });
+            }
+            $("#table-roomInfo>tbody").on("click", "#btn-delete", function () {
+                var index = $(this).attr('data-id');
+                deleteId(index);
+            });
+
             // $("#btn-query").on("click", function () {
 
             //     $.get(`http://127.0.0.1:8080/roomInfo/getListByPage?room_name=` + $("#room_name").val(), function (res) {
