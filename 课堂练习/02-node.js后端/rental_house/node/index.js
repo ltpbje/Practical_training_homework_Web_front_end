@@ -24,6 +24,8 @@ app.use((req, resp, next) => {
 });
 app.use('/roomInfo', require('./routes/roomInfoRoute.js'));
 app.use('/area', require('./routes/areaRoute.js'));
+app.use('/adminInfo', require('./routes/adminInfoRoute.js'));
+app.use('/adminPhoto', express.static(path.join(__dirname, "./adminPhoto")));
 app.use((error, req, resp, next) => {
     resp.status(500).json(new ResultJson(false, "数据请求失败", error));
 });
