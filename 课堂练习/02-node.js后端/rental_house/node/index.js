@@ -1,6 +1,6 @@
 // 引入express模块
 const bodyParser = require('body-parser');
-const { error } = require('console');
+// const { error } = require('console');
 const express = require('express');
 const fs = require('fs');
 // 引入http模块
@@ -23,6 +23,7 @@ app.use((req, resp, next) => {
     next();
 });
 app.use('/roomInfo', require('./routes/roomInfoRoute.js'));
+app.use('/area', require('./routes/areaRoute.js'));
 app.use((error, req, resp, next) => {
     resp.status(500).json(new ResultJson(false, "数据请求失败", error));
 });

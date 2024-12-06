@@ -7,7 +7,8 @@ class BaseService extends DButils {
         this.tableMap = {
             admin_info: 'admin_info',
             room_info: 'room_info',
-            stu_info: 'stu_info'
+            stu_info: 'stu_info',
+            t_area: 't_area'
         };
         this.currentTableName = '';
         this.pageSize = 10;

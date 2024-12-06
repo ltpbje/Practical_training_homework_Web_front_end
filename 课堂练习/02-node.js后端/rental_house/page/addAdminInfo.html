@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <select name="" id="sel_province"></select>
+
+    <select name="" id="sel_city"></select>
+    <select name="" id="sel_area"></select>
+    <input accept="image/*" type="file" class="custom-file-input" id="admin_photo_file">
+    <img src="" id="img_admin_photo" alt="">
+    <script type="text/html" id="temp1">
+        <optionvalue="">-请选择-</option>
+        {{each list item index}}
+        <option value="{{item.areaId}}">{{item.areaName}}</option>
+        {{/each}}
+    </script>
+
+    <script src="./js/jquery-3.7.1.min.js"></script>
+    <script src="./js/template-web.js"></script>
+    <script src="./js/base.js"></script>
+    <script>
+        $(function () {
+            function renderOptions(parentId, targetElement) {
+                // var loading = Qmsg.loading('数据加载中...');
+                request.get("/area/findListByParentId", {
+                    parentId: parentId
+                }).then(function (res) {
+                    var htmlStr = template("temp1", {
+                        list: res.data
+                    });
+                    $(targetElement).html(htmlStr);
+                }).catch(function (error) {
+                    console.log(error);
+                    // Qmsg.error('服务器错误');
+                }).finally(function () {
+                    // loading.close();
+                });
+            }
+            // 先主动调用一遍，获取到所有的省信息并渲染在对应的select当中
+            renderOptions(-1, "#sel_province");
+            //选择省份的时候，渲染对应的城市
+            $("#sel_province").on('change', function () {
+                var parentId = $(this).val();
+                renderOptions(parentId, '#sel_city');
+            });
+            $("#sel_city").on("change", function () {
+                var parentId = $(this).val();
+                renderOptions(parentId, '#sel_area');
+            });
+
+            // ----------------------------图片上传--------------------------------------
+            $("#admin_photo_file").on('change', function () {
+                var file = this.files[0];
+                if (file) {
+                    if (/^image\/(jpe?g|png|gif)/.test(file.type)) {
+                        //创建一个表单域对象
+                        var formData = new FormData();
+                        formData.append("admin_photo", file);
+                        $.ajax({
+                            url: baseURL + '/adminInfo/uploadAdminPhoto',
+                            method: 'POST',
+                            processData: false,// 不对上传的数据做二次处理
+                            contentType: false,// 不携带任何的请求类型过去
+                            success: function (res) {
+                                $('#img_admin_photo').attr('src', baseURL + res.data);
+                                Qmsg.success('上传图片成功');
+                            },
+
+                        });
+                    }
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>
