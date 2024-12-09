@@ -5,6 +5,8 @@ const ResultJson = require('../model/ResultJson.js');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const jwt = require('jsonwebtoken');
+const AppConfig = require('../config/AppConfig.js');
 const upload = multer({
     dest: path.join(__dirname, '../adminPhoto')
 });
@@ -27,8 +29,16 @@ router.post('/add', async (req, resp) => {
 router.post('/checkLogin', async (req, resp) => {
     let results = await serviceFactory.adminInfoService.checkLogin(req.body);
     if (results) {
-        ``;
-        resp.json(new ResultJson(true, "登录成功"));
+        let token = jwt.sign(
+            {
+                adminInfo: results
+            },
+            AppConfig.jwtKey,
+            {
+                expiresIn: 60 * 30
+            }
+        );
+        resp.json(new ResultJson(true, "登录成功", token));
     } else {
         resp.json(new ResultJson(false, "登录失败"));
     }

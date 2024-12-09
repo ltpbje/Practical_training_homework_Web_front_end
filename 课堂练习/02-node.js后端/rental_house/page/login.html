@@ -39,6 +39,7 @@
             }).then(function (res) {
                 if (res.status == 'success') {
                     Qmsg.success('登录成功');
+                    sessionStorage.setItem('rental_house_token', res.data);
                     location.replace("./roomInfoList.html");
                 } else {
                     Qmsg.error('登录失败');

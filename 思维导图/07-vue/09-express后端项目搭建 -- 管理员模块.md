@@ -335,4 +335,174 @@ console.log(mdStr)
   })
   ```
 
+## 5、登录请求
+
+- 前端请求制作
+
+```js
+$(function () {
+    $("#slider-v-code").slider({
+        width: $("#slider-v-code").width(), // width
+        height: 40, // height
+        sliderBg: "rgb(134, 134, 131)", // 滑块背景颜色
+        color: "#fff", // 文字颜色
+        fontSize: 14, // 文字大小
+        bgColor: "#7ecdb6", // 背景颜色
+        textMsg: "按住滑块，拖拽验证", // 提示文字
+        successMsg: "验证通过了哦", // 验证成功提示文字
+        successColor: "red", // 滑块验证成功提示文字颜色
+        time: 400, // 返回时间
+        callback: function (result) { // 回调函数，true(成功), false(失败);
+            if (result) {
+                $("#btn-login").one("click", function () {
+                    checkLogin();
+                });
+            }
+        }
+    });
+    function checkLogin() {
+        var loading = Qmsg.loading("登录中...");
+        request.post("/adminInfo/checkLogin", {
+            zh: $("#zh").val(),
+            admin_pwd: $("#admin_pwd").val()
+        }).then(function (res) {
+            if (res.status == "success") {
+                Qmsg.success("登录成功");
+                location.replace("./roomInfoList.html");
+            } else {
+                Qmsg.error("登录失败，账号密码错误");
+            }
+        }).catch(function (error) {
+            console.log(error);
+            Qmsg.error("服务器错误");
+        }).finally(function () {
+            loading.close();
+        });
+    }
+})
+```
+
+- AdminInfoService.js
+
+  ```js
+  async function checkLogin({ zh, admin_pwd }) {
+      let strSql = `select * from ${this.currentTableName} where isDel = false and admin_pwd = ? `;
+      admin_pwd = md5(admin_pwd + AppConfig.md5salt);
+      if (/^\w+@\w+\.com$/.test(zh)) {
+          strSql += `and admin_email = ?`;
+      } else if (/^1[3456789][0-9]{9}$/.test(zh)) {
+          strSql += `and admin_tel = ?`;
+      } else {
+          strSql += `and id = ?`;
+      }
+      let results = await this.excuteSql(strSql, [admin_pwd, zh]);
+      return results[0];
+  }
+  ```
+
+- adminInfoRoute.js
+
+- ```js
+  router.post("/checkLogin", async (req, resp) => {
+      let results = await
+          serviceFactory.adminInfoService.checkLogin(req.body);
+      if (results) {
+          resp.json(new ResultJson(true, "登录成功"));
+      } else {
+          resp.json(new ResultJson(false, "登录失败"));
+      }
+  })
+  ```
+
   
+
+## 6、JWT鉴权【重点】
+
+- 之前我们知道，我们是不能让请求随意进入服务器的，我们要对进入服务器的请求执行拦截操作
+
+- 第一步：在AppConfig.js中，我们首先社子和需要排除拦截的路径，也就是不需要验证的路径
+
+- ```js
+  const AppConfig = {
+      md5salt: "wqoicbuo122390dhsoqw",
+      //设置一个数组，这个数组里面设置的路径，外面的拦截器放行
+      excludePath: [
+          /\adminInfo\/checkLogin/
+      ]
+  };
+  module.exports = AppConfig;
+  ```
+
+- 第二步：开放预检请求options
+
+- 因为ajax设置到跨域，浏览器对所有的跨域请求都会执行一个预检操作（发起一个options请求），对于这个请求我们是要放行的
+
+- ```js
+  app.use((req, resp, next) => {
+      let pathValidata = AppConfig.excludePath.some(item =>
+          item.test(req.path));
+      if (pathValidata) {
+          next();
+      } else {
+          if (req.method.toUpperCase() == "OPTIONS") {
+              next();
+          }
+      }
+  })
+  ```
+
+- 第三步：发送token令牌
+
+- 目前token的发放比较好的第三方包，我们使用jsonwebtoken，简称JWT
+
+- ```cmd
+  npm i jsonwebtoken --save
+  ```
+
+- 当登录成功之后发送token
+
+- 因为token也可以解密，所以我们需要做加盐处理，也就是需要加一个密钥
+
+```js
+router.post("/checkLogin", async (req, resp) => {
+    let results = await
+        serviceFactory.adminInfoService.checkLogin(req.body);
+    if (results) {
+        let token = jwt.sign(
+            {
+                adminInfo: results
+            },
+            AppConfig.jwtKey,
+            {
+                expiresIn: 60 * 30
+                //令牌的过期事件，以秒为单位，过期时间步是按照发送时间算起，只要你不停的访问或者刷新页面，token的过期时间也会刷新
+            }
+        );
+        console.log(token);
+        resp.json(new ResultJson(true, "登录成功", token));
+    } else {
+        resp.json(new ResultJson(false, "登录失败"));
+    }
+})
+```
+
+- 现在我们登录成功之后，可以得到一个token令牌
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbkluZm8iOnsiaWQiOjEwMDEwLCJhZG1pbl9uYW1lIjoi5p2O5ZubIiwiYWRtaW5fc2V4Ijoi5aWzIiwiYWRtaW5fdGVsIjoiMTMxODg4ODg4ODgiLCJhZG1pbl9wd2QiOiI1OWZhZGVhNzQ2MTY0YmQ5NmI5YWIxYmQ1NzkzZTkwNyIsImFkbWluX2VtYWlsIjoiMjIyMjIyQHFxLmNvbSIsImFkbWluX3Bob3RvIjoiL2FkbWluUGhvdG8vNjA0OThmYzExMDM4YjBiMjkyMjQwMmU2MmU3OTU0YmUxLnBuZyIsImFkbWluX2FkZHJlc3MiOiIxNTA1MTU3MjE1NzPmsrPljZfluIjojIPlpKflrabova_ku7blrabpmaIiLCJpc0RlbCI6MH0sImlhdCI6MTczMzcxNDcxNSwiZXhwIjoxNzMzNzE2NTE1fQ.BorNjnBmGEgrIKr4nhhkiHQEK8zq
+YZ8CyfEpv2Sttu4
+```
+
+-  上面这串就是服务器颁发的token当我们得到上面的token，
+
+- 我们在以后的请求当中就需要携带这个token随着请求一起发送给服务器验证我们的身份，现在的问题就是token应该放在请求的什么地方根据之前我们对http请求的理解，我们可以知道，一个请求最先到达服务器的一定是header
+
+- 我们需要在登录成功之后把服务器颁发的token缓存下来，在登录请求的方法中添加一句话
+
+- ```js
+  sessionStorage.setItem("rental_house_token",res.data)
+  ```
+
+  
+
+## 7、为ajax的每次请求携带token

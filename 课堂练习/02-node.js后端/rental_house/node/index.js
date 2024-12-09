@@ -7,6 +7,7 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const ResultJson = require('./model/ResultJson.js');
+const AppConfig = require('./config/AppConfig.js');
 
 
 require('express-async-errors');
@@ -14,6 +15,16 @@ require('express-async-errors');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: "30mb" }));
+app.use((req, resp, next) => {
+    let pathValidata = AppConfig.excludePath.some(item => item.test(req.path));
+    if (pathValidata) {
+        next();
+    } else {
+        if (req.method.toUpperCase() == "OPTIONS") {
+            next(); 1;
+        }
+    }
+});
 app.use((req, resp, next) => {
     // 设置响应头，允许跨域访问
     resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -31,6 +42,7 @@ app.use('/adminPhoto', express.static(path.join(__dirname, "./adminPhoto")));
 app.use((error, req, resp, next) => {
     resp.status(500).json(new ResultJson(false, "数据请求失败", error));
 });
+
 // 创建一个HTTP服务器，并将app作为回调函数传入
 const server = http.createServer(app);
 server.listen(8080, '0.0.0.0', () => {
