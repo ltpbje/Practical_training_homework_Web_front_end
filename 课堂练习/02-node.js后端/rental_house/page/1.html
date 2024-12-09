@@ -9,8 +9,19 @@
 
 
 <body>
-    <script>
+    <!-- <script type="module" src="./js/message.js"></script> -->
+    <link rel="stylesheet" href="./js/message.css">
+    </link>
 
+    <script>
+        import Qmsg from './js/message.js';
+        Qmsg.success('你好');
+        // Qmsg.info("给你个眼神，你懂得", {
+        //     showClose: true,
+        //     onClose: function () {
+        //         console.log('我懂了');
+        //     }
+        // });
     </script>
 
 </body>

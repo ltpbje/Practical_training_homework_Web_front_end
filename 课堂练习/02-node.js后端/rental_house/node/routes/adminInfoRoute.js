@@ -17,6 +17,13 @@ router.post('/uploadAdminPhoto', upload.single('admin_photo'), (req, resp) => {
     }
 });
 
+
+
+router.post('/add', async (req, resp) => {
+    let results = await serviceFactory.adminInfoService.add(req.body);
+    resp.json(new ResultJson(results, results ? "注册成功" : "注册失败"));
+
+});
 module.exports = router;
 
 

@@ -219,3 +219,120 @@ module.exports = router;
   ```
 
   
+
+## 3、密码的MD5加密
+
+
+
+- MD5是一种号称不可逆的加密模式，它会把原本的字符串产生一个新的字符串，node里面md5加密的方式有很多，我们使用第三方包md5-node
+
+- 安装包
+
+- ```cmd
+  npm i md5-node --save
+  ```
+
+  
+
+- 这里我们做一个简单的演示
+
+- ```js
+  const md5 = require('md5-node');
+  let str = "123456";
+  let mdStr = md5(str);
+  console.log(mdStr)
+  ```
+
+- 这里我们得到了一个加密的字符串，但是，这样其实还是有隐患的，因为一些常见的密码使用了加密还是有一些工具可以进行穷举解密，所以，这个时候我们还可以对密码进行**加严**
+
+```js
+const md5 = require('md5-node');
+let str = "123456";
+let str1 = "dwjqioheoiundoqeuy3213dno2348"
+let mdStr = md5(str + str1);
+console.log(mdStr)
+```
+
+- 所谓的加盐其实就是在原本需要加密的字符串的基础上，再添加一个无规则的字符串，防止原本的字符串的加密文本过于简单
+
+## 4、保存管理员数据
+
+- 前端请求：
+
+  ```js
+  var imgURL = ""; //这里的值是再上传图片的时候返回的图片路径
+  function saveData() {
+      var loading = Qmsg.loading("正在注册中...");
+      request.post("/adminInfo/add", {
+          admin_name: $("#admin_name").val(),
+          admin_sex: $("#admin_sex").val(),
+          admin_tel: $("#admin_tel").val(),
+          admin_pwd: $("#admin_pwd").val(),
+          admin_email: $("#admin_email").val(),
+          admin_photo: imgURL,
+          admin_address:
+              [$("#sel_province").val(), $("#sel_city").val(), $("#sel_area").val
+                  (), $("#detail_addr").val()].join("")
+      }).then(function (res) {
+          if (res.status == "success") {
+              Qmsg.success("注册成功");
+          } else {
+              Qmsg.error("注册失败");
+          }
+      }).catch(function (error) {
+          console.log(error);
+          Qmsg.error("服务器错误");
+      }).finally(function () {
+          loading.close();
+      });
+  }
+  $("#btn-save").on("click", function () {
+      saveData();
+  })
+  ```
+
+  
+
+- 新建一个config目录里面新建一个AppConfig.js用来设置md5加严设置
+
+- ```js
+  const AppConfig = {
+      md5salt:"wqoicbuo122390dhsoqw"
+  }
+  module.exports = AppConfig;
+  ```
+
+- AdminService.js
+
+```js
+ const BaseService = require("./BaseService.js");
+        const md5 = require("md5-node");
+        const AppConfig = require("../config/AppConfig.js");
+        class AdminInfoService extends BaseService {
+            constructor() {
+                super();
+                this.currentTableName = this.tableMap.admin_info;
+            }
+            async add({ admin_name, admin_sex, admin_tel, admin_pwd, admin_email, admin_photo, admin_address }) {
+                admin_pwd = md5(admin_pwd + AppConfig.md5salt);
+                let strSql = `insert into ${this.currentTableName} (admin_name,admin_sex,admin_tel,admin_pwd,admin_email,admin_photo,admin_address) value(?,?,?,?,?,?,?)`;
+                let results = await this.excuteSql(strSql,
+                    [admin_name, admin_sex, admin_tel, admin_pwd, admin_email, admin_photo
+                        , admin_address]);
+                console.log(results);
+                return results.affectedRows > 0 ? true : false;
+            }
+        }
+        module.exports = AdminInfoService;
+```
+
+- adminInfoRoute.js
+
+- ```js
+  router.post("/add",async (req,resp) => {
+      let results = await serviceFactory.adminInfoService.add(req.body);
+      resp.json(new ResultJson(results,results?"注册成功":"注册失败"))
+  })
+  ```
+
+  

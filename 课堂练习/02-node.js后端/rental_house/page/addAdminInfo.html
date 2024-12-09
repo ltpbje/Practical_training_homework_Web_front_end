@@ -8,23 +8,40 @@
 </head>
 
 <body>
+
     <select name="" id="sel_province"></select>
 
     <select name="" id="sel_city"></select>
     <select name="" id="sel_area"></select>
+
+    用户名<input type="text" id="admin_name">
+    性别<select id="admin_sex">
+        <option value="男">男</option>
+        <option value="女">女</option>
+    </select>
+    电话<input type="text" id="admin_tel">
+    密码<input type="text" id="admin_pwd">
+    邮箱<input type="text" id="admin_email">
+
+    详细地址<input type="text" id="detail_addr">
     <input accept="image/*" type="file" class="custom-file-input" id="admin_photo_file">
     <img src="" id="img_admin_photo" alt="">
+
+    <button id="btn-save">保存数据</button>
     <script type="text/html" id="temp1">
         <optionvalue="">-请选择-</option>
         {{each list item index}}
         <option value="{{item.areaId}}">{{item.areaName}}</option>
         {{/each}}
     </script>
-
+    <link rel="stylesheet" href="./js/message.css">
     <script src="./js/jquery-3.7.1.min.js"></script>
     <script src="./js/template-web.js"></script>
     <script src="./js/base.js"></script>
+    <script src="./js/messages_zh.js"></script>
+    <script src="./js/message.min.js"></script>
     <script>
+        Qmsg.loading('数据加载中...');
         $(function () {
             function renderOptions(parentId, targetElement) {
                 // var loading = Qmsg.loading('数据加载中...');
@@ -70,6 +87,7 @@
                             contentType: false,// 不携带任何的请求类型过去
                             success: function (res) {
                                 $('#img_admin_photo').attr('src', baseURL + res.data);
+                                imgURL = res.data;
                                 // Qmsg.success('上传图片成功');
                             },
                             error: function (error) {
@@ -91,6 +109,37 @@
                     }
                 }
             });
+
+            // -----------------------------管理员数据保存----------------------------------
+            var imgURL = ""; //这里的值是再上传图片的时候返回的图片路径
+            function saveData() {
+                // var loading = Qmsg.loading('正在注册中');
+                request.post("/adminInfo/add", {
+                    admin_name: $('#admin_name').val(),
+                    admin_sex: $('#admin_sex').val(),
+                    admin_tel: $('#admin_tel').val(),
+                    admin_pwd: $('#admin_pwd').val(),
+                    admin_email: $('#admin_email').val(),
+                    admin_photo: imgURL,
+                    admin_address: [$('#sel_province').val(), $('#sel_city').val(), $('#sel_area').val(), $('#detail_addr').val()].join('')
+                }).then(function (res) {
+                    if (res.status == 'success') {
+                        // Qmsg.success('注册成功');
+                    } else {
+                        // Qmsg.error('注册失败');
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                    // Qmsg.error('服务器错误');
+                }).finally(function () {
+                    // loading.close();
+                });
+
+            }
+            $('#btn-save').on("click", function () {
+                saveData();
+            });
+
         })
     </script>
 </body>
