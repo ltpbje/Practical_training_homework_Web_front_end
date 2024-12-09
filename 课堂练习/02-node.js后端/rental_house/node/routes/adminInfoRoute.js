@@ -24,6 +24,15 @@ router.post('/add', async (req, resp) => {
     resp.json(new ResultJson(results, results ? "注册成功" : "注册失败"));
 
 });
+router.post('/checkLogin', async (req, resp) => {
+    let results = await serviceFactory.adminInfoService.checkLogin(req.body);
+    if (results) {
+        ``;
+        resp.json(new ResultJson(true, "登录成功"));
+    } else {
+        resp.json(new ResultJson(false, "登录失败"));
+    }
+});
 module.exports = router;
 
 
