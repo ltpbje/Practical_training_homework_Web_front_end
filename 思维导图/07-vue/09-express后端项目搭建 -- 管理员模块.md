@@ -506,3 +506,163 @@ YZ8CyfEpv2Sttu4
   
 
 ## 7、为ajax的每次请求携带token
+
+- 现在我们所有的请求都是通过我们自己封装的方法执行的，所以我们在这些房中添加设置请求头
+
+```js
+var baseURL = "http://127.0.0.1:8080";
+        var request = {
+            get: function (url, data) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        method: 'get',
+                        url: baseURL + url,
+                        data: data,
+                        success: function (res) {
+                            resolve(res);
+                        },
+                        error: function (error) {
+                            reject(error);
+                        },
+                        beforeSend: function (xhr) {
+                            var rental_house_token =
+                                sessionStorage.getItem("rental_house_token");
+                            if (rental_house_token) {
+                                xhr.setRequestHeader("rental_house_token", rental_house_token);
+                            }
+                        }
+                    });
+                });
+            },
+            post: function (url, data) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        method: 'post',
+                        url: baseURL + url,
+                        data: data,
+                        success: function (res) {
+                            resolve(res);
+                        },
+                        error: function (error) {
+                            reject(error);
+                        },
+                        beforeSend: function (xhr) {
+                            var rental_house_token =
+                                sessionStorage.getItem("rental_house_token");
+                            if (rental_house_token) {
+                                xhr.setRequestHeader("rental_house_token", rental_house_token);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+```
+
+- 现在我们在之前解决跨域的拦截器中修改 Access-control-Allow-Headers 响应头设置，只允许携带了token的请求进行响应
+
+- ```js
+  app.use((req, resp, next) => {
+      resp.setHeader("Access-control-Allow-Origin", "*");
+      resp.setHeader("Access-control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+      resp.setHeader("Access-control-Allow-Headers", "rental_house_token");
+      next();
+  })
+  ```
+
+- 在新做的拦截器中进行拦截验证token
+
+- > 注意：拦截一定要写在路由的前面
+
+```js
+
+app.use((req, resp, next) => {
+    let pathValidata = AppConfig.excludePath.some(item =>
+        item.test(req.path));
+    if (pathValidata) {
+        next();
+    } else {
+        if (req.method.toUpperCase() == "OPTIONS") {
+            next();
+        } else {
+            let token = req.headers.rental_house_token;
+            if (token) {
+                jwt.verify(token, AppConfig.jwtKey, (error, decoded)
+                    => {
+                    if (error) {
+                        resp.status(403).json(new
+                            ResultJson(false, "当前token失效"));
+                    } else {
+                        console.log(decoded);
+                        next();
+                    }
+                });
+            } else {
+                resp.status(403).json(new ResultJson(false, "当前token失效"));
+            }
+        }
+    }
+})
+```
+
+## 8、ajax响应拦截
+
+- 在上面的请求中，我们的每一次请求都会携带token到服务器，如果验证通过了，就会进入路由，而没通过就会返回403，而我们知道在http状态码的设置中403表示的没有权限，但是，我们依然还是可以进入到需要权限才能进入的页面，只不过这个页面中的请求会发送失败
+- 现在我们需要在403的情况下，无法进入到需要权限才能进入的页面，这个时候我们可以利用一个特点，只有200的状态码才算成功，其他的都可以算错，那么，我们可以利用这个特点做一个响应拦截
+
+```js
+var baseURL = "http://127.0.0.1:8080";
+        var request = {
+            get: function (url, data) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        method: 'get',
+                        url: baseURL + url,
+                        data: data,
+                        success: function (res) {
+                            resolve(res);
+                        },
+                        error: function (error) {
+                            if (error.status == 403) {
+                                location.replace('./login.html');
+                            }
+                            reject(error);
+                        },
+                        beforeSend: function (xhr) {
+                            var rental_house_token =
+                                sessionStorage.getItem("rental_house_token");
+                            if (rental_house_token) {
+                                xhr.setRequestHeader("rental_house_token", rental_house_token);
+                            }
+                        }
+                    });
+                });
+            },
+            post: function (url, data) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        method: 'post',
+                        url: baseURL + url,
+                        data: data,
+                        success: function (res) {
+                            resolve(res);
+                        },
+                        error: function (error) {
+                            if (error.status == 403) {
+                                location.replace('./login.html');
+                            }
+                            reject(error);
+                        },
+                        beforeSend: function (xhr) {
+                            var rental_house_token =
+                                sessionStorage.getItem("rental_house_token");
+                            if (rental_house_token) {
+                                xhr.setRequestHeader("rental_house_token", rental_house_token);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+```
+
