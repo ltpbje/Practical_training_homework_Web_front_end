@@ -8,23 +8,14 @@ const http = require('http');
 const path = require('path');
 const ResultJson = require('./model/ResultJson.js');
 const AppConfig = require('./config/AppConfig.js');
-
+const jwt = require('jsonwebtoken');
 
 require('express-async-errors');
 // 创建express应用
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: "30mb" }));
-app.use((req, resp, next) => {
-    let pathValidata = AppConfig.excludePath.some(item => item.test(req.path));
-    if (pathValidata) {
-        next();
-    } else {
-        if (req.method.toUpperCase() == "OPTIONS") {
-            next(); 1;
-        }
-    }
-});
+
 app.use((req, resp, next) => {
     // 设置响应头，允许跨域访问
     resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -33,7 +24,31 @@ app.use((req, resp, next) => {
     resp.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
     // 设置允许的请求头
     resp.setHeader("Access-Control-Allow-Headers", "content-type");
+    resp.setHeader("Access-Control-Allow-Headers", "rental_house_token");
     next();
+});
+
+app.use((req, resp, next) => {
+    let pathValidata = AppConfig.excludePath.some(item => item.test(req.path));
+    if (pathValidata) {
+        next();
+    } else {
+        if (req.method.toUpperCase() == "OPTIONS") {
+            next();
+        } else {
+            let token = req.header.rental_house_token;
+            if (token) {
+                jwt.verify(token, AppConfig.jwtKey, (error, decoded) => {
+                    if (error) {
+                        resp.status(403).json(new ResultJson(false, "当前token失效"));
+                    } else {
+                        console.log(decoded);
+                        next();
+                    }
+                });
+            }
+        }
+    }
 });
 app.use('/roomInfo', require('./routes/roomInfoRoute.js'));
 app.use('/area', require('./routes/areaRoute.js'));

@@ -12,7 +12,16 @@ var request = {
                     resolve(res);
                 },
                 error: function (error) {
+                    if (error.state == 403) {
+                        location.replace('../login.html');
+                    }
                     reject(error);
+                },
+                beforeSend: function (xhr) {
+                    var rental_house_token = sessionStorage.getItem('rental_house_token');
+                    if (rental_house_token) {
+                        xhr.setRequestHeader('rental_house_token', rental_house_token);
+                    }
                 }
             });
         });
