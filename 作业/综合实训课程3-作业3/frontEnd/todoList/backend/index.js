@@ -54,6 +54,10 @@ app.get('/delete', async (req, resp) => {
     await DB.excuteSql(sqlStr, params);
     resp.json('ok');
 });
+
+app.get('/finish', async () => {
+    let sqlStr = `update todolist set Sname='杨红梅' where Sid = 6; `;
+});
 // app.get('/', (req, resp) => {
 //     console.log(1);
 

@@ -66,6 +66,18 @@ async function delEvent(id) {
   // console.log(id);
 
 }
+const showEdit = ref(false);
+const editData = ref({});
+function editEvent(id) {
+  const arr = dataList.value.filter(item => item.id == id);
+  editData.value = arr[0];
+  showEdit.value = true;
+}
+function finishEvent() {
+  const id = editData.value.id;
+
+}
+
 async function getDataList() {
   let data = (await axios.get('http://localhost:8080/getData')).data;
   // console.log(data);
@@ -106,7 +118,7 @@ onMounted(() => {
             <van-button
               :type="{ 'primary': item.status == '已完成', 'warning': item.status == '待完成', 'danger': item.status == '已超时' }"
               class="status_tag" size="normal">{{ item.status }}</van-button>
-            <div div class="content_box">
+            <div div class="content_box" @click="editEvent(item.id)">
               <span>{{ item.title }}</span>
               <span>
                 创建时间{{ getFormatDate(item.startTime) }} 计划完成时间：{{ getFormatDate(item.endTime) }}
@@ -116,9 +128,14 @@ onMounted(() => {
           </li>
         </ul>
       </div>
+      <van-dialog v-model:show="showEdit" :title="editData.title" show-cancel-button @confirm="finishEvent"
+        confirm-button-text="确定完成">
+        <!-- <van-field v-model="editData.content" placeholder="请输入待办事项内容" /> -->
+        <van-field v-model="editData.content" rows="3" autosize type="textarea" placeholder="请输入待办事项内容" />
+        <!-- <img src="https://fastly.jsdelivr.net/npm/@vant/assets/apple-3.jpeg" /> -->
+      </van-dialog>
     </div>
   </div>
-
 
 </template>
 
