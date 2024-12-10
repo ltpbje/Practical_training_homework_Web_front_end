@@ -11,6 +11,19 @@ root.render(
   </React.StrictMode>
 );
 
+// 创建一个div元素
+let HtmlDom = document.createElement("div");//创建原生DOM
+// 创建一个React元素
+let ReactDOM1 = React.createElement('div');//创建react虚拟DoM
+for (let i in HtmlDom) {
+  console.log("原生DOM", i);
+
+}
+for (let i in ReactDOM1) {
+  console.log("react虚拟DOM", i);
+
+}
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

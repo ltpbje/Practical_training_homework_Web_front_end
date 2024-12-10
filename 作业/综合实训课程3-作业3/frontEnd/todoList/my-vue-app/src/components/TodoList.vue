@@ -36,54 +36,11 @@ const onConfirm = (value) => {
             <div class="content_box">
               <span>标题1</span>
               <span>
-                创建时间 计划完成时间：
+                创建时间2024-10-10 计划完成时间：2024-10-10
               </span>
             </div>
+            <van-icon name="close" size=".23rem" class="del_btn" />
           </li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-          <li>111</li>
-
-
         </ul>
       </div>
     </div>
@@ -100,6 +57,10 @@ const onConfirm = (value) => {
   display: flex;
   justify-content: center;
   background-color: #EAEAEF;
+}
+
+input {
+  box-sizing: border-box;
 }
 
 .inp_section {
@@ -142,7 +103,7 @@ const onConfirm = (value) => {
   height: 0.6rem;
   width: 100%;
   margin: .1rem auto;
-  border-radius: 12px;
+  border-radius: 5px;
   background-color: #fff;
   padding-left: 7px;
 }
@@ -150,10 +111,10 @@ const onConfirm = (value) => {
 .contentInp {
   border: none;
   outline: none;
-  height: 1rem;
+  height: 0.6rem;
   width: 100%;
   margin: 0 auto;
-  border-radius: 12px;
+  border-radius: 5px;
   padding-left: 7px;
 }
 
@@ -164,6 +125,7 @@ const onConfirm = (value) => {
 
 .list {
   width: 90%;
+  position: relative;
   margin: 0 auto;
 }
 
@@ -190,12 +152,21 @@ const onConfirm = (value) => {
 .list li .content_box {
   display: flex;
   flex-direction: column;
+  margin-left: .1rem;
 }
 
 .list li .content_box span:first-of-type {
   font-size: .17rem;
 }
 
+.list li .content_box span:nth-of-type(2) {
+  font-size: .09rem;
+}
+
+.del_btn {
+  position: absolute;
+  right: 0;
+}
 
 .status_tag {
   width: .9rem;
