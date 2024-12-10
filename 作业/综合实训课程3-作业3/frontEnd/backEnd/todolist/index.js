@@ -5,7 +5,6 @@ const DButils = require('./utils/DButils');
 
 // 创建express应用
 const app = express();
-const router = express.Router();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: "30mb" }));
 app.use((req, resp, next) => {
@@ -15,10 +14,11 @@ app.use((req, resp, next) => {
     // 设置允许的请求方法
     resp.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
     // 设置允许的请求头
+    next();
 });
 
 const DB = new DButils();
-router.get('/getData', async (req, resp) => {
+app.get('/getData', async (req, resp) => {
     console.log(1);
 
     let sqlStr = `select * from todolist`;
