@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 // import { Calendar, Cell } from 'vant';
 const date = ref('');
 const show = ref(false);
@@ -11,6 +11,7 @@ const onConfirm = (value) => {
   show.value = false;
   date.value = formatDate(value);
 };
+const dataList = reactive([]);
 </script>
 
 <template>
@@ -32,7 +33,7 @@ const onConfirm = (value) => {
       <div class="list">
         <ul>
           <li class="list_item">
-            <van-button type="primary" class="status_tag" size="normal">已完成</van-button>
+            <van-button :type="{ primary: false, noraml: true, }" class="status_tag" size="normal">已完成</van-button>
             <div class="content_box">
               <span>标题1</span>
               <span>
