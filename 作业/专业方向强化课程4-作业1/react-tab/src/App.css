@@ -1,0 +1,17 @@
+@import url(../public/font/iconfont.css);
+.tabBox{
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
+  font-size: .2rem;
+  text-align: center;
+}
+
+.tabBox li{
+  width: 100%;
+  /* background-color: pink; */
+}
+
+.active{
+  color: blue;
+}

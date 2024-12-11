@@ -1,0 +1,72 @@
+{
+  "id": "4719541",
+  "name": "仿微信",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "879141",
+      "name": "prev",
+      "font_class": "prev",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    },
+    {
+      "icon_id": "76989",
+      "name": "分类",
+      "font_class": "fenlei",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "109766",
+      "name": "my",
+      "font_class": "my",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "2076282",
+      "name": " 订单",
+      "font_class": "dingdan",
+      "unicode": "e897",
+      "unicode_decimal": 59543
+    },
+    {
+      "icon_id": "2372117",
+      "name": "餐具",
+      "font_class": "canju",
+      "unicode": "e6e8",
+      "unicode_decimal": 59112
+    },
+    {
+      "icon_id": "77039",
+      "name": "我",
+      "font_class": "wo",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1149395",
+      "name": "通讯录",
+      "font_class": "tongxunlu",
+      "unicode": "e6c2",
+      "unicode_decimal": 59074
+    },
+    {
+      "icon_id": "4333440",
+      "name": "发现",
+      "font_class": "faxian",
+      "unicode": "e609",
+      "unicode_decimal": 58889
+    },
+    {
+      "icon_id": "8288886",
+      "name": "微信",
+      "font_class": "weixin",
+      "unicode": "e856",
+      "unicode_decimal": 59478
+    }
+  ]
+}
