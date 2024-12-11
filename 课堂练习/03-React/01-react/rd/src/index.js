@@ -6,9 +6,9 @@ import App from './App';//导入项目的根组件app
 //将public目录中的index.html中的id为root的元素作为react的挂载区域
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  // <React.StrictMode>
+  <App />
+  // </React.StrictMode>
 );
 
 // // 创建一个div元素

@@ -55,8 +55,12 @@ app.get('/delete', async (req, resp) => {
     resp.json('ok');
 });
 
-app.get('/finish', async () => {
+app.get('/finish', async (req, resp) => {
     let sqlStr = `update todolist set status='已完成' where id = ?; `;
+    const { id } = req.query;
+    let results = await DB.excuteSql(sqlStr, [id]);
+    resp.json(results);
+
 });
 // app.get('/', (req, resp) => {
 //     console.log(1);

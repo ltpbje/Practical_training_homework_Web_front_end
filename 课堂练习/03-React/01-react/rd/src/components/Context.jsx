@@ -33,7 +33,9 @@ export default class Father extends Component{
     state= {
         str:'hahahha1fa'
     }
-  
+    componentWillMount() {
+        console.log(111);
+    }
     render() {
         return (
             <>
