@@ -1,8 +1,9 @@
 import './App.css';
 // import Father from './components/Father';
 // import Context from './components/Context';
-import Mount from './components/Mount';
-import UpdateFather from './components/UpdateFather';
+// import Mount from './components/Mount';
+// import UpdateFather from './components/UpdateFather';
+import Pais from './components/Pais';
 //这个App函数就时组件本体，这种写法就是所谓JSX语法
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
       {/* <Father></Father> */}
       {/* <Context></Context> */}
       {/* <Mount></Mount> */}
-      <UpdateFather></UpdateFather>
+      {/* <UpdateFather></UpdateFather> */}
+      <Pais></Pais>
     </div>
   );
 }

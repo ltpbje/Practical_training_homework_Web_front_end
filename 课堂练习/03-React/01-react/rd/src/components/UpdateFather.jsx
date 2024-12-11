@@ -1,6 +1,6 @@
-import { Component } from "react";
+import { Component ,PureComponent} from "react";
 
-class Son extends Component{
+class Son extends PureComponent{
     state = {
         str:'yoyo'
     }
@@ -9,14 +9,14 @@ class Son extends Component{
         console.log("0、接收到新的props", newProps);       
         return true;
     }
-    // state
-    UNSAFE_shouldComponentUpdate(newProps,newState) {
-        console.log('1、是否开始更新',newProps,newState);
-        return true
-    }
+    // // state
+    // UNSAFE_shouldComponentUpdate(newProps,newState) {
+    //     console.log('1、是否开始更新', newProps, newState);
+    //     return (newState.str !== this.state.str) || (newProps.cstr!== this.props.cstr);
+    // }
 
     UNSAFE_componentWillUpdate() {
-        console.log('2、准备开始跟新');
+        console.log('2、准备开始更新');
         
     }
     render() {
