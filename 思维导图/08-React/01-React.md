@@ -771,3 +771,230 @@ export default class Ref extends Component {
   > 获取到的DOM对象在user的current属性中
 
 - 还有第三中方式是通过ref标记赋值一个字符串来获取，但是这种方式官方已经很早就不推荐使用了，所以这里我们不去单独说它
+
+## 10、父子组件
+
+- React的类式组件时通过在一个js文件中写入class创建的，所以，我们可以在一个文件一个类，也可以一个文件多个类，也就时说，我们可以在一个文件里面面完成父子组件
+- 新建一个Father.jsx
+
+```jsx
+import { Component } from 'react';
+export default class Father extends Component {
+    //这里我们可以省略构造器，因为构造器主要时为了类的继承作用的，但是我们这里
+    的类式组件不存在继承关系;
+    state = {
+        fatherData: "zhangsan"
+    };
+    render() {
+        return (
+            <>
+                <Child num={this.state.fatherData}></Child>
+            </>
+        );
+    }
+}
+class Child extends Component {
+    constructor(state, props) {
+        super();
+    }
+    //在子组件中客户以通过定义静态属性的方式，定义props的默认值
+    static defaultProps = {
+        num: 50
+    };
+    render() {
+        //在子组件的类中默认声明了一个props的属性对象，用于存放父组件传递过来
+        的数据;
+        return (
+            <>
+                <h2>我是child组件</h2>
+                <h2>{this.props.num}</h2>
+            </>
+        );
+    }
+}
+```
+
+- > 代码分析：
+  >
+  > 其实类组件当中，在构造器里面会默认设置一个props并通过super继承，完成写出来如下
+  >
+  > ```jsx
+  > class Child extends Component {
+  >     constructor(props) {
+  >         super();
+  >     }
+  >     //......
+  > }
+  > ```
+  >
+  > 
+
+- 之前在vue中，我们可以设置需要接收的数据类型，在react也可以实现
+
+```jsx
+import { Component } from 'react';
+import defaultTypes from 'prop-types'; //导入设置期望类型的对象
+//.......
+class Child extends Component {
+    constructor(state, props) {
+        super();
+    }
+    //在子组件中可以通过定义静态属性propTyps来设置默认接收的数据类型
+    static propTypes = {
+        num: defaultTypes.number
+    };
+    //在子组件中可以通过定义静态属性的方式，定义props的默认值
+    static defaultProps = {
+        num: 50
+    };
+    render() {
+        //在子组件的类中默认声明了一个props的属性对象，用于存放父组件传递过来的数据;
+        return (
+            <>
+                <h2>我是child组件</h2>
+                <h2>{this.props.num}</h2>
+            </>
+        );
+    }
+}
+```
+
+## 11、子组件修改父组件数据
+
+```jsx
+import { Component } from 'react';
+import defaultTypes from 'prop-types'; //导入设置期望类型的对象
+export default class Father extends Component {
+    //这里我们可以省略构造器，因为构造器主要时为了类的继承作用的，但是我们这里
+    的类式组件不存在继承关系;
+    state = {
+        fatherData: "zhangsan"
+    };
+    //在父组件中创建一个修改自己内部数据的方法
+    changeFatherData() {
+        this.setState({
+            fatherData: "lisi"
+        });
+    }
+    render() {
+        return (
+            <>
+                <h2>{this.state.fatherData}</h2>
+                <Child num={this.state.fatherData} changeData=
+                    {this.changeFatherData.bind(this)}></Child>
+            </>
+        );
+    }
+}
+class Child extends Component {
+    constructor(props) {
+        super();
+    }
+    //在子组件中可以通过定义静态属性propTyps来设置默认接收的数据类型
+    static propTypes = {
+        num: defaultTypes.number
+    };
+    //在子组件中可以通过定义静态属性的方式，定义props的默认值
+    static defaultProps = {
+        num: 50
+    };
+    //在子组件中创建一个方法，在该方法内部调用父组件传递过来的修改父组件数据的
+    方法;
+    changeFatherData() {
+        this.props.changeData();
+    }
+    render() {
+        //在子组件的类中默认声明了一个props的属性对象，用于存放父组件传递过来的数据;
+        return (
+            <>
+                <h2>我是child组件</h2>
+                <h2>{this.props.num}</h2>
+                <button onClick=
+                    {this.changeFatherData.bind(this)}>修改父组件</button>
+            </>
+        );
+    }
+}
+```
+
+- > 代码分析：
+  >
+  > 上述的制作方式类似于vue的自定义事件，只不过执行逻辑上react更加直接一
+  >
+  > 些，在父组件中声明修改自己数据的方法，然后将该方法传递给子组件，然
+  >
+  > 后，子组件再声明一个方法。从props中调出父组件传递过来的修改父组件数
+  >
+  > 据的方法，最后子组件中执行该方法，从而执行父组件传递过来的修改父组件
+  >
+  > 数据的方法
+
+## 12、context进行跨级传递数据
+
+- React组件之间的通信是基于props的数据传递，但是这种传递方式只能一层一层从上至下传递，如果组件的层级嵌套太多了就会超级麻烦
+- 在react组件中配置context解决跨级传递问题：
+
+```jsx
+import { Component, createContext } from "react";
+class GrandSon extends Component {
+    render() {
+        return (
+            <>
+                <FatherContext.Consumer>
+                    {
+                        fstr => <h2>{fstr}</h2>
+                    }
+                </FatherContext.Consumer>
+            </>
+        );
+    }
+}
+class Son extends Component {
+    render() {
+        return (
+            <>
+                <GrandSon></GrandSon>
+            </>
+        );
+    }
+}
+export default class Father extends Component {
+    state = {
+        str: "hahahahah"
+    };
+    render() {
+        return (
+            <>
+                <FatherContext.Provider value={this.state.str}>
+                    <Son></Son>
+                </FatherContext.Provider>
+            </>
+        );
+    }
+}
+const FatherContext = createContext("light");
+```
+
+- > 代码分析：
+  >
+  > 现在我们通过createContext创建一个上下文环境，并且在调用时传入一个实参值作为上下文环境的默认值
+  >
+  > 当创建成功之后我们可以在上下文环境对象中调用 Provider 向上下文环境内注
+  >
+  > 入数据，然后通过 Consumer 调出上下文环境中注入的数据，从而完成一个跨
+  >
+  > 级的数据传递
+  >
+  > **扩展：**
+  >
+  > 在react19之前的版本中，还有一套context的API可以实现上下文环境的跨级传递数据，但是在react19中已经被移动不能使用
+  >
+  > 我们来认识之前的老API
+  >
+  > 1、static contextTypes 设置在需要接收数据的子组件上
+  >
+  > 2、static ChildContextTypes 设置在需要向下传递数据的父组件上
+  >
+  > 3、getChildContext() 方法设置在需要向下传递数据的父组件上，在方法体内return需要传递的数据到上下文环境中
+  >
+  > 基于上面三项操作，只要时处于当前父组件上下文环境中的子组件都可以调用到环境内的数据

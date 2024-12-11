@@ -73,8 +73,22 @@ function editEvent(id) {
   editData.value = arr[0];
   showEdit.value = true;
 }
-function finishEvent() {
+async function finishEvent() {
   const id = editData.value.id;
+  showConfirmDialog({
+    message:
+      '确定完成吗?',
+  })
+    .then(async () => {
+      // on confirm
+      await axios.get(`http://localhost:8080/finish?id=${id}`);
+      getDataList();
+    })
+    .catch(() => {
+      // on cancel
+    });
+  // console.log(id);
+
 
 }
 

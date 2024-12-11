@@ -56,7 +56,7 @@ app.get('/delete', async (req, resp) => {
 });
 
 app.get('/finish', async () => {
-    let sqlStr = `update todolist set Sname='杨红梅' where Sid = 6; `;
+    let sqlStr = `update todolist set status='已完成' where id = ?; `;
 });
 // app.get('/', (req, resp) => {
 //     console.log(1);
