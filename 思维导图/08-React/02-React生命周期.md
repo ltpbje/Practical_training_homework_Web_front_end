@@ -663,3 +663,340 @@ class Son extends Component {
   > ```
   >
   > 
+
+### 4.5、getSnapshotBeforeUpdate函数
+
+- 这是一个新增的更新阶段的生命周期函数，它在render之后触发，其接收两个参数，一个返回值
+- 参数1：更新之前的props
+- 参数2：更新之前的state
+- 返回值：改返回值会作为componentDidUpdate生命周期函数的第三个参数传入，一般我们会返回之前的一些页面状态，从而进行页面状态的保持
+- 举例：
+- 现在有一个移动端页面，我们现在希望当组件更新之后，调整当前滚动的位置
+
+```jsx
+import { Component } from "react";
+import './scroll.css';
+export default class Scroll extends Component {
+    state = {
+        num: 1
+    };
+    //当组件加载时设置一个定时器，4秒轴修改状态从而触发组件更新
+    componentDidMount() {
+        this.clearTime = setTimeout(() => {
+            this.setState({
+                num: 2
+            });
+        }, 4000);
+        console.log(this.wrap);
+    }
+    //一般情况下，我们会把组件内设置的定时器，在组件卸载的时候清除掉
+    componentWillUnmount() {
+        clearTimeout(this.clearTime);
+    }
+    render() {
+        return (
+            <div className="wrap" ref={ref => this.wrap = ref}>
+                <div className="box1">111</div>
+                <div className="box2">{this.state.num}</div>
+            </div>
+        );
+    }
+    //当开始更新时，将更新之前的wrap元素的scrollTop返回出去
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        return this.wrap.scrollTop;
+    }
+    //在更新之后，通过componentDidUpdate的第三个参数调出wrap元素更新之前的scrollTop值减去300，再赋值给更新之后的wrap;
+    componentDidUpdate(prevProps, prevState, prevScrollTop) {
+        this.wrap.scrollTop = prevScrollTop - 300;
+    }
+}
+```
+
+- scroll.css
+
+```css
+*{
+    padding:0;
+    margin:0;
+}
+.wrap{
+    width:100vw;
+    height:100vh;
+    overflow: auto;
+}
+.box1{
+    height:1000px;
+    background:#f00;
+}
+.box2{
+    height:1000px;
+    background:#0f0;
+}
+```
+
+- > 代码分析：
+  >
+  > 上面的例子中，我们Scroll组件应该会再加载好的4秒之后自动修改内部状态，
+  >
+  > 从而触发更新生命周期，然后当前滚动的位置会向上自动滚动300px的位置，
+  >
+  > 这里主要依靠的就时 getSnapshotBeforeUpdate 将更新之前的scrollTop的值
+  >
+  > 返回出去，然后更新之后的生命周期函数 componentDidUpdate 可以接收到
+  >
+  > 该值作为第三个参数的实参，并将更新之前的scrollTop的值再赋值给更新之后
+  >
+  > 的scrollTop
+  >
+  > 注意：
+  >
+  > 这里减去300主要是为了通过位置移动观察生命周期函数的效果，如果单纯只
+  >
+  > 是为了保持滚动位置我们是不需要去减的
+
+## 5、特殊生命周期 -- React异常捕获
+
+- 从React16开始引入了一个新的概念叫做**错误边界**
+- 错误边界可以理解成是一个React组件，其应用场景与概念比较类似于我们之前vue中讲过的异步组件，只不过它并不是一个Promise对象，这种组件可以捕获并答应发生在子组件树任意位置二点原生JavaScript错误，并且渲染出来错误情况下的ui界面，而不是渲染错误的子组件树
+- 目前只有类组件可以作为错误边界组件使用，要实现错误边界组件需要使用以下两个函数
+  - getDerivedStateFromError(error)
+  - componentDidCatch(error,info)
+
+- 以上两个函数任意一个或两个都用都可以构成一个错误边界组件，这两个函数功能类似
+
+### 5.1、getDerivedStateFromError(error)
+
+- 该方法是一个静态方法，接收一个参数，返回一个对象
+
+- 参数：错误对象
+
+- 返回值：返回一个匿名对象，这个对象直接指向当前组件的state
+- 举例：
+
+```jsx
+import { Component } from "react";
+export default class ErrorComp extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: false, //error用来表示当前错误边界组件是否捕获到错误
+        };
+    }
+    static getDerivedStateFromError(error) {
+        console.log(error);
+        return {
+            error: true
+        };
+    }
+    render() {
+        if (this.state.error) {
+            return (
+                <>
+                    <p>我是错误</p>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <Child></Child>
+                </>
+            );
+        }
+    }
+}
+class Child extends Component {
+    render() {
+        throw new Error("我是一个错误"); //在子组件中人为抛出一个错误触发getDerivedStateFromError;
+        return (
+            <div>渲染child组件</div>
+        );
+    }
+}
+```
+
+- > 代码分析：
+  >
+  > 上面的代码中，我们创建一个ErrorComp组件作为错误边界组件，在内部调用
+  >
+  > 在子组件中人为抛出一个错误触发getDerivedStateFromError，同时创建和一
+  >
+  > 个子组件Child并在其渲染的时候手动抛出一个错误，当组件渲染时，
+  >
+  > ErrorComp接收到子组件抛出的错误触发getDerivedStateFromError通过该方
+  >
+  > 法的返回值修改了error状态的值为true，在ErrorComp组件在render的时候，
+  >
+  > 根据error状态的值做一个判断来决定渲染内容
+
+### 5.2、componentDidCatch(error,info)
+
+- 该方法的作用其实和上面的方法基本一致，就是制作逻辑不太一样，接收两个参数，没有返回值
+- 参数1：错误信息对象
+- 参数2：自动注入一个对象，对象内部有一个componentStack属性记录当前错误的路径
+- 举例：
+
+```jsx
+import { Component } from "react";
+export default class ErrorComp extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: false, //error用来表示当前错误边界组件是否捕获到错误
+            text: ""
+        };
+    }
+    componentDidCatch(error, info) {
+        console.log(error, info);
+        this.setState({ //通过setState修改内部状态（于之前的return其实
+            是一样的效果）
+            error: error,
+            text: info.componentStack //把错误信息路径赋值给text
+        });
+    }
+    render() {
+        if (this.state.error) {
+            return (
+                <>
+                    <p>我是错误：{this.state.text}</p>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <Child></Child>
+                </>
+            );
+        }
+    }
+}
+class Child extends Component {
+    render() {
+        throw new Error("我是一个错误"); //在子组件中人为抛出一个错误触发
+        return (
+            <div>渲染child组件</div>
+        );
+    }
+}
+```
+
+- - > 代码分析：
+    >
+    > 上面的例子其实执行的效果与getDerivedStateFromError方法的执行效果大差
+    >
+    > 不多，只不过客户以多接收一个参数记录错误位置，一般我们可以把这个错误
+    >
+    > 作为错误日志上传给服务器，同时因为没有return的方式修改错误状态error的
+    >
+    > 值，所以我们直接使用setState来修改
+
+- 以上两个方法如果一起用，我们可以用getDerivedStateFromError来修改错误状态，用componentDidCatch来调用一个上传接口上传错误给服务器做错误日志
+
+- > 注意事项：
+  >
+  > - 错误边界组件只能捕获自己组件的子组件中的错误，所以我们首先会专门制作多个需要在不同错误状态下渲染的错误信息组件
+  > - 在开发环境下就算渲染出来了备用组件，依然还是会弹出React自己的报错页面，生产环境下不会，所以说错误边界组件是为生产环境下准备的
+
+### 5.3、无法捕获的异常情况
+
+- 有4种情况无法被错误边界捕获
+  - 事件处理
+  - 异步代码
+  - 服务端渲染
+  - 自身抛出的错误
+- 对于错误边界无法捕获的异常，我们可以使用 try...catch... 语句
+- 举例：
+
+```jsx
+import { Component } from "react";
+export default class ErrorCatch extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null
+        };
+    }
+    bandleClick() {
+        try {
+            throw new Error("我是一个错误"); //在try种手动抛出一个错误
+            让catch捕获;
+        } catch (error) {
+            this.setState({ error });
+        }
+    }
+    render() {
+        return (
+            <div>
+                {
+                    this.state.error ? <p>{'我是错误的'}</p> : <p>
+                        {'我是正确的'}</p>
+                }
+                <button onClick={this.bandleClick.bind(this)}>按钮
+                </button>
+            </div>
+        );
+    }
+}
+```
+
+- > 代码分析：
+  >
+  > 我们通过点击事件触发一个try...catch语句的执行，并且在try中年故意抛出一个错误，从而 修改error的状态值，来控制当前组件的渲染结果
+
+## 6、React生命周期整理
+
+- React的生命周期会比较复杂一些，我们现在来做一个总结性质的生命周期函数整理
+
+### 6.1、老生命周期函数
+
+- **挂载阶段：**
+  - 1、 constuctor 初始化着呢个组件的state已经调用props，该方法只会执行一次
+  - 2、 componentWillMount 挂载之前（已经被弃用，但是目前的react19中依然可以使用，但是会报警告）
+  - 3、 render 只返回需要渲染的页面结构，最好不要包含其他的业务代码
+  - 4、 componentDidMount 挂载之后，可以获取DOM节点操作，服务器请求，启动事件监听，调用setState等，都可以在这个函数中执行
+
+- **更新阶段情况一：state更新时**
+  - 1、 shouldComponentUpdate(nextProps,nextState) 有两个参数分别表示更新之后的props和state，返回一个布尔值，true表示会触发后续更新，false表示不会触发后续更新，默认返回true，我们通过利用这个生命周期来优化React的性能
+  - 2、 componentWillUpdate 准备开始更新（已弃用，但是目前的react19中依然可以使用，但是会报警告）
+  - 3、 render 重新渲染页面结构（与挂载阶段共享的一个生命周期函数）
+  - 4、 componentDidUpdate 在组件完成更新之后立即调用，在初始化的时候不会被调用
+- **更新阶段情况二：props更新时**
+- 1、 componentWillReceiveProps(nextProps) 外部传入的数据发生变化的时候触发（父组件修改了自己内部的数据，而这个被修改的数据有传递给子组件）
+- 2、 shouldComponentUpdate(nextProps,nextState) 有两个参数分别表示更新之后的props和state，返回一个布尔值，true表示会触发后续更新，false表示不会触发后续更新，默认返回true，我们通过利用这个生命周期来优化React的性能
+- 3、 componentWillUpdate 准备开始更新（已弃用，但是目前的react19中依然可以使用，但是会报警告）
+- 4、 render 重新渲染页面结构（与挂载阶段共享的一个生命周期函数）
+- 5、 componentDidUpdate 在组件完成更新之后立即调用，在初始化的时候不会被调用
+- **卸载阶段：**
+
+- 1、 componentWillUnmount 当组件卸载的时候触发，我们一般在这个函数里面去清除一些定时器，取消网络请求，清除无效的DOM元素，清理缓存等等一些垃圾清理工作
+
+- > **以上已经被弃用的生命周期函数**
+  >
+  > componentWillMount
+  >
+  > componentWillReceiveProps(nextProps)
+  >
+  > componentWillUpdate
+  >
+  > 但是在当前react19的版本中依然还是可以使用，但是会报警告，要求加上前缀UNSAFE_
+
+### 6.2、新生命周期函数
+
+- **挂载阶段：**
+
+  - 1、 constuctor 初始化着呢个组件的state已经调用props，该方法只会执行一次
+  - 2、 getDerivedStateFromProps(nextProps,prevState) 这个是一个静态方法，所以在类组件中声明的时候记得带上static修饰符，接收的两个参数分别是新传入的props和修改之前的state，它返回一个对象来更新组件的内部状态，如果返回null则不更新任何内容
+  - 3、 render 只返回需要渲染的页面结构，最好不要包含其他的业务代码
+  - 4、 componentDidMount 挂载之后，可以获取DOM节点操作，服务器请求，启动事件监听，调用setState等，都可以在这个函数中执行
+
+- **更新阶段：**
+
+  - 1、 componentWillReceiveProps(nextProps) 外部传入的数据发生变化的时候触发（父组件修改了自己内部的数据，而这个被修改的数据有传递给子组件）
+  - 2、 shouldComponentUpdate(nextProps,nextState) 有两个参数分别表示更新之后的props和state，返回一个布尔值，true表示会触发后续更新，false表示不会触发后续更新，默认返回true，我们通过利用这个生命周期来优化React的性能
+  - 3、 getDerivedStateFromProps(nextProps,prevState) 这个是一个静态方法，所以在类组件中声明的时候记得带上static修饰符，接收的两个参数分别是新传入的props和修改之前的state，它返回一个对象来更新组件的内部状态，如果返回null则不更新任何内容
+  - 4、 render 重新渲染页面结构（与挂载阶段共享的一个生命周期函数）
+  - 5、 getSnapshotBeforeUpdate(prevProps,prevState) 有两个参数分别接收更新之前的props和state，返回一个值，这个值会作为componentDidUpdate的第三个参数使用，如果你不向返回值，可以返回null，该生命周期函数主要配合componentDidUpdate搭配使用
+
+  - 6、 componentDidUpdate(prevProps,prevState,snapShot) 在组件完成更新之后立即调用，在初始化的时候不会被调用，该方法被调用后会接收三个参数，分别表示跟新之前的props，更新之前的state，getSnapshotBeforeUpdate的返回值，主要可以用于做状态保持的使用
+
+- **卸载阶段：**
+- 1、 componentWillUnmount 当组件卸载的时候触发，我们一般在这个函数里面去清除一些定时器，取消网络请求，清除无效的DOM元素，清理缓存等等一些垃圾清理工作

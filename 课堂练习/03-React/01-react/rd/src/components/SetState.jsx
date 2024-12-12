@@ -10,7 +10,7 @@ export default class SetState extends Component{
         num:1
     }
     changeNum() {
-        this.state.num += 1;
+        // this.state.num += 1;
         this.setState((state,props) => {
             console.log(state.num);
             return {

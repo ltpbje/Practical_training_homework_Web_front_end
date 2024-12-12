@@ -4,6 +4,8 @@
   list-style: none;
   justify-content: space-around;
   font-size: .2rem;
+  height: .4rem;
+  align-items: center;
   text-align: center;
 }
 
@@ -14,4 +16,16 @@
 
 .active{
   color: blue;
+}
+
+.show{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .2rem;
+  height: 2rem;
+  background-color: skyblue;
+}
+.hidden{
+   display: none;
 }

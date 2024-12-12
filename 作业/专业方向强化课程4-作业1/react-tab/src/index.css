@@ -18,9 +18,9 @@ body {
       font-size: calc(768px / 375 * 100);
   }
 
-  #app {
+  #root {
       width: 768px;
-      /* margin: 0 auto; */
+      margin: 0 auto;
   }
 }
 ul{

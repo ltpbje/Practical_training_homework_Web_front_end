@@ -65,7 +65,9 @@ class App extends React.Component {
         })}
         </ul>{this.state.pageList.map((item) => {
           return (
-            <div key={item.id} className={item.id == this.state.acitveIndex ? 'show' : 'hidden'}></div>
+            <div key={item.id} className={item.id == this.state.acitveIndex ? 'show' : 'hidden'}>
+              { item.content}
+            </div>
           )
         })
         }         
