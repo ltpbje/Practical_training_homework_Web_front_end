@@ -5,7 +5,7 @@ export default class Home extends Component{
     state = {
         num:1
     }
-    
+   
     render() {
         return (
             <>
@@ -14,7 +14,7 @@ export default class Home extends Component{
                 </h2>
                 <Link to='/home/shops'> shop</Link>
                 <Link to='/home/order'> order</Link>
-                <div>{this.props.children }</div>
+                <div>{this.props.children}</div>
             </>
         )
     }
