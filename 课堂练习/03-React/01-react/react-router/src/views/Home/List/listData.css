@@ -1,0 +1,14 @@
+.box{
+    width: 600px;
+    height: 100px;
+    margin: 0 auto;
+}
+
+.top{
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.m-l{
+ margin-left: 10px;
+}

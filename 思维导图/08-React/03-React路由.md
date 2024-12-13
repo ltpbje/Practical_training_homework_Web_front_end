@@ -349,3 +349,137 @@ export default Routers;
   > ```
   >
   > 
+
+# redux与antd
+
+- redux是一个可以用在react上的全局状态管理
+- antd是蚂蚁金服开发一套ui框架，主打react
+
+## 1、使用antd快速搭建页面
+
+- 安装包
+
+- ```cmd
+  npm install antd --save
+  ```
+
+- 简单测试下是否安装成功
+
+- 新建listData.jsx
+
+```jsx
+import { Component } from "react";
+import { Button } from 'antd';
+export default class ListData extends Component {
+    render() {
+        return (
+            <div>
+                <Button type="primary">Primary Button</Button>
+            </div>
+        );
+    }
+}
+```
+
+- 我们把list页面作为home下的二级页面在路由上进行设置
+
+```jsx
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+//.......
+import List from "../views/Home/List/List";
+const Routers = () => {
+    return (
+        //表示该路由使用history模式
+        <BrowserRouter>
+            <Switch>
+                <Route path="/" component={() => (<App>
+                    <Switch>
+                        <Route path="/home" component={() =>
+                        (<Home>
+                            <Switch>
+                                <Route path="/home/shops"
+                                    component={Shops}></Route>
+                                <Route path="/home/order"
+                                    component={Order}></Route>
+                                <Route path="/home/list"
+                                    component={List}></Route>
+                                <Route component={Page404}>
+                                </Route>
+                            </Switch>
+                        </Home>)}></Route>
+                        <Route path="/about" component={About}>
+                        </Route>
+                    </Switch>
+                </App>)}></Route>
+            </Switch>
+        </BrowserRouter>
+    );
+};
+export default Routers;
+```
+
+- 然后浏览器手动输入地/home/list地址，没有问题的话我们是可以看到一个蓝色按钮的
+
+## 2、list案例
+
+- 现在我们制作一个简单的list案例，设置一个input和button，将input中输入的内容通过button点击执行添加到组件的内部状态中，然后通过antd的List组件进行列表渲染
+
+- listData.jsx
+
+- ```jsx
+  import { Component } from "react";
+  import { Button, Input, List } from 'antd';
+  import './listData.css';
+  export default class ListData extends Component {
+      constructor(props) {
+          super(props);
+          this.state = {
+              arr: ["zhangsan", "lisi", "wangwu"]
+          };
+      }
+      render() {
+          return (
+              <div className="box">
+                  <div className="top">
+                      <Input placeholder="请输入内容"></Input>
+                      <Button className="m-l" type="primary">添加内
+                          容</Button>
+                  </div>
+                  <div className="bottom">
+                      <List
+                          itemLayout="vertical"
+                          dataSource={this.state.arr}
+                          renderItem={item => (
+                              <List.Item>
+                                  {item}
+                              </List.Item>
+                          )}
+                      />
+                  </div>
+              </div>
+          );
+      }
+  }
+  ```
+
+- 新建listData.css
+
+- ```css
+  .box{
+      width:600px;
+      margin:100px auto;
+  }
+  .top{
+      display: flex;
+      margin-bottom:20px;
+  }
+  .m-l{
+      margin-left:10px;
+  }
+  ```
+
+  
+
+- > 代码分析：
+  >
+  > 上面这套代码我们主要关注两个点：

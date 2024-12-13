@@ -7,6 +7,7 @@ import Shops from '../views/Home/shops/Shops';
 import Order from '../views/Home/order/Order';
 import Page404 from "../views/page404/Page404";
 import App from "../App";
+import ListData from "../views/Home/List/List";
 const Routers = () => {
     return (
         <BrowserRouter>
@@ -19,6 +20,8 @@ const Routers = () => {
                                 <Switch>
                                     <Route path='/home/shops' component={Shops}></Route>
                                     <Route path='/home/order' component={Order}></Route>
+                                    <Route path='/home/list' component={ListData}></Route>
+
                                     <Route component={Page404}></Route>
                                 </Switch>
                             </Home>

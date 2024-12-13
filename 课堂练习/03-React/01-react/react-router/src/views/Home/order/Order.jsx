@@ -4,6 +4,8 @@ import { Component } from "react";
 export default class Order extends Component{
     componentDidMount() {
         // console.log(this.props);
+        // console.log(this.props.match.params);
+        console.log(this.props);
         
     }
     state = {

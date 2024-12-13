@@ -7,7 +7,13 @@ export default class Shops extends Component{
     }
      goOrder() {
         //   console.log(this.props);
-         this.props.history.push('/home/order');
+        //  this.props.history.push('/home/order/123');
+         this.props.history.push({
+             pathname: '/home/order',
+             state:{
+                 num:15
+             }
+        })
     }
     render() {
         return (
