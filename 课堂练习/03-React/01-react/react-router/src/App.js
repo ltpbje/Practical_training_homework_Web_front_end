@@ -1,6 +1,7 @@
 import './App.css';
-import Routers from './router';
+// import Routers from './router';
 import { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
 
 //这个App函数就时组件本体，这种写法就是所谓JSX语法
@@ -9,8 +10,10 @@ class App extends Component {
   //   super(props);
   // }
   UNSAFE_componentWillMount() {
-    if (window.location.pathname === '/') {
-      window.location.href = '/home/shops';
+    console.log(this.props);
+    if (this.props.location.pathname === '/') {
+
+      this.props.history.push('/home/shops');
     }
 
   }
@@ -18,11 +21,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Routers></Routers>
+        <div>{this.props.children}</div>
       </div>
 
     );
   }
 }
 
-export default App;
+export default withRouter(App);
