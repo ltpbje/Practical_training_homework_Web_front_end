@@ -1093,3 +1093,194 @@ export default class Page1 extends Component {
 }
 ```
 
+- 在reducer.js中修改switch判断为“toAdd” 时，将全局状态中的num执行递增运算
+
+- ```jsx
+  //......
+  export default (state = defaultState, action) => {
+      let newState = JSON.parse(JSON.stringify(state));
+      switch (action.type) {
+          case "toAdd":
+              newState.num++;
+              break;
+          //......
+      }
+      return newState;
+  };//......
+  
+  ```
+
+- 现在我们可以在页面中点击按钮执行toAdd方法，然后通过redux开发工具查看到实时的全局状态num的变化，只不过现在还缺少一步就是Page组件需要实时获取修改之后的num值，做成双向绑定的状态，然页面可以实时渲染修改后的num
+
+- **通过subscribe订阅实时变化**
+
+- ```jsx
+  import React, { Component } from 'react';
+  import store from '../store';
+  export default class Page1 extends Component {
+      constructor(props) {
+          super(props);
+          this.state = store.getState();
+          //通过订阅监听store中的num变化，如果发生变化就执行viewChange方法
+          store.subscribe(this.viewChange.bind(this));
+      }
+      //获取store中的全局状态，并双向绑定到Page组件的state中
+      viewChange() {
+          this.setState(store.getState());
+      }
+      //......
+  }
+  ```
+
+### 通过react-redux针对性优化redux在react中的写法
+
+
+
+
+
+- react-redux其实是对redux的二次封装，因为redux的作者发现redux在react中写起来非常难受
+
+- 安装包
+
+- ```cmd
+  npm i react-redux
+  ```
+
+- react-redux核心就是一个组件和一个方法
+- 1. Provider提供器组件
+  2. connect连接器方法
+
+### Provider组件
+
+- 先在index.js入口文件中导入Provider作为顶层组件使用
+
+- ```jsx
+  //......
+  import App from './App';
+  import { Provider } from 'react-redux';
+  import store from './store';
+  const root = ReactDOM.createRoot(document.getElementById('root'));
+  root.render(
+      <Provider store={store}>
+          <App />
+      </Provider>
+  );
+  ```
+
+- > 代码分析：
+  >
+  > Provider作为一个提供器组件，通过其store属性将全局数据提供给其所有的子组件，所以我们需要把Provider组件写在最外层
+
+- 在需要使用全局状态的组件中导入connect方法，针对这个方法我们单独先介绍一下：
+
+### connect方法
+
+- connect方法在调用的时候需要连续调用，因为该方法的返回值也是一个方法，我们在执行了connect方法之后还要执行其返回的方法，并且每次调用时需要传入特定的参数，如下
+
+- ```js
+  export default connect(state的映射函数,dispatch的映射函数)(组件名)
+  ```
+
+  
+
+- 第一次执行时传入两个回调函数：
+
+- 参数1：这里的映射的state指的reducer中的defaultState
+
+- 参数2：其实可以理解成就用于派发修改行为的dispatch方法映射了一份作为connect的参数使用
+
+- 第二次执行时传入一个组件名作为参数：
+
+- 当第一次调用执行完之后会返回一个带有全局状态和修改行为的函数，就好比我们之前在组件的 constructor 中写的 this.state = store.getState() 和用于派发修改行为的方法（比如上面累加例子中的toAdd方法），单独提取出来做了一个打包成了connect方法执行后的返回值，连续的第二次执行我们就可以理解成把打包的内容注入到组件中，这样该组件就能使用全局state的数据
+
+- 这里，我们在Page组件中导入connect方法
+
+- 在第一次执行的时候先传入一个state的映射函数，让Page组件先能调用到全局状态的数据
+
+- ```jsx
+  import React, { Component } from 'react';
+  import store from '../store';
+  import { connect } from 'react-redux';
+  class Page1 extends Component {
+      //把原来的constructor和viewChange直接可以删除掉了
+      toAdd() {
+          let action = {
+              type: "toAdd"
+          };
+          store.dispatch(action);
+      }
+      render() {
+          return (
+              <div>
+                   {/* connect注入的全局数据要从props中调用 */}
+                  <p>{this.props.num}</p>
+                  <button onClick={this.toAdd.bind(this)}>按钮</button>
+              </div>
+          );
+      }
+  }
+  //创建一个映射全局状态的函数，这里state形参会映射到reducer.js中的defaultState;
+  const mapStateToProps = state => {
+      //这里return的匿名对象我们可以看成当前组件内的数据
+      return {
+          //这里需要使用全局state中哪个数据就return哪个
+          num: state.num
+      };
+  };
+  //
+  export default connect(mapStateToProps)(Page1);
+  ```
+
+  
+
+- > #### 注意：
+  >
+  > 把mapStateToProps作为connect实参传入，那么mapStateToProps中return的对象就会成为第二次执行时，作为参数传入的组件内部的state使用，但是数据实际上要从props里面调用
+  >
+  > #### 全局数据要从组件的props里面调用的原因：
+  >
+  > 因为connect方法注入的全局数据是通过Provider组件提供的，而Provider组件现在是作为顶层组件使用的，所以我们可以理解成这里其实就是一个父组件向子组件传值的过程，那么传入到子组件中的数据自然要从props中调用
+
+- **再传入dispatch的映射函数**
+
+- ```jsx
+  //......
+  //这里的形参dispatch会被映射入store中的dispatch方法作为实参
+  const mapDispatchToProps = dispatch => {
+      return {
+          toAdd() {
+              let action = {
+                  type: "toAdd"
+              };
+              dispatch(action);
+          }
+      };
+  };
+  export default connect(mapStateToProps, mapDispatchToProps)(Page1);
+  ```
+
+  
+
+- 其实就是把所有派发修改行为的方法封装到mapDispatchToProps函数的return对象中即可，然后把mapDispatchToProps传入到connect的第二个参数中，这样所有的修改全局state的方法都会挂到props对象上面，所以现在在调用toAdd方法的时候需要从props中调用
+
+- ```jsx
+  render() {
+      return (
+          <div>
+              <p>{this.props.num}</p>
+              <!-- toAdd方法要从props中调用 -->
+              <button onClick={this.props.toAdd.bind(this)}>按钮
+              </button>
+          </div>
+      );
+  }
+  ```
+
+## 补充内容
+
+- 当完成了上述操作之后，我们其实就可以不需要在组件内导入store了，因为这个store已经通过Provider组件提供给了通过connect方法返回并导出的组件中了包括为什么mapStateToProps的state形参可以获取到defaultState作为实参，
+- mapDispatchToProps的dispatch形参可以获取store的dispatch方法作为实参，其实都是Provider组件中将全局状态实例store作为该组件的store属性值传入并提供出来
+
+- > 备注：
+  >
+  > 其实react-redux只是对我们组件内操作全局state的写法，对原本的redux中的reducer和index文件并没有影响
