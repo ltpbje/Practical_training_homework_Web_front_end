@@ -3,7 +3,6 @@ import './App.css';
 import { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
-
 //这个App函数就时组件本体，这种写法就是所谓JSX语法
 class App extends Component {
   // constructor(props) {
