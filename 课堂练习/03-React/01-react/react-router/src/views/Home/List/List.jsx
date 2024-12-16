@@ -2,6 +2,8 @@ import { Component } from "react";
 import {  Input, List } from "antd";
 import store from "../../../store";
 import './listData.css'
+import { ARR, DEL, TEXT_VAL } from '../../../store/actionType'
+import actionCreators from "../../../store/actionCreators";
 export default class ListData extends Component{
 
     constructor(props) {
@@ -19,12 +21,12 @@ export default class ListData extends Component{
     //制作获取Input的value值的方法，让其成为受控组件
     getInputVal(e) { 
         //使用dispatch方法必须要传入一个action对象，所以我们创建一个action对象
-        let action = {
-            type: 'textVal',
-            value : e.target.value
-        }
-        store.dispatch(action)
-
+        // let action = {
+        //     type: TEXT_VAL,
+        //     value : e.target.value
+        // }
+        // store.dispatch(action)
+        actionCreators(TEXT_VAL,e.target.value)
         // this.setState({
         //     textVal: e.target.value
         // })
@@ -38,14 +40,29 @@ export default class ListData extends Component{
     //将每次Input输入的内容添加到arr数组的前面，从而实时渲染添加了新值的列表
     addItem() {
         // this.state.arr.unshift(this.state.textVal)
-        let action = {
-            type:'arr'
-        }
-        store.dispatch(action)
+        // let action = {
+        //     type:ARR
+        // }
+        // store.dispatch(action)
+        actionCreators(ARR);
         // this.setState({
         //     arr: this.state.arr,
         //     textVal:''//每次新值之后清除之前输入的内容
         // })
+    }
+
+
+    delItem(index) {
+        // let action = {
+        //     type: DEL,
+        //     value: index
+        // };
+
+        // store.dispatch(action);
+
+        actionCreators(DEL,index)
+
+
     }
     render() {
         return (
@@ -56,12 +73,13 @@ export default class ListData extends Component{
                 </div>            
                 <div className="bottom">
                     <List
-                        itemLayout="vertical"
+                  
                         bordered
                         dataSource={this.state.arr}
-                        renderItem={(item) => (
-                            <List.Item>
-                                { item}
+                        renderItem={(item,index) => (
+                            <List.Item className="item-flex">
+                                <span>{item}</span>
+                            <button className="del-btn" onClick={this.delItem.bind(this,index)}>删除</button>    
                             </List.Item>
                         )}
                         />

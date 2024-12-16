@@ -12,3 +12,18 @@
 .m-l{
  margin-left: 10px;
 }
+
+.del-btn{
+    width: 80px;
+    height: 36px;
+    background-color: red;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+}
+
+/* .bottom .item-flex{ */
+ .item-flex{
+    display: flex;
+    justify-content: space-between;
+}
