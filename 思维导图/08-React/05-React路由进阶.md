@@ -314,3 +314,300 @@ export default routers;
   > - key：一个随机字符串
   >
   > 注意：useLocation不要再组件的方法内调用，会报错
+
+## 7、react路由守卫
+
+- 在vue中我们通过路由管理对象调出一个beforeEach方法，通过该方法的参数调出跳转的路由单体中我们事先设置好的一些路由相关的元信息，通过这些元信息来进行判断决定是否可以执行next进行跳转，而react中这个过程我们全程手动编辑
+- 现在我们需要自己手动来渲染路由，最好就不好使用useRoutes，通过map方法便利路由表，在遍历的过程中根据路由表中设置的一些类似vue中meta对象中设置的属性来决定生成的路由单体组件如何实现跳转
+- 举例：
+- 现在我们来模拟一个登录，根据登录与否来决定是否可以跳转到目标页面，如果没登录直接重定向到登录页面
+- 现在在路由表中添加一个Login页面
+
+```jsx
+import Home from "../views/Home";
+import My from "../views/My";
+import Comp404 from "../views/Comp404";
+import Order from "../views/Order";
+import Search from "../views/Search";
+import Shops from "../views/Shops";
+import Login from "../views/Login";
+import { Navigate } from "react-router-dom";
+const routers = [
+    {
+        path: "/",
+        auth: false,
+        element: <Navigate to="/home/shops" /> //重定向
+    },
+    {
+        path: "/home",
+        auth: false,
+        element: <Home />,
+        children: [
+            {
+                path: "/home/order",
+                auth: true,
+                element: <Order />
+            },
+            {
+                path: "/home/search",
+                auth: false,
+                element: <Search />
+            },
+            {
+                path: "/home/shops/:id",
+                auth: false,
+                element: <Shops />
+            }
+        ]
+    },
+    {
+        path: "/my",
+        auth: false,
+        element: <My />
+    },
+    {
+        path: "*",
+        auth: false,
+        element: <Comp404 />
+    },
+    {
+        path: "/login",
+        auth: false,
+        element: <Login />
+    }
+];
+export default routers;
+```
+
+- > 注意：
+  >
+  > 这里每个子路由都添加了一个auth属性，这个可以理解成当前页面在跳转浅是
+  >
+  > 否检测登录状态，false为不需要，true为需要，这里我们把order路由设置为
+  >
+  > true，表示需要登录才能跳转到该页面，不然直接重定向到登录页面
+
+- 打开router.js进行修改，通过map遍历的方法渲染路由组件
+
+```jsx
+import routers from "./";
+import { Navigate, useLocation, Route, Routes } from "react-router-dom";
+const AppRouter = () => {
+    const location = useLocation();
+    const { pathname } = location;
+    let isLogin = false; //表示是否有登录
+    const RouteNav = router => {
+        return (
+            router.map(item => {
+                return (
+                    <Route
+                        path={item.path}
+                        element={item.path === pathname &&
+                            item.auth && !isLogin ? <Navigate to='/login'></Navigate> :
+                            item.element}
+                        key={item.path}
+                    >
+                        {
+                            item.children &&
+                            RouteNav(item.children)
+                        }
+                    </Route>
+                );
+            })
+        );
+    };
+    return (
+        <Routes>
+            {
+                RouteNav(routers)
+            }
+        </Routes>
+    );
+};
+export default AppRouter;
+```
+
+- > 代码分析：
+  >
+  > 之前我们就讲过，react中的路由其实本质就时一个react函数组件，所以我们
+  >
+  > 可以在路由组件的内部创建状态和方法，这里我们先通过useLocation获取当前
+  >
+  > 用户跳转的页面地址，然后通过RouteNav的递归调用生成路由
+  >
+  > 关键点：
+  >
+  > RouteNav方法，这个是在路由组件中声明一个方法，该方法的主要目的就
+  >
+  > 是当我们的路由包含嵌套路由的时候，我们可以通过递归的方式实现路由
+  >
+  > 组件的动态渲染
+  >
+  > 递归渲染中在route提供的element属性上，我们执行了一个三元运算，判
+  >
+  > 断条件是执行一个逻辑与运算，这个逻辑与运算我们写了三个用于判断的
+  >
+  > 表达式：
+  >
+  > 1、执行逻辑当每次跳转之后，先获取当前的页面地址判断是否与当前
+  >
+  > 路由指向的路径一致，这步判断主要是为了能够执行404页面的跳转
+  >
+  > 2、判断当前遍历项中的auth属性，这里我们直接设置的true或者
+  >
+  > false，作用就是表示当前路由在跳转时是否需要做鉴权，上面的例子
+  >
+  > 上我们对order页面设置了true，所以当跳转这个页面的会进行鉴权
+  >
+  > 3、第三个非运算其实也是为了做鉴权，这里执行的是一个登录有否的
+  >
+  > 判断，根据isLogin的值来决定是否已经登录，如果没登录同时第二个
+  >
+  > 判断又是true的情况下就需要重定向到login页面
+  >
+  > 如果以上的逻辑与运算过程中，某一个结果为false就会立即触发逻辑运算
+  >
+  > 的熔断机制，直接渲染item.element
+
+- 最后在入口文件中render渲染组件
+
+- ```jsx
+  import React from 'react';
+  import ReactDOM from 'react-dom/client';
+  import { BrowserRouter as Router } from 'react-router-dom';
+  import AppRouter from './routers/router';
+  const root =
+      ReactDOM.createRoot(document.getElementById('root'));
+  root.render(
+      <Router>
+          <AppRouter></AppRouter>
+      </Router>
+  );
+  ```
+
+  - > 注意事项：
+    >
+    > 这里我们千万不要把BrowserRouter直接写在路由组件的内部，因为我们在路
+    >
+    > 由组件中使用hook函数useLocation，而这个hook函数不能直接在路由组件的
+    >
+    > 内部使用，所以我们需要像上面这样，单独调用BrowserRouter，先让其在程
+    >
+    > 序中程序上下文环境，再在该上下文环境中渲染路由
+
+- 按照上面的写法，我们只需要在登录与未登录时，去修改isLogin的值即可实现登录跳转的鉴权操作，我们把isLogin放到全局状态当中进行管理
+
+- reducer.js
+
+- ```jsx
+  const defaultState = {
+      isLogin: false
+  };
+  export default (state = defaultState, action) => {
+      let newState = JSON.parse(JSON.stringify(state));
+      switch (action.type) {
+          case "changeLoginState":
+              newState.isLogin = true;
+              break;
+          default:
+              break;
+      }
+      return newState;
+  };
+  ```
+
+  
+
+- index.js
+
+- ```jsx
+  import { createStore } from "redux";
+  import reducer from "./reducer";
+  const store = createStore(reducer);
+  export default store
+  ```
+
+- 然后我们通过react-redux中提供的Provider提供器，在入口文件向全局提供store实例
+
+- ```jsx
+  //......
+  import { Provider } from 'react-redux';
+  import store from './store';
+  const root =
+      ReactDOM.createRoot(document.getElementById('root'));
+  root.render(
+      <Provider store={store}>
+          <Router>
+              <AppRouter></AppRouter>
+          </Router>
+      </Provider>
+  );
+  ```
+
+  
+
+- 在router.js中调用connect方法获取isLogin
+
+```jsx
+import routers from "./";
+import { Navigate, useLocation, Route, Routes } from "react-routerdom";
+import { connect } from "react-redux";
+const AppRouter = (props) => {
+    const location = useLocation();
+    const { pathname } = location;
+    const { isLogin } = props;
+    //......
+    return (
+        <Routes>
+            {
+                RouteNav(routers)
+            }
+        </Routes>
+    );
+};
+
+const mapStateToProps = state => { //映射全局状态isLogin
+    return {
+        isLogin: state.isLogin
+    };
+};
+export default connect(mapStateToProps)(AppRouter);
+```
+
+- 在login组件中设置映射派发修改行为的方法dispatch，用来修改isLogin的值，模拟登录成功
+
+```jsx
+import React from 'react';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+function Login(props) {
+    const navigate = useNavigate();
+    const checkLogin = () => {
+        props.changeLoginState();
+        navigate(-1);
+    };
+    return (
+        <div>
+            <h2>login</h2>
+            <button onClick={checkLogin}>登录</button>
+        </div>
+    );
+}
+const mapStateToProps = state => { //映射全局状态isLogin
+    return {
+        isLogin: state.isLogin
+    };
+};
+const mapDispatchToProps = dispatch => {
+    return {
+        changeLoginState() {
+            let action = {
+                type: "changeLoginState"
+            };
+            dispatch(action);
+        }
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
+```
+
