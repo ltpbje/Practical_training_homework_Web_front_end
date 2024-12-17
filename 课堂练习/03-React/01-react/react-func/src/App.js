@@ -3,7 +3,8 @@ import React from 'react';
 // import Effect from './views/Effect';
 // import Context from './views/Context';
 // import Reducer from './views/Reducer';
-import Ref from './views/Ref';
+// import Ref from './views/Ref';
+import Memo from './views/Memo';
 const App = () => {
 
   return (
@@ -12,7 +13,8 @@ const App = () => {
       {/* <Effect></Effect> */}
       {/* <Context></Context> */}
       {/* <Reducer></Reducer> */}
-      <Ref></Ref>
+      {/* <Ref></Ref> */}
+      <Memo></Memo>
     </div>
   );
 };
