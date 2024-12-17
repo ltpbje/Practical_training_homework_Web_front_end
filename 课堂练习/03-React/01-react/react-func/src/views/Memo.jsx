@@ -38,6 +38,7 @@ export default function Memo() {
         });
     };
     let newList = useMemo(() => changeList(obj.filterStr), [obj.filterStr]);
+
     // let newList = changeList(obj.filterStr);
     return (
         <div>

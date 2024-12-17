@@ -4,7 +4,8 @@ import React from 'react';
 // import Context from './views/Context';
 // import Reducer from './views/Reducer';
 // import Ref from './views/Ref';
-import Memo from './views/Memo';
+// import Memo from './views/Memo';
+import ReactMemo from './views/ReactMemo';
 const App = () => {
 
   return (
@@ -14,7 +15,8 @@ const App = () => {
       {/* <Context></Context> */}
       {/* <Reducer></Reducer> */}
       {/* <Ref></Ref> */}
-      <Memo></Memo>
+      {/* <Memo></Memo> */}
+      <ReactMemo></ReactMemo>
     </div>
   );
 };
