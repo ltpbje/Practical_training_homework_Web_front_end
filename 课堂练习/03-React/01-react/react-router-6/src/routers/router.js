@@ -1,17 +1,11 @@
 import routers from "./";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, useRoutes } from "react-router-dom";
+
 const AppRouter = () => {
+    const GetRouter = () => useRoutes(routers);
     return (
         <Router>
-            <Routes>
-                {
-                    routers.map((item, index) => {
-                        return (
-                            <Route exact key={index} path={item.path} element={<item.component></item.component>}></Route>
-                        );
-                    })
-                }
-            </Routes>
+            <GetRouter></GetRouter>
         </Router>
     );
 };

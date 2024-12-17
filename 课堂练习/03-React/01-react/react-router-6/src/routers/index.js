@@ -1,22 +1,43 @@
 import Home from "../views/Home";
 import My from "../views/My";
 import Comp404 from "../views/Comp404";
-
+import Order from "../views/Order.jsx";
+import Search from "../views/Search";
+import Shops from "../views/Shops";
+import { Navigate } from "react-router-dom";
 const routers = [
     {
-        title: "首页",
+
         path: '/',
-        component: Home
+        element: <Navigate to='/home/shops'></Navigate>
     },
     {
-        title: "我的",
+        path: '/',
+        element: <Home ></Home>,
+        children: [
+            {
+                path: '/home/order',
+                element: <Order></Order>
+            },
+            {
+                path: '/home/search',
+                element: <Search></Search>
+            },
+            {
+                path: '/home/shops',
+                element: <Shops></Shops>
+            },
+        ]
+    },
+    {
+
         path: '/my',
-        component: My
+        element: <My></My>
     },
     {
-        title: "404",
+
         path: '*',
-        component: Comp404
+        element: <Comp404></Comp404>
     },
 ];
 
