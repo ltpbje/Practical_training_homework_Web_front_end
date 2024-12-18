@@ -611,3 +611,15 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
 ```
 
+# React高阶组件
+
+- 所谓组件的进阶用法就是通过函数来返回组件，这种用法主要起到的就是组件复用的作用，这种组件我们也可以叫做高阶组件（HOC）
+- 举例：
+- 这里我们通过类组件来说明情况，我们这里有两个类组件，其内部有部分内容是相似或者完全一样，这个时候，根据我们以前学习过的封装思维，将公共的部分提取出来进行封装来提高代码的复用率
+- 现在有如下代码：
+
+- > 有Son1和Son2两个子组件在Hoc父组件当中渲染，两个子组件有相同的
+  >
+  > state，相同的需要渲染的标签结构，还有相同的changeData方法，但是修改
+  >
+  > 的state的值是不一样的
