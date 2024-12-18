@@ -1,0 +1,23 @@
+.title-bar {
+  font-size: .2rem;
+  background-color: #0079FC;
+  color: aliceblue;
+}
+
+.swiper .flex-row {
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.flex-row .banner-item {
+  width: 25%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-row .banner-item img {
+  width: 60%;
+}

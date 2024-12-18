@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client'; //导入用于创建虚拟节点的对象
 import App from './App';
 import initReactFastclick from 'react-fastclick';
+import 'lib-flexible';
 initReactFastclick();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(

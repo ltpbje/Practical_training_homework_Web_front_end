@@ -1,6 +1,6 @@
 <template>
     <div>
-        <van-swipe class="my-swipe" :autoplay="3000" indicator-color="aqua">
+        <van-swipe class="my-swipe" indicator-color="aqua">
             <van-swipe-item class="flex-row" v-for="(item, index) in swiperData" :key="index">
                 <div class="banner-item" v-for="(sub, subIndex) in item" :key="subIndex">
                     <img :src="store.baseURL + sub.image_url" alt="">
