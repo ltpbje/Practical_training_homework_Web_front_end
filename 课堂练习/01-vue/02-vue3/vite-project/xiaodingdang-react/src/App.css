@@ -4,6 +4,12 @@
   color: aliceblue;
 }
 
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .swiper .flex-row {
   flex-wrap: wrap;
   display: flex;
@@ -20,4 +26,8 @@
 
 .flex-row .banner-item img {
   width: 60%;
+}
+
+.tab_bar {
+  height: .5rem;
 }
