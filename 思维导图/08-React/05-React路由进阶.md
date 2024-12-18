@@ -623,3 +623,340 @@ export default connect(mapStateToProps, mapDispatchToProps)(Login);
   > state，相同的需要渲染的标签结构，还有相同的changeData方法，但是修改
   >
   > 的state的值是不一样的
+
+```jsx
+import React, { Component } from 'react';
+class Son1 extends Component {
+    state = {
+        userName: "zhangsan"
+    };
+    changeData() {
+        this.setState({
+            userName: "lisi"
+        });
+    }
+    render() {
+        return (
+            <div>
+                <h2>子组件1：{this.state.userName}</h2>
+                <button onClick={this.changeData.bind(this)}>子组
+                    件1按钮</button>
+            </div>
+        );
+    }
+}
+class Son2 extends Component {
+    state = {
+        userName: "zhangsan"
+    };
+    changeData() {
+        this.setState({
+            userName: "wangwu"
+        });
+    }
+    render() {
+        return (
+            <div>
+                <h2>子组件2：{this.state.userName}</h2>
+                <button onClick={this.changeData.bind(this)}>子组
+                    件2按钮</button>
+            </div>
+        );
+    }
+}
+export default class Hoc extends Component {
+    render() {
+        return (
+            <div>
+                <Son1></Son1>
+                <hr />
+                <Son2></Son2>
+            </div>
+        );
+    }
+}
+```
+
+- > 以上的代码，有很多相同的部分，那么我们是不是可以把公共的部分提取出来
+  >
+  > 进行二次封装提升代码的复用率
+
+- 对以上代码做修改：
+
+```jsx
+import React, { Component } from 'react';
+class Son1 extends Component {
+    render() {
+        return (
+            <div>
+                <h2>子组件1：{this.props.userName}</h2>
+                <button onClick=
+                    {this.props.changeData.bind(this)}>子组件1按钮</button>
+            </div>
+        );
+    }
+}
+class Son2 extends Component {
+    render() {
+        return (
+            <div>
+                <h2>子组件2：{this.props.userName}</h2>
+                <button onClick=
+                    {this.props.changeData.bind(this)}>子组件2按钮</button>
+            </div>
+        );
+    }
+}
+const HOCfunc = (newName, Comp) => {
+    return class extends Component {
+        state = {
+            userName: "zhangsan"
+        };
+        changeData() {
+            this.setState({
+                userName: newName
+            });
+        }
+        render() {
+            return (
+                <Comp userName={this.state.userName} changeData=
+                    {this.changeData.bind(this)}></Comp>
+            );
+        }
+    };
+};
+let Child1 = HOCfunc("lisi", Son1);
+let Child2 = HOCfunc("wangwu", Son2);
+export default class Hoc extends Component {
+    render() {
+        return (
+            <div>
+                <Child1></Child1>
+                <hr />
+                <Child2></Child2>
+            </div>
+        );
+    }
+}
+```
+
+- > 代码分析：
+  >
+  > 把Son1和Son2中的state和changeData这两个部分提取出来，单独封装在了另
+  >
+  > 外一个类组件当中，这个类组件作为一个匿名类组件写在HOCfunc这个函数组
+  >
+  > 件的返回值上，当我们调用HOCfunc，就会把这个匿名类组件返回出来，并且
+  >
+  > 根据函数组件传入的参数来决定返回的组件中的之前没提取出来封装之前的不
+  >
+  > 同的地方
+  >
+  > 其中比较有特点就是Comp参数，这个参数我们这里设定的是接收组件作为实
+  >
+  > 参，这个每次调用的时候可以传入不同的组件作为HOCfun返回组件的子组件
+  >
+  > 使用，其实就相当于是决定了匿名组件自身的标签结构
+  >
+  > 这里的代码逻辑，其实与我们最早学习的构造函数如出一辙，通过new调用一
+  >
+  > 个构造函数来实例化一个基于该构造函数为模板的对象出来和这里通过调用
+  >
+  > HOCfunc返回一个基于该函数返回的类结构的一个类组件基本思路是一样的
+
+# 组件懒加载
+
+- > React实现懒加载需要使用以下两个东西：
+  >
+  > 1、React.lazy() 在lazy方法内传入一个回调函数，在回调函数内通过
+  >
+  > import("xxxxx")导入组件，lazy方法就会把你通过import导入的组件包装成一个懒
+  >
+  > 加载组件返回出来
+  >
+  > 2、 `<Suspense></Suspense>` 在调用懒加载组件的时候需要给它嵌套一个
+  >
+  > Suspense组件，然后通过其属性fallback设置一个在懒加载过程中需要显示的过渡
+  >
+  > 内容
+  >
+  > 举例：
+  >
+  > 新建一个components目录，在这里创建一个child.jsx，作为懒加载组件使用
+
+- ```jsx
+  import React, { Component } from 'react';
+  export default class Child extends Component {
+      render() {
+          return (
+              <div>
+                  <h2>我是一个懒加载组件</h2>
+              </div>
+          );
+      }
+  }
+  ```
+
+  - > 把这个组件做成一个懒加载组件是在把它导入到另外一个组件的时候通过React.lazy
+    >
+    > 方法来实现
+
+  - ```jsx
+    import React, { Component, Suspense } from 'react';
+    const Child = React.lazy(() => import('../components/Child'));
+    export default class LazyLoad extends Component {
+        render() {
+            return (
+                <div>
+                    <Suspense fallback={<div>loading.....</div>}>
+                        <Child></Child>
+                    </Suspense>
+                </div>
+            );
+        }
+    }
+    ```
+
+    
+
+- > 最后把这个LazyLoad组件导入到App根组件当中进行渲染，我们可以通过浏览器的
+  >
+  > 性能来查看结果
+
+- > 备注：
+  >
+  > 我们可以把fallback的值直接写成一个专门的loading动画组件
+
+# React Hooks的闭包陷阱
+
+- 先看一个例子
+
+- ```jsx
+  import React, { useState, useEffect } from 'react';
+  export default function Test() {
+      const [count, setCount] = useState(0);
+      useEffect(() => {
+          setInterval(() => {
+              console.log(count);
+          }, 1000);
+      }, []);
+      const changeCount = () => {
+          setCount(count + 1);
+      };
+      return (
+          <div>
+              <h2>count值：{count}</h2>
+              <button onClick={changeCount}>按钮</button>
+          </div>
+      );
+  }
+  ```
+
+- > ###### 代码分析：
+  >
+  > 现在我们会发现，我们点击按钮执行count+1的操作，页面上渲染的结果没有
+  > 问题，但是在控制台里面面一致打印的都是0，这里其实就是闭包带来的问题
+  > 这里我们分析两个问题：
+  >
+  > ###### 问题1：当我们点击按钮执行setCount(count + 1)之后发生了什么？
+  >
+  > 之前我们在将hook函数的时候说过，函数组件内的状态发生变化的时候会将整
+  > 个组件重新渲染一遍，也就是相当于重新把作为组件的函数重新执行一遍，而
+  > 函数组件本质就是一个函数，而在函数内创建的状态其本质就是一个局部变
+  > 量，那么随着函数执行完毕，局部变量就被自然销毁释放掉，所以，我们认为
+  > 每次的重新渲染创建的状态都是一个全新的count，与上一次执行的count是没
+  > 有什么关系的
+  >
+  > ###### 问题2：闭包带来的影响？
+  >
+  > 闭包其实简单解释就是上级作用域内的变量被下及作用域引用，而导致无法被
+  > 释放，必须要等到下级作用域执行完毕才能被正常释放掉，但是这里，我们使
+  > 用setInterval在内部调用了test组件的状态（test函数的局部变量），而
+  > setInterval如果要执行完毕必须要使用clearInterval，所以导致在setInterval内
+  > 部调用的状态一致都无法被释放掉，从而反复调用的都是第一次执行时创建的
+  > count值
+
+- 解决方案：使用useRef
+
+```jsx
+import React, { useState, useEffect, useRef } from 'react';
+export default function Test() {
+    const countRef = useRef(0);
+    useEffect(() => {
+        setInterval(() => {
+            console.log(countRef.current);
+        }, 1000);
+    }, []);
+    const changeCount = () => {
+        countRef.current++;
+    };
+    return (
+        <div>
+            <h2>count值：{countRef.current}</h2>
+            <button onClick={changeCount}>按钮</button>
+        </div>
+    );
+}
+```
+
+- > 代码分析：
+  >
+  > 这里我们借鉴了类组件中的this的特点，因为this的指向在组件的生命周期中是
+  >
+  > 不变的，所以它永远都会指向当前的类组件自身，而useRef我们之前只用在获
+  >
+  > 取DOM对象上面，而对象也是一种数据结构，我们平时也会用useState创建对
+  >
+  > 象结构的状态来使用，我们通过将useRef创建出来的数据赋值给countRef完成
+  >
+  > 了数据的引用，也就是说仙子啊的countRef只会指向useRef创建出来的数据，
+  >
+  > 让countRef和useRef创建出来的数据形成了映射关系，从而达到你变我也变的
+  >
+  > 效果
+
+- > 但是组件渲染到页面上的内容不会变化，因为 countRef.current的改变并不会引起
+  >
+  > 函数组件的重新渲染，所以需要配合useState使用
+
+- ```jsx
+  import React, { useState, useEffect, useRef } from 'react';
+  export default function Test() {
+      const countRef = useRef(0);
+      const [count, setCount] = useState(0);
+      useEffect(() => {
+          setInterval(() => {
+              console.log(countRef.current);
+          }, 1000);
+      }, []);
+      const changeCount = () => {
+          setCount(++countRef.current);
+      };
+      return (
+          <div>
+              <h2>count值：{countRef.current}</h2>
+              <button onClick={changeCount}>按钮</button>
+          </div>
+      );
+  }
+  ```
+
+  
+
+- > 代码分析：
+  >
+  > 通过将每次递增计算的结果通过setCount再赋值给countRef.current，现在我
+  >
+  > 们就可以看到组件的内容与打印结果是一致的了，同时我们可以把
+  >
+  > changeCount通过useCallback进行缓存，避免每次修改count重新执行Test组
+  >
+  > 件的时候，还要再创建一个遍changeCount
+  >
+  > ```jsx
+  > const changeCount = useCallback(() => {
+  >     setCount(++countRef.current)
+  > })
+  > ```
+  >
+  > 
