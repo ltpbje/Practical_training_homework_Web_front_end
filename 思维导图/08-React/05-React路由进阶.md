@@ -960,3 +960,245 @@ export default function Test() {
   > ```
   >
   > 
+
+# Transition
+
+- > 在React18当中，引入了一个新概念 transition
+  >
+  > 由此带来一个新API startTransition
+  >
+  > 两个新的hook函数 useTransition 和 usedeferredValue
+  >
+  > 在react中一旦状态发生变化我们都会触发重新渲染，之前我们学习useMemo和
+  >
+  > useCallback可以对组件中的state和方法进行缓存，并设置依赖项来做更新的前后
+  >
+  > 对比，如果更新前后对比的结果一致就不重新渲染，反之，如果开始了更新的过
+  >
+  > 程，在react中更新过程会被分为两类来看
+  >
+  > 紧急更新任务（urgent update）：用户期望马上响应的更新操作，比如，鼠标
+  >
+  > 点击或者键盘输入
+  >
+  > 过渡更新任务（transition update）：一些可以延迟接受的更新操作，比如查
+  >
+  > 询，搜索推荐，搜索结果展示等等
+  >
+  > 而我们之前所讲过的内容中执行的全都是紧急更新，如果想要实现过渡更新我们可
+  >
+  > 以使用startTransition方法
+
+- 举例：
+
+- ```jsx
+  import React, { startTransition, useEffect, useState } from 'react';
+  export default function Transition() {
+      const [first, setFirst] = useState("a");
+      const [second, setSecond] = useState("b");
+      const changeVal = () => {
+          setFirst("zhangsan");
+          startTransition(() => {
+              setSecond("lisi");
+          });
+      };
+      useEffect(() => {
+          console.log(first, second);
+      }, [first]);
+      return (
+          <div>
+              <button onClick={changeVal}>按钮</button>
+          </div>
+      );
+  }
+  ```
+
+- > 代码分析：
+  >
+  > 在上面的代码中，当我们点击触发了changeVal的时候，执行了setFirst和
+  >
+  > setSecond修改first和second的状态之，然后我们监听first的变化执行控制台
+  >
+  > 打印first和second，但是在控制台中的打印结果我们可以看到只有first的值变
+  >
+  > 了，而second的值并没有变，按理说虽然我们只监听了first，但是first和
+  >
+  > second的修改是在同一个方法下执行的，那么，打印的结果应该是修改之后的
+  >
+  > 状态
+  >
+  > 原因：
+  >
+  > 因为我们把setSecond标记成了过渡更新，而当某一个状态被标记成过渡更新
+  >
+  > 的时候，在重新渲染的过程中就会有了渲染优先级这样一个情况，被transition
+  >
+  > 标记的会成为低优先级任务，没有的成为高优先级任务，所以，当我们执行
+  >
+  > changeVal的时候，先执行了setFirst先修改了first的值，而监听到first状态值
+  >
+  > 的变化就已经立即触发了 console.log(first,second) 这个时候seconde还
+  >
+  > 并没有修改到位
+  >
+  > 注意：
+  >
+  > react之前是没有渲染优先级这一说的，在react18中正式引入并发渲染机制，
+  >
+  > 从而实现了渲染优先级
+
+## 什么是并发渲染机制？
+
+- > **前提场景：**
+  >
+  > 当出现数据量巨大，DOM节点元素巨多的场景下，一次的更新可能会带来的处
+  >
+  > 理量非常巨大，而所有的更新认都都是紧急更新的，在这种情况下浏览器会同
+  >
+  > 时执行大连那个的渲染工作，而这种情况下带来的最直观的用户体验就是卡
+  >
+  > 顿，特别是在硬件配置比较低的情况下越发明显
+
+#### 并发渲染机制的目的
+
+- > 根据用户的设备性能和网速对渲染过程进行适当的调整，保证React应用在长事件的
+  >
+  > 渲染过程中依然可以保持可交互性，避免页面出现卡顿或无响应的情况，从而提升
+  >
+  > 用户体验，而startTransition就是基于v18新特性提供的API
+
+- > ###### 注意：如果想要使用v18版本提供的新特性需要使用createRoot来创建项目的根节点
+  >
+  > ```jsx
+  > //v18的创建方式
+  > import { createRoot } from 'react-dom/client'
+  > import App from './App.jsx'
+  > createRoot(document.getElementById('root')).render(
+  >     <App />
+  > )
+  > ```
+  >
+  > v18之前创建根节点的方式
+  >
+  > ```jsx
+  > import * as ReactDOM from 'react-dom';
+  > import App from './App'
+  > const root = document.getElementById("app");
+  > ReactDOM.render(<App/>,root)
+  > ```
+  >
+  > 
+
+- > Transition本质上是用于一些不是很紧迫的更新上，用于解决并发渲染的问题，在
+  >
+  > React18之前，所有的 更新任务都是视为紧迫的任务，在React18诞生了
+  >
+  > concurrent Mode（并发渲染）模式，在这个模式下，渲染是可以中断，而被
+  >
+  > startTransition标记的状态修改会成为低优先级任务被暂停中断执行，可以让高优
+  >
+  > 先级的任务先更新渲染，从而实现在并发渲染模式下大量数据渲染造成的卡顿问题
+  >
+  > 的解决
+
+  
+
+- 举例：
+
+```jsx
+import React, { startTransition, useState, memo } from 'react';
+const fakeDataArr = new Array(10000).fill(1); //模拟一万条数据，填充1
+const DataList = ({ query }) => {
+    console.log("开始渲染");
+    return (
+        <div>
+            {
+                fakeDataArr.map((item, index) => <div key={index}>
+                    {query}</div>)
+            }
+        </div>
+    );
+};
+const MemoDataList = memo(DataList);
+const TransitionDemo = () => {
+    const [isTransition, setTransition] = useState(false); //控制
+    transition的开启关闭;
+    const [query, setQuery] = useState(""); //获取输入框的数据（传递给子组件）
+    const changeTransition = e => {
+        if (isTransition) {
+            startTransition(() => {
+                setQuery(e.target.value);
+            });
+        } else {
+            setQuery(e.target.value);
+        }
+    };
+    return (
+        <div>
+            <button onClick={() => setTransition(!isTransition)}>
+                {isTransition ? 'transition' : 'normal'}</button>
+            <input type="text" onChange={changeTransition} />
+            <MemoDataList query={query}></MemoDataList>
+        </div>
+    );
+};
+export default TransitionDemo;
+```
+
+- > 代码分析：
+  >
+  > 以上代码，我们通过isTransition的布尔值切换，例来开启关闭transition状态
+  >
+  > isTransition为false的情况下
+  >
+  > 我们的setQuery是紧急更新，在获取到输入框的value值之后就会立即传递给
+  >
+  > MemoDataList，并被渲染一万条出来，而每次的query值的修改都会造成子组
+  >
+  > 件MemoDataList重新被渲染一万次，并且每次都还是紧急更新，结果就是一
+  >
+  > 旦我们输入的速度快一点，输入框的输入操作就会出现明显的卡顿情况
+  >
+  > isTransition为true的情况下：
+  >
+  > 我们的setQuery被标记成了过渡更新，那么，每次修改输入的value值的时
+  >
+  > 候，没修改一个字符所触发的更新，会比上一次出的优先级要低，这样就形成
+  >
+  > 了一个类似于排队执行的状态，这样做，我们会海鲜，虽然渲染结果有一定的
+  >
+  > 滞后性，但是输入框的卡顿情况明显要好非常多
+  >
+  > **扩展内容：**
+  >
+  > 看到这种情况你会发现，这个和我们之前讲过的防抖高度类似，但是两者在执
+  >
+  > 行的过程上差异还是比较大的
+  >
+  > 我们实现防抖依靠的是setTimeout进行了一个延迟执行，控制了执行的频率，
+  >
+  > 但是这种频率设置是固定的，如果控制不好延迟的时长的话，延迟太长带来的
+  >
+  > 操作的滞后感会非常强烈，延迟太短那么基本等于没有效果，而transition这时
+  >
+  > 就体现出来优势了，特别是在硬件性能较差的设备上，因为transition一定会在
+  >
+  > 上一个任务执行完成之后才会执行下一个，而上一个任务要执行多久完全要看
+  >
+  > 硬件的计算性能
+
+# useTransition
+
+- > 上面我们已经介绍了startTransition，同时也讲到了过渡更新，而过渡跟新是有一
+  >
+  > 个过渡期的，在这个期间更新任务会被中断，useTransition可以为中间期间添加业
+  >
+  > 务逻辑，而不是单纯的等待
+  >
+  > useTransition返回一个数组，该数组中包含两个元素
+  >
+  > 1、isPending过渡状态值，表示当前任务是否处于中断的状态
+  >
+  > 2、一个方法，这个方法就是上面讲过的startTransition
+  >
+  > 举例：将上面的TransitionDemo替换成useTransition来完成
