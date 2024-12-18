@@ -45,3 +45,39 @@ body {
   flex-direction: column;
   height: 100vh;
 }
+
+
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.j-c {
+  justify-content: center;
+}
+
+.a-c {
+  align-items: center;
+}
+
+.j-s-a {
+  justify-content: space-around;
+}
+
+.j-s-b {
+  justify-content: space-between;
+}
+
+.j-s-e {
+  justify-content: space-evenly;
+}
+
+.flex-1 {
+  flex: 1;
+}

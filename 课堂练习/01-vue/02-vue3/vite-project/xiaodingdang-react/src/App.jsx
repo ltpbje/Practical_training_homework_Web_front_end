@@ -1,6 +1,6 @@
-import './App.css';
-import { Badge, NavBar, Swiper, TabBar } from 'antd-mobile';
-import { AppOutline, MessageFill, SearchOutline, UnorderedListOutline, UserOutline } from 'antd-mobile-icons';
+import './App.scss';
+import { NavBar, Rate, Swiper, TabBar } from 'antd-mobile';
+import { AppOutline, ContentOutline, SearchOutline, UserOutline } from 'antd-mobile-icons';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
@@ -31,27 +31,26 @@ function App() {
   };
   useEffect(() => {
     renderSwiperData();
+    getShopList();
   }, []);
-
   const tabs = [
     {
       key: 'home',
-      title: '首页',
+      title: '外卖',
       icon: <AppOutline />,
-      badge: Badge.dot,
+
     },
     {
       key: 'todo',
-      title: '待办',
-      icon: <UnorderedListOutline />,
-      badge: '5',
+      title: '搜索',
+      icon: <SearchOutline />,
+
     },
     {
       key: 'message',
-      title: '消息',
-      icon: (active) =>
-        active ? <MessageFill /> : <MessageOutline />,
-      badge: '99+',
+      title: '新闻',
+      icon: <ContentOutline />,
+
     },
     {
       key: 'personalCenter',
@@ -59,6 +58,14 @@ function App() {
       icon: <UserOutline />,
     },
   ];
+  // 商家列表数据
+  const [shopListData, setShopListData] = useState([]);
+  const getShopList = async () => {
+    const arr = (await axios.get('http://127.0.0.1:8900/shops')).data.list;
+    console.log(arr);
+    setShopListData(arr);
+
+  };
   return (
     <>
 
@@ -85,7 +92,7 @@ function App() {
                         {
                           item.map((item, index) => {
                             return (
-                              <div className='banner-item'>
+                              <div className='banner-item' key={index}>
                                 <img src={`http://127.0.0.1:8900/${item.image_url}`} alt="" />
                                 <span>
                                   {item.title}
@@ -101,8 +108,54 @@ function App() {
                 })
               }
             </Swiper>
+          </div>
+          <div className="shop-list">
+            {
+              shopListData.map((item) => {
+                return (
+                  <div className="shop-item flex-row a-c" key={item.id}>
+                    <div className="shop-left flex-row a-c">
+                      <img src={`http://127.0.0.1:8900/${item.image_path}`} alt="" />
+                    </div>
+                    <div className='shop-center flex-1 flex-column j-c'>
+                      <div className="shop-title flex-row a-c">
+                        <span>品牌</span>
+                        <h3>{item.name}</h3>
+                      </div>
+                      <div className="shop-rate flex-row a-c">
+                        <Rate readOnly value={item.rating} style={{ '--star-size': '14px' }} />
+                        <div className="rate-score">{item.rating}</div>
+                        <div className="sale-count">
+                          月销：{item.recent_order_num}单
+                        </div>
+                      </div>
+                      <div className="shop-costs">
+                        <span>￥{item.float_minimum_order_amount}元起送 ／ 配送费约{
+                          item.float_delivery_fee
+                        }元</span>
+                      </div>
+                    </div>
+                    <div className="shop-right flex-column j-c">
+                      <div className="shop-support">
+                        {
+                          item.supports.map((item, index) => {
+                            return (
+                              <span key={index}>
+                                {item.icon_name}
+                              </span>
+                            );
+                          })
+                        }
+                      </div>
+                      <div className="shop-server">
+                        <span>{item.delivery_mode.text}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
 
-
+            }
           </div>
 
         </div>

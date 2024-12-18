@@ -1,0 +1,129 @@
+.title-bar {
+  font-size: .2rem;
+  background-color: #0079FC;
+  color: aliceblue;
+}
+
+.content {
+  
+  display: flex;
+  flex: 1;
+  height: 90vh;
+  flex-direction: column;
+}
+
+.swiper .flex-row {
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.flex-row .banner-item {
+  width: 25%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-row .banner-item img {
+  width: 60%;
+}
+
+.tab_bar {
+  // height: .5rem;
+  flex: 1;
+  .adm-tab-bar{
+    height: 100%;
+    
+    .adm-tab-bar-wrap{
+      height: 100%;
+    }
+  }
+}
+
+
+
+
+.shop-item {
+    height: 0.9rem;
+    padding: .1rem .15rem;
+    border-bottom: 1px solid #ccc;
+
+    .shop-left {
+        width: .8rem;
+        height: 80%;
+
+        img {
+            width: 80%;
+            height: 80%;
+            border: 1px solid #000;
+        }
+
+
+    }
+
+    .shop-center {
+        .shop-title {
+            span {
+                background: yellow;
+                font-weight: bold;
+                font-size: .14rem;
+                padding: 0.05rem;
+                font-size: .14rem;
+            }
+
+            h3 {
+                font-size: .15rem;
+                margin-left: .05rem;
+            }
+        }
+
+        .shop-rate {
+            padding: .03rem 0 .12rem 0;
+
+            .sale-count {
+                font-size: .12rem;
+                color: #666;
+                padding-left: .05rem;
+
+            }
+        }
+
+        .rate-score {
+            color: #f00;
+            font-size: .14rem;
+        }
+
+        .shop-costs {
+            font-size: .12rem;
+            color: #666;
+        }
+
+
+    }
+
+    .shop-right {
+        width: .8rem;
+        font-size: .12rem;
+        align-items: end;
+
+        .shop-support {
+            span {
+                border: 1px solid #666;
+                color: #666;
+                padding: .01rem;
+            }
+        }
+
+        .shop-server {
+            margin: 0.03rem 0 0 .03rem;
+
+            span {
+                border: 1px solid #00A16A;
+                color: #00A16A;
+                padding: 0.01rem;
+            }
+        }
+    }
+}
