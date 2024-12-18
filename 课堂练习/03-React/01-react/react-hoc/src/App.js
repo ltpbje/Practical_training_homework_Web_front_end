@@ -5,12 +5,16 @@ import React, { Component } from 'react';
 // import Reducer from './views/Reducer';
 // import Ref from './views/Ref';
 // import Memo from './views/Memo';
-import Hoc from './views/Hoc';
+// import Hoc from './views/Hoc';
+import LazyLoad from './views/LazyLoad';
+import Test from './views/Test';
 class App extends Component {
   render() {
     return (
       <div>
-        <Hoc></Hoc>
+        {/* <Hoc></Hoc> */}
+        {/* <LazyLoad></LazyLoad> */}
+        <Test></Test>
       </div>
     );
 
