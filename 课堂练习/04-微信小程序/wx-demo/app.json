@@ -1,13 +1,11 @@
 {
   "pages": [  
-    "pages/index/index",
-    "pages/home/home",
-    "pages/logs/logs"
+    "pages/index/index"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "功能演示",
+    "navigationBarBackgroundColor": "#f00"
   },
   "style": "v2",
   "componentFramework": "glass-easel",

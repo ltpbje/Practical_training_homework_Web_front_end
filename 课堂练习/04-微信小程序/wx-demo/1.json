@@ -1,0 +1,7 @@
+{
+  "desc": "关于本文件的更多信息，请参考文档https://developers.weixin.qq.com/miniprogram/dev/framework/sitemap.html",
+  "rules": [{ //搜索规则配置
+  "action": "allow", //允许被搜索
+  "page": "*" //可以被搜索到的页面，*表示所有页面都可以被搜索到
+  }]
+  }
