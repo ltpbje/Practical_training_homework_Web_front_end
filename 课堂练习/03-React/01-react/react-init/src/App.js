@@ -6,7 +6,10 @@ const App = () => {
     <div>
       <div className="box"></div>
     </div>
+	
   );
 };
+
+
 
 export default App;
