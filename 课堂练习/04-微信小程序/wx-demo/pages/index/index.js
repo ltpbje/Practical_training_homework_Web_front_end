@@ -5,14 +5,34 @@ Page({
    * 页面的初始数据
    */
   data: {
-    userName:'张三',
-    flag:false,
-    stuList:[
-      1,2,3,4,5,6
-    ]
+    userInfo:{
+      userName:'zhangsan',
+      age:18
+    },
+    tname:'lisi'
   },
-  sayHello(){
-    console.log('hello');
+  changeName(){
+    // this.setData({
+    //   //第一种方式：通过object.assgin（）
+    //  userInfo:Object.assign(this.data.userInfo,{userName:'wangwu'})
+    // })
+    this.setData({
+      //第一种方式：通过object.assgin（）
+     userInfo:{
+       ...this.data.userInfo,
+       userName:'wangwu'
+      }
+    })
+    console.log(this.data.userInfo);
+  },
+  sayHello(event){
+    console.log('hello',event.currentTarget.dataset.stuName);
+  },
+  outer(){
+    console.log('我是外面的盒子');
+  },
+  inner(){
+    console.log('我是里面的盒子');
   },
   /**
    * 生命周期函数--监听页面加载

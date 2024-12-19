@@ -1,5 +1,5 @@
 <!--pages/index/index.wxml-->
-<view>{{userName}}</view>
+<!-- <view>{{userName}}</view>
 
 
 <view>
@@ -13,4 +13,12 @@
   <view wx:for="{{stuList}}" wx:for-item="item" wx:for-index="index" wx:key='index'>{{item}}----{{index}}</view>
 </view>
 
-<button bind:tap="sayHello">打招呼</button>
+<button bind:tap="sayHello" data-stu-name="张三">打招呼</button>
+
+
+
+<view bind:tap="outer">
+  <button catch:tap="inner">内部按钮</button>
+
+</view> -->
+<button bind:tap="changeName">修改name</button>
