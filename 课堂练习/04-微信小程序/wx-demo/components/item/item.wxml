@@ -1,0 +1,4 @@
+<!--components/item/item.wxml-->
+<view>components/item/item.wxml</view>
+
+<view>{{userName}}</view>

@@ -1,2 +1,4 @@
 <!--pages/home/home.wxml-->
 <text>pages/home/home.wxml11111</text>
+
+<text-item user-name="{{userName}}"></text-item>

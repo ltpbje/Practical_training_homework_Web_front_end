@@ -1,1 +1,8 @@
 /* pages/index/index.wxss */
+
+.box{
+  width: 375rpx;
+  height: 200rpx;
+  background-color: red;
+  /* background-image: url('../../assets/1.png'); */
+}

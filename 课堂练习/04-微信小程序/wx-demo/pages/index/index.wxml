@@ -22,3 +22,5 @@
 
 </view> -->
 <button bind:tap="changeName">修改name</button>
+
+<view class="box"></view>

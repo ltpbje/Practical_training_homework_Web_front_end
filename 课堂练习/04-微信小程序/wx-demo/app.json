@@ -1,7 +1,26 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/home/home"
   ],
+  "tabBar": {
+    "selectedColor": "#f00",
+    "color": "#000000",
+    "list": [
+      {
+        "text": "首页",
+        "iconPath": "",
+        "selectedIconPath": "",
+        "pagePath": "pages/index/index"
+      },
+      {
+        "text": "我的",
+        "iconPath": "",
+        "selectedIconPath": "",
+        "pagePath": "pages/home/home"
+      }
+    ]
+  },
   "window": {
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "功能演示",
