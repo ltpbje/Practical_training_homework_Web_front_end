@@ -26,32 +26,57 @@
 			<view class="box">1</view>
 			<view class="box">1</view>
 		</scroll-view>			 -->
-
-		<view class="">
-			{{userName}}
+		<!-- 
+		<view class=""> 
+			{{userName}}---{{age}}
 		</view>
-		<button @click="goTo">按钮</button>
+		<button @click="goTo">按钮</button> -->
+		<!-- <navigator url="/pages/demo/demo" open-type="reLaunch">跳转demo</navigator> -->
+		<view v-for="(item,index) in 10">
+			{{item}}
+		</view>
 	</view>
 </template>
 
 <script setup>
 	import {
-		ref
+		ref,
+
 	} from 'vue';
-	const userName = ref('张三');
+	import {
+		onLoad,
+		onReady,
+		onShow,
+		onUnload,
+		onPullDownRefresh
+	} from '@dcloudio/uni-app';
+	onPullDownRefresh(() => {
+		console.log('下拉刷新');
+		uni.stopPullDownRefresh()
+	})
+	onUnload(() => {
+		console.log('onUnload');
+	})
+	// const userName = ref('张三');
+	// const age = ref(0)
+	// const goTo = () => {
+	// 	uni.navigateTo({
+	// 		url: '/pages/demo/demo',
+	// 		// event配置项中，可以监听由返回页面触发的自定义事件
+	// 		events: {
 
-	const goTo = () => {
-		uni.navigateTo({
-			url: '/pages/demo/demo',
+	// 			fromDemo: data => {
+	// 				age.value = data.age;
+	// 			}
+	// 		},
+	// 		success: res => {
 
-			success: res => {
-
-				res.eventChannel.emit('fromIndex', {
-					userName: userName.value
-				})
-			}
-		})
-	}
+	// 			res.eventChannel.emit('fromIndex', {
+	// 				userName: userName.value
+	// 			})
+	// 		}
+	// 	})
+	// }
 </script>
 
 <style lang="scss" scoped>

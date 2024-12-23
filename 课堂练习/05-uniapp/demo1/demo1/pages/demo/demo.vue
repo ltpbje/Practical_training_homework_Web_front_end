@@ -13,13 +13,18 @@
 		ref
 	} from 'vue';
 	const userName = ref('');
-
+	const age = ref(20);
 	onLoad(() => {
 		const instance = getCurrentInstance().proxy;
 		const eventChannel = instance.getOpenerEventChannel();
+
+		eventChannel.emit('fromDemo', {
+			age: age.value
+		})
 		eventChannel.on('fromIndex', data => {
 			userName.value = data.userName;
 		})
+
 	})
 </script>
 

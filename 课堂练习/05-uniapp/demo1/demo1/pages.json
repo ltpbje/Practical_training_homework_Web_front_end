@@ -7,10 +7,9 @@
 			}
 		},
 		{
-			"path" : "pages/demo/demo",
-			"style" : 
-			{
-				"navigationBarTitleText" : ""
+			"path": "pages/demo/demo",
+			"style": {
+				"navigationBarTitleText": ""
 			}
 		}
 	],
@@ -18,7 +17,22 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"enablePullDownRefresh": true, // 全局开启下拉刷新I
+		"backgroundColorTop": "red"
+	},
+	"tabBar": {
+		"list": [{
+				"text": "首页",
+				"pagePath": "pages/index/index",
+				"selectedIconPath": "static/logo.png"
+			},
+			{
+				"text": "我的",
+				"pagePath": "pages/demo/demo",
+				"selectedIconPath": "static/icon/icon-h.png"
+			}
+		]
 	},
 	"uniIdRouter": {}
 }
