@@ -9,12 +9,17 @@
 		onLoad
 	} from '@dcloudio/uni-app';
 	import {
+		getCurrentInstance,
 		ref
 	} from 'vue';
 	const userName = ref('');
 
-	onLoad((e) => {
-		userName.value = e.userName
+	onLoad(() => {
+		const instance = getCurrentInstance().proxy;
+		const eventChannel = instance.getOpenerEventChannel();
+		eventChannel.on('fromIndex', data => {
+			userName.value = data.userName;
+		})
 	})
 </script>
 
