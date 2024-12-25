@@ -898,3 +898,453 @@ module.exports = {
 }
 ```
 
+# uni-app跨端应用开发 -- 常用API
+
+- > 在之前的学习，我们已经使用了一些API，这里我们来继续对一些常用API进行讲
+  >
+  > 解，我们主要结合官方文档来看
+
+## 1、交互反馈
+
+- > 我们一直在说对于用户的操作我们需要给予反馈，而其中一种重要的反馈手段就时
+  >
+  > 消息提示窗
+
+### 1.1、uni.showToast与uni.hideToast
+
+- uni.showToast可以在页面中显示一个半透明的消息窗口
+
+- ```js
+  uni.showToast({
+      title: "成功",
+      icon: "success",
+      mask: true,
+      duration: 3000
+  });
+  ```
+
+  
+
+- > 在不做任何配置的情况下，默认在窗口中显示一个勾的图标，通过icon选项的配置
+  >
+  > 可以显示不同的图标，比较常用的就时success（默认值），fail，然后loading，如
+  >
+  > 果要使用其它图标，可以通过image选中设置本地路径的图标图片
+
+- 如果觉得弹窗的存在时间太长，我们可以在中途直接通过uni.hideToast直接隐藏
+
+- > **文本长度的跨端适配问题：**
+  >
+  > 在title中可以设置文本信息，但是文本长度微信小程序只支持最多7个字符，多
+  >
+  > 余的部分是不显示的，而H5是可以完整显示的
+  >
+  > 这种情况下，我们可以通过设置 icon:"none" 取消图标的方式来解决小程序文
+  >
+  > 本长度限制的问题
+
+### 1.2、uni.showLoading与uni.hideLoading
+
+- > 显示loading提示框，需要主动调用uni.hideLoading才能关闭提示框，可以设置的
+  >
+  > 配置与上面的showToast是一样，只不过不能设置duration显示时长和窗口图标
+
+- ```vue
+  <template>
+      <view class="content">
+          <button @click="getData">发送请求</button>
+      </view>
+  </template>
+  <script setup>
+  const getData = () => {
+      uni.showLoading({
+          title: "加载中...",
+          success: res => {
+              console.log(res);
+          }
+      });
+      //模拟请求时长
+      setTimeout(() => {
+          uni.hideLoading();
+      }, 3000);
+  };
+  </script>
+  ```
+
+  
+
+### 1.3、uni.showModel
+
+- > 显示模态弹窗，可以只有一个确定按钮，也可以同时有确定和取消按钮。类似于一
+  >
+  > 个API整合了 html 中：alert、confirm。
+
+- ```js
+  const getData = () => {
+      uni.showModal({
+          title: "标题",
+          content: "你确定么？",
+          success: res => {
+              console.log(res);
+          },
+          fail: res => {
+              console.log(res);
+          }
+      });
+  };
+  ```
+
+- > 说明：
+  >
+  > 除了以上配置，还可以隐藏取消按钮，只显示一个确认按钮，设置确认和取消
+  >
+  > 按钮的样式
+  >
+  > 在确定和取消的回到中可以接收一个参数，里面包含三个属性
+  >
+  > ```js
+  > {
+  >     cancel: false, //布尔结果表示是否点击取消按钮
+  >     confirm: true, //布尔结果表示是否点击确认按钮
+  >     errMsg: "showModel:ok"; //只要弹窗正常显示就为showModel:ok，前面几种弹窗的回调也可以接收该值;
+  > }
+  > ```
+
+- 还可以通过设置 editable:true 在弹窗中显示输入框
+
+- > 用户在输入框中输入的内容，会在回调函数中的参数里面多一个content属性中存
+  >
+  > 放，点击取消按钮的话，取消回调的参数中是没有输入框内容的
+
+- > 注意：
+  >
+  > 开启输入框之后，content设置的弹窗内容会作为输入框的value默认值显示，
+  >
+  > 可以通过placeholderText设置提示信息，但是如果placeholderText和content
+  >
+  > 同时设置，默认显示content内容
+
+## 2、导航栏、tabBar与背景的动态设置
+
+- > 这三项的设置其实我们在pages.json的globalStyle、pages和tabBar这三个配置项
+  >
+  > 中都进行过设置，但是在pages.json中的设置我们可以理解成是静态设置是写死的
+  >
+  > 配置
+
+- > 而这些设置还可以通过调用API的方式来进行修改，这些API没有什么特别之处可以
+  >
+  > 直接看官方文档学习
+
+- https://zh.uniapp.dcloud.io/api/ui/navigationbar.html
+
+## 3、跳转API
+
+- > 之前的学习中我们接触过用于路由跳转的API，但是我们只是使用了
+  >
+  > uni.navigatorTo，除了这个之外，还有一些其它的跳转API
+
+- uni.redirectTo
+- uni.relaunch
+- uni.switchTab
+- uni.navigateBack
+
+- > 以上的这些跳转方法都有自己的一些情况，需要根据自身项目的实际情况来调
+  >
+  > 整使用的跳转API
+  >
+  > 注意：
+  >
+  > navigateTo , redirectTo 只能打开非 tabBar 页面。
+  >
+  > switchTab 只能打开 tabBar 页面。
+  >
+  > reLaunch 可以打开任意页面。
+  >
+  > 页面底部的 tabBar 由页面决定，即只要是定义为 tabBar 的页面，底部
+  >
+  > 都有 tabBar 。
+  >
+  > 不能在首页 onReady 之前进行页面跳转。
+  >
+  > H5端页面刷新之后页面栈会消失，此时 navigateBack 不能返回，如果一
+  >
+  > 定要返回可以使用 history.back() 导航到浏览器的其他历史记录
+
+### 3.1、getCurrentPages获取页面栈实例
+
+- > 通过上面的API实现页面跳转之后，每次跳转的页面都会被记录到页面栈中（类似于
+  >
+  > 历史记录），而我们可以通过getCurrentPages可以把每次跳转的页面信息获取做成
+  >
+  > 一个数组返回
+
+- > 举例：
+  >
+  > 创建index、demo、home三个页面，index可以跳转到home、home可以跳转到
+  >
+  > demo、在三个页面都执行getCurrentPages看打印结果
+
+- index.vue
+
+- ```vue
+  <template>
+      <view class="content">
+          <button @click="goHome">跳转home</button>
+      </view>
+  </template>
+  <script setup>
+  const goHome = () => {
+      uni.navigateTo({
+          url: "/pages/home/home"
+      });
+  };
+  console.log(getCurrentPages());
+  </script>
+  ```
+
+  
+
+- home.vue
+
+- ```vue
+  <template>
+      <view>
+          <view>home</view>
+          <button @click="goDemo1">跳转demo1</button>
+      </view>
+  </template>
+  <script setup>
+  const goDemo1 = () => {
+      uni.switchTab({
+          url: "/pages/demo1/demo1"
+      });
+  };
+  console.log(getCurrentPages());
+  </script>
+  
+  ```
+
+  - demo1.vue
+
+  - ```vue
+    <template>
+    
+    </template>
+    <script setup>
+        console.log(getCurrentPages())
+    </script>
+    ```
+
+  - > 注意：
+    >
+    > 这里我们跳转的过程中，跳转到demo1中的时候，因为demo1是选项卡页面，
+    >
+    > 所以跳转之后，之前的非tabBar页面会被清理出页面栈数组
+
+- 在页面栈的实例中，不同的平台不太一样，这里我们以H5端和微信小程序为例：
+- H5端：
+
+- > 每一个实例都是一个代理对象，代理的目标对象是包含了vue实例和路由新的对象，
+  >
+  > 即然包含了vue实例那么就可以直接调出该vue实例下的数据和方法，但是只支持选
+  >
+  > 项式API
+
+- 改造一下home.vue换成选项式API
+
+- ```vue
+  
+  export default {
+      name: "home",
+      data: () => {
+          return {
+              str: "hahahaha"
+          };
+      }, methods: {
+          handleClick() {
+              console.log(this.str);
+          }
+      },
+      mounted() {
+          console.log(getCurrentPages());
+      }
+  };
+  ```
+
+- > 小程序端：
+  >
+  > 小程序端的每一个实例，就是一个小程序页面栈实例，里面可以调用小程序页面生
+  >
+  > 命周期，在$vm中可以看到小程序的组件实例，可以调出该实例中的数据和方法
+
+### 3.2、页面通讯
+
+- > 在之前介绍onLoad的时候，我们就介绍过相关的跳转API，并通过eventChannel在
+  >
+  > 页面跳转的时候实现了数据方法的传递，但是eventChannel实现的是页面间通讯，
+  >
+  > 而uni-app作为一个跨端框架，那么就需要考虑不同平台的跨端组件通讯，而在页面
+  >
+  > 通讯中所介绍的所有API都是 App 全局级别的，跨任意组件，页面，nvue，vue 等
+
+- **uni.$emit(eventName,OBJECT)** 触发全局自定义事件
+
+- > 这个API的使用于之前vue中学习的自定义事件的用法基本一样，只不过这里的自定
+  >
+  > 义事件是可以全局监听的
+
+- 在index.vue中触发自定义事件，传递obj对象给home页面
+
+- ```vue
+  <template>
+      <view class="content">
+          <button @click="fromIndex">跳转home</button>
+      </view>
+  </template>
+  <script setup>
+  import { reactive } from "vue";
+  const obj = reactive({
+      userName: "zhangsan",
+      age: 18
+  });
+  const fromIndex = () => {
+      uni.navigateTo({
+          url: "/pages/home/home",
+          success: () => {
+              uni.$emit("fromIndex", obj);
+          }
+      });
+  };
+  </script>
+  ```
+
+- 监听全局的自定义事件需要使用 uni.$on(eventName,callback)
+
+- > 在home页面中监听自定义事件，接收自定义事件触发传递的参数并且在home中渲
+  >
+  > 染
+
+- ```vue
+  <template>
+      <view>
+          <view>姓名：{{ indexData.userName }}</view>
+          <view>年龄：{{ indexData.age }}</view>
+      </view>
+  </template>
+  <script setup>
+  const indexData = ref({});
+  onReady(() => {
+      uni.$on("fromIndex", data => {
+          indexData.value = data;
+      });
+  });
+  </script>
+  ```
+
+  - 注意：完成以上操作之后，会出现几个问题
+
+- > **问题1：** 无论是H5端还是小程序端，第一次跳转进入后是无法监听到自定义事件触
+  >
+  > 发，只有当返回第二次再跳转才可以监听到自定义事件
+
+- > **原因：**官方文档再页面通讯栏目最后的注意事项进行了说明，uni.$on 定义完成后才
+  >
+  > 能接收到 uni.$emit 传递的数据，也就是说，必须要先执行uni.$on开启监听，才能
+  >
+  > 监听自定义事件的触发，但是我们的uni.$on在home页面中，需要跳转过去才能执
+  >
+  > 行，不可能在index中的uni.$emit之前执行
+
+- 这里，我们采用嵌套的方式来决定
+
+- index.vue
+
+- ```vue
+  <template>
+      <view class="content">
+          <button @click="fromIndex">跳转home</button>
+      </view>
+  </template>
+  
+  <script setup>
+  import { reactive } from "vue";
+  const obj = reactive({
+      userName: "zhangsan",
+      age: 18
+  });
+  const fromIndex = () => {
+      uni.navigateTo({
+          url: "/pages/home/home",
+          success: () => {
+              uni.$on("fromHome", () => {
+                  uni.$emit("fromIndex", obj);
+              });
+          }
+      });
+  };
+  </script>
+  ```
+
+  - home.vue
+
+```vue
+<template>
+    <view>
+        <view>姓名：{{ indexData.userName }}</view>
+        <view>年龄：{{ indexData.age }}</view>
+    </view>
+</template>
+<script setup>
+const indexData = ref({});
+onReady(() => {
+    uni.$on("fromIndex", data => {
+        indexData.value = data;
+    });
+    uni.$emit("fromHome");
+});
+</script>
+```
+
+- > 代码分析：
+  >
+  > 这里我们在index的跳转成功的回调中先开启一个监听fromHome自定义事件的
+  >
+  > 监听器，当监听到fromHome的触发时，再执行uni.$emit去触发一个
+  >
+  > fromIndex自定义事件
+  >
+  > 当条件到home页面的时候，开启监听fromIndex的监听器，并触发
+  >
+  > fromHome自定义事件，这样就形成了一个如下的逻辑：
+  >
+  > 当我们首先进入index页面的时候会先开启一个监听fromHome的监听器，这个
+  >
+  > 时候跳转成功进入home页面触发home页面的onReady生命周期函数从而执行
+  >
+  > 开启一个监听fromIndex的监听器，同时触发fromHome事件，这个时候监听
+  >
+  > fromHome的监听器已经在之前的index页面中已经开启，当监听到home页面
+  >
+  > 中触发的fromHome事件，执行fromHome监听的回调，从而触发fromIndex
+  >
+  > 事件并传递事件参数，而这个时候针对fromIndex的监听已经在之前跳转到
+  >
+  > home页面的时候就已经开启，所以也可以顺利监听到fromIndex的触发并接收
+  >
+  > 事件参数
+
+- > **问题2：**当上面的问题解决之后，我们会发现，如果我们返回之后再次条件，在
+  > home中的监听器里面的打印会打印多次
+
+- > **原因：**其实官方文档也体行了我们要及时销毁事件监听，从打印的结果我们可以看
+  > 到，其实每次跳转进入创建的监听一直都在，它会像我们之前在vue中讲过的可以挂
+  > 到组件的生命周期上面随着组件的卸载而移除，所以，我们这里需要手动移除
+
+- **使用uni.$off(eventName, callback)移除事件监听**
+
+- 在index页面使用
+
+- >注意：这里我们把原本在navigateTo的成功回调中执行的自定义事件相关代
+  >
+  >码，移出来，不然H5兼容会有问题

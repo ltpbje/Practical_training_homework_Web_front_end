@@ -32,31 +32,96 @@
 		</view>
 		<button @click="goTo">按钮</button> -->
 		<!-- <navigator url="/pages/demo/demo" open-type="reLaunch">跳转demo</navigator> -->
-		<view v-for="(item,index) in 10">
+		<!-- <view v-for="(item,index) in 10">
 			{{item}}
-		</view>
+		</view> -->
+		<button @click="getData">发送请求</button>
+		{{arr}}
 	</view>
 </template>
 
 <script setup>
-	import {
-		ref,
+	// import {
+	// 	reactive
+	// } from 'vue';
+	// const obj = reactive({
+	// 	userName: "zhangsan",
+	// 	age: 18
+	// })
+	const arr = ref('')
+	const getData = async () => {
+		const arrData = await uni.request({
+			url: 'https://jsonplaceholder.typicode.com/posts',
+			success: res => {
+				console.log(res);
+			}
+		})
+		console.log(arrData);
+		arr.value = arrData
+	}
+	// const fromIndex = () => {
+	// 	uni.navigateTo({
+	// 		url: '/pages/home/home',
 
-	} from 'vue';
-	import {
-		onLoad,
-		onReady,
-		onShow,
-		onUnload,
-		onPullDownRefresh
-	} from '@dcloudio/uni-app';
-	onPullDownRefresh(() => {
-		console.log('下拉刷新');
-		uni.stopPullDownRefresh()
-	})
-	onUnload(() => {
-		console.log('onUnload');
-	})
+	// 	})
+	// 	uni.$on('fromHome', () => {
+	// 		uni.$emit('fromIndex', obj)
+	// 	})
+	// }
+	// onShow(() => {
+	// 	uni.$off('fromIndex');
+	// })
+	// uni.showToast({
+	// 	title: '成功',
+	// 	icon: 'success',
+	// 	mask: true,
+	// 	duration: 3000,
+
+	// })
+
+
+	// const getData = () => {
+	// 	uni.showLoading({
+	// 		title: '加载中'
+	// 	})
+
+	// 	setTimeout(() => {
+	// 		uni.hideLoading();
+	// 	}, 3000)
+	// }
+
+	// const getData = () => {
+	// 	uni.showModal({
+	// 		title: '标题',
+	// 		content: '你确定吗',
+	// 		editable: true,
+	// 		placeholderText: '哈哈哈哈',
+	// 		success: res => {
+	// 			console.log(res);
+	// 		},
+	// 		fail: (err) => {
+	// 			console.log(err);
+	// 		}
+	// 	})
+	// }
+	// import {
+	// 	ref,
+
+	// } from 'vue';
+	// import {
+	// 	onLoad,
+	// 	onReady,
+	// 	onShow,
+	// 	onUnload,
+	// 	onPullDownRefresh
+	// } from '@dcloudio/uni-app';
+	// onPullDownRefresh(() => {
+	// 	console.log('下拉刷新');
+	// 	uni.stopPullDownRefresh()
+	// })
+	// onUnload(() => {
+	// 	console.log('onUnload');
+	// })
 	// const userName = ref('张三');
 	// const age = ref(0)
 	// const goTo = () => {
