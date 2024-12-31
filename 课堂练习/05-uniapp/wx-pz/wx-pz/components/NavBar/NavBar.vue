@@ -10,7 +10,7 @@
 			backgroundColor:props.backgroundColor,
 			color:props.fontcolor,
 			fontSize:props.fontsize
-		}">
+		}" v-if="props.flag">
 			<view class="back-icon" @touchstart="navTo">
 				<image v-if="navIcon >1" src="../../static/navbar/prev.png" alt="" />
 				<image v-else src="../../static/navbar/home.png" alt="" />
@@ -18,6 +18,32 @@
 			<view class="title-txt">
 				<slot></slot>
 
+			</view>
+		</view>
+		<view class="search-bar" v-else :style="{
+			display:'flex',
+			height:titHeight,
+			alignItems:'center',
+		}">
+			<text class="city" :style="{
+				height:menuButtonInfo.height +'px',
+				backgroundSize:menuButtonInfo.height -6 + 'px',
+				paddingLeft:'30px',
+				marginTop:menuButtonInfo.top -statusHeight +'px',
+				marginRight:'20rpx'
+			}">中部地区</text>
+			<view class="" :style="{
+				marginRight:menuButtonInfo.width + 20 +'px',
+				flex:1
+			}">
+				<navigator url="" :style="{
+					backgroundColor:'#f3f3f3',
+					borderRadius:'1000rpx',
+					textAlign:'center',
+					height:menuButtonInfo.height +'px',
+				}"><text class="search-text" :style="{
+					backgroundSize:menuButtonInfo.height - 18 +'px'
+				}">找医院</text></navigator>
 			</view>
 		</view>
 	</view>
@@ -40,8 +66,13 @@
 		fontsize: {
 			type: String,
 			default: "32rpx"
+		},
+		flag: {
+			type: Boolean,
+			default: false
 		}
 	});
+	const menuButtonInfo = ref(uni.getMenuButtonBoundingClientRect())
 	const statusHeight = ref(0);
 	const titHeight = ref(0);
 	const getNavData = () => {
@@ -53,8 +84,8 @@
 		} = uni.getWindowInfo()
 		console.log(system, statusBarHeight);
 		// 如果希望胶囊按钮在title-bar中垂直居中，可以按照下面的写法来获取title-bar的高度
-		let menuButtonInfo = uni.getMenuButtonBoundingClientRect()
-		titHeight.value = (menuButtonInfo.top - statusBarHeight) * 2 + menuButtonInfo.height + 'px';
+		// let menuButtonInfo = uni.getMenuButtonBoundingClientRect()
+		titHeight.value = (menuButtonInfo.value.top - statusBarHeight) * 2 + menuButtonInfo.value.height + 'px';
 		statusHeight.value = statusBarHeight + 'px'; //这里使用px而不是rpx，主要是从iphonex开始会有计算误差
 		// if (system.includes("iOS")) {
 		// 	titHeight.value = 88 + 'rpx';
@@ -109,5 +140,22 @@
 			height: inherit;
 			top: 0;
 		}
+	}
+
+	.search-text {
+		font-size: 24rpx;
+		color: #aaa;
+		height: inherit;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: url() no-repeat left center;
+		background-size: 100% 80%;
+	}
+
+	.city {
+		display: flex;
+		align-items: center;
+		background: url() no-repeat;
 	}
 </style>
